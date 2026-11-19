@@ -1,0 +1,157 @@
+@import "tailwindcss";
+@import "@fontsource/pinyon-script/index.css";
+
+@theme {
+  --color-brand: #f97316;
+  --color-brand-light: #fb923c;
+  --color-brand-dark: #ea580c;
+  --font-family-sans: 'Inter', system-ui, sans-serif;
+  --font-family-mono: 'Fira Code', monospace;
+  --font-instrument-serif: 'Instrument Serif', Georgia, serif;
+  --font-script: 'Pinyon Script', cursive;
+
+  --animate-blink: blink 1.2s step-start infinite;
+  --animate-marquee: marquee 30s linear infinite;
+  --animate-fadeUp: fadeUp 0.6s ease forwards;
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  @keyframes marquee {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: white;
+  color: #171717;
+}
+
+.dark body {
+  background-color: #0a0a0a;
+  color: #f5f5f5;
+}
+
+.font-instrument-serif,
+[class*="font-instrument-serif"] {
+  font-family: var(--font-instrument-serif, 'Instrument Serif', Georgia, serif);
+  letter-spacing: normal;
+  word-spacing: 0.16em;
+}
+
+.font-script,
+[class*="font-script"] {
+  font-family: var(--font-script, 'Pinyon Script', cursive);
+}
+
+::selection {
+  background-color: color-mix(in srgb, #f97316 30%, transparent);
+  color: #ea580c;
+}
+
+.presence-row-link,
+.presence-row-name,
+.presence-row-number,
+.presence-row-arrow,
+.presence-row-visit {
+  transition-duration: 250ms;
+  transition-timing-function: ease;
+}
+
+.presence-row-link {
+  transition-property: background-color, box-shadow;
+}
+
+.presence-row-name,
+.presence-row-number {
+  transition-property: color;
+}
+
+.presence-row-arrow {
+  transition-property: background-color, color, box-shadow;
+}
+
+.presence-row-arrow svg {
+  transition: transform 250ms ease;
+}
+
+.presence-row-visit {
+  display: none;
+  opacity: 0;
+  transform: translateX(-0.25rem);
+  transition-property: opacity, transform;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .presence-row-visit {
+    display: inline-block;
+  }
+
+  .presence-row-link:hover {
+    background-color: #171717;
+    box-shadow: 0 10px 32px rgb(23 23 23 / 16%);
+  }
+
+  .presence-row-link:hover .presence-row-name {
+    color: #fff;
+  }
+
+  .presence-row-link:hover .presence-row-number {
+    color: #a3a3a3;
+  }
+
+  .presence-row-link:hover .presence-row-visit,
+  .presence-row-link:focus-visible .presence-row-visit {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .presence-row-link:hover .presence-row-arrow {
+    background-color: #e5e5e5;
+    color: #171717;
+    box-shadow: none;
+  }
+
+  .presence-row-link:hover .presence-row-arrow svg {
+    transform: rotate(45deg);
+  }
+
+  .dark .presence-row-link:hover {
+    background-color: #fff;
+    box-shadow: 0 10px 32px rgb(0 0 0 / 32%);
+  }
+
+  .dark .presence-row-link:hover .presence-row-name {
+    color: #171717;
+  }
+
+  .dark .presence-row-link:hover .presence-row-number {
+    color: #737373;
+  }
+
+  .dark .presence-row-link:hover .presence-row-arrow {
+    background-color: #e5e5e5;
+    color: #171717;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /blink-tuner
+
+Sitemap: https://waseem-portfolio-48383.web.app/sitemap.xml

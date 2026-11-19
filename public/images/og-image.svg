@@ -1,0 +1,40 @@
+<!-- Static source artwork for the 1200x630 social preview PNG. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a0a0a"/>
+      <stop offset="100%" stop-color="#111827"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#f97316"/>
+      <stop offset="100%" stop-color="#fb923c"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Subtle grid lines -->
+  <line x1="0" y1="315" x2="1200" y2="315" stroke="#ffffff08" stroke-width="1"/>
+  <line x1="600" y1="0" x2="600" y2="630" stroke="#ffffff08" stroke-width="1"/>
+
+  <!-- Orange accent bar -->
+  <rect x="80" y="260" width="6" height="110" rx="3" fill="url(#accent)"/>
+
+  <!-- Name -->
+  <text x="112" y="310" font-family="system-ui, -apple-system, sans-serif" font-size="68" font-weight="800" fill="#ffffff" letter-spacing="-1">Waseem Qasim</text>
+
+  <!-- Title -->
+  <text x="112" y="358" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="400" fill="#f97316">AI/ML Engineer &amp; React Developer</text>
+
+  <!-- Tags -->
+  <text x="112" y="420" font-family="ui-monospace, monospace" font-size="18" fill="#6b7280">PYTHON · RAG · COMPUTER VISION · REACT · FASTAPI</text>
+
+  <!-- Bottom domain line -->
+  <text x="112" y="556" font-family="ui-monospace, monospace" font-size="16" fill="#374151">LAHORE / DERA GHAZI KHAN · PAKISTAN</text>
+
+  <!-- Right side: decorative circle -->
+  <circle cx="1020" cy="315" r="180" fill="none" stroke="#f97316" stroke-width="1" opacity="0.15"/>
+  <circle cx="1020" cy="315" r="120" fill="none" stroke="#f97316" stroke-width="1" opacity="0.1"/>
+  <text x="1020" y="300" font-family="system-ui, sans-serif" font-size="80" font-weight="800" fill="#f97316" opacity="0.15" text-anchor="middle">WQ</text>
+</svg>
