@@ -69,7 +69,7 @@ This is a React + TypeScript single-page application built with Vite. To deploy 
 1. Push this project to a new GitHub repository using the commands below, then sign in to Vercel and choose **Add New... > Project**.
 2. Import the GitHub repository. Vercel should detect Vite; set the Framework Preset to **Vite** if it does not.
 3. Use these build settings: Install Command `npm install`, Build Command `npm run build`, Output Directory `dist`.
-4. In the Vercel project settings, add the required `VITE_SITE_URL` and any Firebase `VITE_` values from `.env.example`. Set `VITE_SITE_URL` to the final HTTPS domain. Do not add Firebase service-account secrets to the browser environment.
+4. In the Vercel project settings, add the Firebase `VITE_` values from `.env.example`. Do not add Firebase service-account secrets to the browser environment. The canonical domain is configured in `src/config/siteConfig.json`.
 5. Deploy. Open **Settings > Domains**, add your domain, and follow Vercel's DNS instructions at your domain provider.
 
 To initialize this folder and create its first commit, then push to a new GitHub repository (replace the GitHub placeholders):
@@ -86,14 +86,14 @@ git push -u origin main
 ## After Deploy
 
 1. Add the deployed site to [Google Search Console](https://search.google.com/search-console/). Verify the domain (DNS verification is recommended for a custom domain).
-2. In Search Console, open **Sitemaps** and submit `https://YOUR_DOMAIN/sitemap.xml`.
-3. Use **URL Inspection** for `https://YOUR_DOMAIN/` and select **Request indexing**.
+2. In Search Console, open **Sitemaps** and submit `https://waseemqasim.vercel.app/sitemap.xml`.
+3. Use **URL Inspection** for `https://waseemqasim.vercel.app/`, `/about`, and `/projects`, then select **Request indexing**.
+4. Validate the homepage with Google's [Rich Results Test](https://search.google.com/test/rich-results).
 
 Search indexing is controlled by Google and is not guaranteed by metadata alone. Keep the site publicly accessible and replace the domain placeholder before submitting.
 
 ## SEO Values To Supply
 
-- `YOUR_DOMAIN`: set `VITE_SITE_URL` in `.env` for local builds and in Vercel Project Settings for production. The sitemap and robots sitemap URL are generated from it.
-- `YOUR_GITHUB_URL`: replace `https://YOUR_GITHUB_URL` in the Person JSON-LD `sameAs` list in `index.html` with your real public GitHub profile URL.
+- Canonical site URL: edit `siteUrl` in `src/config/siteConfig.json`; the sitemap, robots file, static HTML, and route metadata all use that value.
 - `YOUR_GITHUB_USERNAME` and `YOUR_REPOSITORY`: replace these in the Git remote command above with the account and repository you create.
-- Profile image: the project already has `public/images/me-open.jpg`; it is used for the Person schema, so no image URL placeholder is needed. Replace that asset only if you want a different public profile photo.
+- Profile image: `public/images/muhammad-waseem-qasim.jpg` is used for the Person schema. Update `profileImage` in `src/config/siteConfig.json` if you replace it.

@@ -45,7 +45,7 @@ type Contribution = { date: string; count: number; level: number }
 type ContributionResponse = { contributions?: Array<Partial<Contribution>> }
 type ContributionCache = { savedAt: number; contributions: Contribution[] }
 
-const workDescription = 'Projects by Muhammad Waseem Qasim, AI/ML Engineer and Full-Stack Developer.'
+const workDescription = 'Selected portfolio projects by Muhammad Waseem Qasim, Full-Stack and Machine Learning Developer.'
 
 export default function Work() {
   const content = useSiteContent()
@@ -58,7 +58,12 @@ export default function Work() {
 
   return (
     <>
-      <PageMeta title="Projects" description={workDescription} path="/work" />
+      <PageMeta
+        title={slug ? `${project?.title || 'Project'} case study` : 'Project Portfolio'}
+        description={project?.desc || workDescription}
+        path={slug ? `/work/${slug}` : '/work'}
+        noindex={Boolean(slug && !project)}
+      />
       {slug
         ? project
           ? <ProjectDetail portfolio={portfolio} project={project} />

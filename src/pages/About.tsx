@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type PointerEvent } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
+import { Helmet } from 'react-helmet-async'
 import { useLocation } from 'react-router-dom'
 import { useSiteContent, type SiteContent } from '../hooks/useSiteContent'
 import { content as defaultSiteContent } from '../data/content'
@@ -13,6 +14,7 @@ import CertLightbox, { type CertItem } from '../components/CertLightbox'
 import FaqAccordion from '../components/FaqAccordion'
 import TechIcon, { getTechBrandTint } from '../components/TechIcon'
 import { useTheme } from '../context/ThemeContext'
+import siteConfig from '../config/siteConfig.json'
 
 type AboutPhoto = SiteContent['about']['photos'][number]
 type Certificate = {
@@ -83,13 +85,34 @@ export default function About() {
   return (
     <>
       <PageMeta
-        rawTitle="About Muhammad Waseem Qasim — AI/ML Engineer, Pakistan"
+        rawTitle="About Muhammad Waseem Qasim | Full-Stack & Machine Learning, Lahore"
         description="About Muhammad Waseem Qasim, AI/ML Engineer and Full-Stack Developer from Pakistan. BS CS (CGPA 3.67) at The University of Lahore, AI/ML trainee at NetSol Technologies, AI intern at EnigmaDesk."
         path="/about"
       />
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'ProfilePage',
+          url: `${siteConfig.siteUrl}/about`,
+          mainEntity: {
+            '@type': 'Person',
+            name: siteConfig.name,
+            alternateName: siteConfig.alternateNames,
+            url: `${siteConfig.siteUrl}/`,
+            image: `${siteConfig.siteUrl}${siteConfig.profileImage}`,
+            jobTitle: siteConfig.jobTitle,
+            description: siteConfig.description,
+            address: { '@type': 'PostalAddress', addressLocality: siteConfig.addressLocality, addressCountry: siteConfig.addressCountry },
+            alumniOf: { '@type': 'CollegeOrUniversity', name: siteConfig.alumniOf },
+            knowsAbout: siteConfig.knowsAbout,
+            sameAs: siteConfig.sameAs,
+          },
+        })}</script>
+      </Helmet>
       <div>
         <PageHero
           title={about.heroHeading || 'ABOUT'}
+          accessibleTitle="Muhammad Waseem Qasim"
           eyebrow={about.heroTag || 'ENGINEER, BUILDER, AND'}
           accent={about.heroName || 'lifelong learner.'}
           subline={about.heroSubline || 'CS graduate from The University of Lahore, building ML systems and full-stack web apps.'}

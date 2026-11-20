@@ -1,0 +1,32 @@
+{
+  "siteUrl": "https://waseemqasim.vercel.app",
+  "name": "Muhammad Waseem Qasim",
+  "alternateNames": ["Waseem Qasim", "Wasi"],
+  "jobTitle": "Full-Stack & Machine Learning Developer",
+  "description": "Muhammad Waseem Qasim (Waseem Qasim, also known as Wasi) is a Full-Stack and Machine Learning Developer in Lahore, Pakistan. He builds web applications and practical AI systems.",
+  "addressLocality": "Lahore",
+  "addressCountry": "PK",
+  "alumniOf": "The University of Lahore",
+  "email": "waseemqasim804@gmail.com",
+  "profileImage": "/images/muhammad-waseem-qasim.jpg",
+  "openGraphImage": "/images/og-image.png",
+  "sameAs": [
+    "https://www.linkedin.com/in/waseem-qasim",
+    "https://github.com/waseemqasim804-pk",
+    "https://x.com/Waseemkhan068",
+    "https://www.instagram.com/waseemkhan4623",
+    "https://www.facebook.com/share/1DuD3cEpY2/"
+  ],
+  "knowsAbout": [
+    "Full-stack development",
+    "Machine learning",
+    "React",
+    "Next.js",
+    "Python",
+    "FastAPI",
+    "Large language models",
+    "Retrieval-augmented generation",
+    "Natural language processing",
+    "Computer vision"
+  ]
+}

@@ -2,6 +2,7 @@ import { motion, useReducedMotion } from 'framer-motion'
 
 type PageHeroProps = {
   title: string
+  accessibleTitle?: string
   eyebrow?: string
   accent?: string
   subline?: string
@@ -13,6 +14,7 @@ type PageHeroProps = {
 
 export default function PageHero({
   title,
+  accessibleTitle,
   eyebrow,
   accent,
   subline,
@@ -33,7 +35,8 @@ export default function PageHero({
     >
       {/* a) Giant word: ultra-bold sans, uppercase, tight letter-spacing (-0.03em), clamp(4rem, 14vw, 12rem), line-height 0.85 */}
       <h1 data-page-hero-title className="max-w-full break-words font-sans text-[clamp(4rem,14vw,12rem)] font-black uppercase leading-[0.85] tracking-[-0.03em] text-foreground dark:bg-gradient-to-b dark:from-white dark:via-neutral-200 dark:to-neutral-500/20 dark:bg-clip-text dark:text-transparent">
-        {title}
+        {accessibleTitle && <span className="sr-only">{accessibleTitle}</span>}
+        <span aria-hidden={accessibleTitle ? true : undefined}>{title}</span>
       </h1>
 
       {/* b) Eyebrow line: small, uppercase, monospace, wide letter-spacing (0.3em), muted color */}

@@ -127,10 +127,10 @@ function HomeBentoCard({ children, className = '', delay = 0, reducedMotion }: {
   )
 }
 
-function HomeMedia({ src, alt, className = '' }: { src: string; alt: string; className?: string }) {
+function HomeMedia({ src, alt, className = '', width, height }: { src: string; alt: string; className?: string; width?: number; height?: number }) {
   const image = useResolvedMedia(src, '')
   if (!image) return null
-  return <img src={image} alt={alt} loading="lazy" className={className} />
+  return <img src={image} alt={alt} width={width} height={height} loading="lazy" className={className} />
 }
 
 function HomePhotoStack({ photos, name }: { photos: string[]; name: string }) {
@@ -478,7 +478,8 @@ export default function Home() {
         )}
         <div className="relative z-10 mx-auto flex w-full flex-col items-center text-center">
           <h1 className="w-full font-sans text-[clamp(80px,15vw,260px)] font-black uppercase leading-[0.85] tracking-[-0.08em] text-foreground dark:text-foreground">
-            {home.heroHeading}
+            <span className="sr-only">{home.name}</span>
+            <span aria-hidden="true">{home.heroHeading}</span>
           </h1>
           <p className="mt-8 text-xs font-semibold uppercase tracking-[0.3em] text-muted dark:text-muted sm:text-sm">{home.heroTag}</p>
           <p className="mt-2 font-instrument-serif text-[clamp(34px,6vw,76px)] italic leading-tight text-muted dark:text-muted">{heroTagline}</p>
@@ -553,7 +554,7 @@ export default function Home() {
             <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_left,rgba(249,115,22,0.2),transparent_60%),radial-gradient(ellipse_at_bottom_right,rgba(234,88,12,0.12),transparent_55%)]" />
             <div className="flex h-full flex-col justify-between gap-8 sm:flex-row sm:items-center">
               <div className="flex items-center gap-5">
-                {home.photo && <HomeMedia src={home.photo} alt={home.name} className="h-28 w-28 shrink-0 rounded-full border-4 border-border object-cover object-top shadow-xl dark:border-neutral-700 sm:h-36 sm:w-36" />}
+                {home.photo && <HomeMedia src={home.photo} alt="Muhammad Waseem Qasim" width={1066} height={1599} className="h-28 w-28 shrink-0 rounded-full border-4 border-border object-cover object-top shadow-xl dark:border-neutral-700 sm:h-36 sm:w-36" />}
                 <div>
                   <h2 className="text-3xl font-black tracking-tight text-foreground dark:text-foreground sm:text-5xl">{home.builderTitle}</h2>
                   <p className="font-instrument-serif text-3xl italic text-accent-foreground sm:text-5xl">{home.builderAccent}</p>

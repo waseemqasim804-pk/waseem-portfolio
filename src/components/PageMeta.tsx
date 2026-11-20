@@ -11,20 +11,20 @@
 //   />
 
 import { Helmet } from 'react-helmet-async'
+import siteConfig from '../config/siteConfig.json'
 
-const SITE_URL = (import.meta.env.VITE_SITE_URL as string | undefined)?.replace(/\/$/, '')
-  || 'https://waseem-portfolio-48383.web.app'
-
-const DEFAULT_IMAGE = `${SITE_URL}/images/og-image.png`
+const SITE_URL = siteConfig.siteUrl.replace(/\/$/, '')
+const DEFAULT_IMAGE = new URL(siteConfig.openGraphImage, `${SITE_URL}/`).href
 const SITE_NAME = 'Waseem Qasim'
-const AUTHOR = 'Waseem Qasim'
-const HOME_TITLE = 'Waseem Qasim | AI/ML Engineer & React Developer Portfolio'
-const HOME_DESCRIPTION = 'Waseem Qasim is an AI/ML Engineer and React Developer in Pakistan, building AI solutions with Python, LangChain, RAG, computer vision, FastAPI and React.'
+const AUTHOR = siteConfig.name
+const HOME_TITLE = 'Waseem Qasim — Full-Stack & ML Developer, Lahore'
+const HOME_DESCRIPTION = 'Muhammad Waseem Qasim (Waseem Qasim) is a Full-Stack and Machine Learning Developer in Lahore, Pakistan, building AI systems and web applications.'
+const DESCRIPTION_SUFFIX = 'Muhammad Waseem Qasim is a Full-Stack and Machine Learning Developer in Lahore, Pakistan.'
 
 interface PageMetaProps {
   /** Short page name, e.g. "About". Becomes "About | Muhammad Waseem Qasim". */
   title?: string
-  /** Use this instead of title when you want the exact string with no suffix. */
+  /** Use this instead of title when a route needs a custom title prefix. */
   rawTitle?: string
   /** ~150-character description unique to this page. */
   description: string
@@ -37,10 +37,17 @@ interface PageMetaProps {
 }
 
 export default function PageMeta({ title, rawTitle, description, path = '', noindex = false, image }: PageMetaProps) {
-  const fullTitle = path === '/' ? HOME_TITLE : rawTitle || `${title} | ${AUTHOR}`
-  const pageDescription = path === '/' ? HOME_DESCRIPTION : description
+  const titlePrefix = rawTitle || `${title} | ${AUTHOR}`
+  const titleSuffix = 'Full-Stack & Machine Learning Developer, Lahore, Pakistan'
+  const fullTitle = path === '/'
+    ? HOME_TITLE
+    : `${titlePrefix}${titlePrefix.includes('Lahore, Pakistan') ? '' : ` — ${titleSuffix}`}`
+  const pageDescription = path === '/'
+    ? HOME_DESCRIPTION
+    : `${description.slice(0, Math.max(32, 155 - DESCRIPTION_SUFFIX.length - 1)).trim().replace(/[\s,;:.–—-]+$/, '')}. ${DESCRIPTION_SUFFIX}`
   const canonicalUrl = `${SITE_URL}${path}`
   const ogImage = image ? new URL(image, `${SITE_URL}/`).href : DEFAULT_IMAGE
+  const ogType = path === '/' ? 'profile' : 'website'
 
   return (
     <Helmet>
@@ -55,7 +62,7 @@ export default function PageMeta({ title, rawTitle, description, path = '', noin
       <meta property="og:url"         content={canonicalUrl} />
       <meta property="og:image"       content={ogImage} />
       <meta property="og:site_name"   content={SITE_NAME} />
-      <meta property="og:type"        content="website" />
+      <meta property="og:type"        content={ogType} />
       <meta property="og:locale"      content="en_US" />
 
       {/* Twitter */}

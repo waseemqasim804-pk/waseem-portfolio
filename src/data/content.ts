@@ -300,7 +300,7 @@ export const content = {
     faqTitleAccent: 'answered',
     galleryTitle: 'University memories',
     galleryEmptyText: 'University memories: photos coming soon',
-    big: "I'm Muhammad Waseem Qasim, a Computer Science graduate and AI/ML Engineer focused on building intelligent applications and full-stack software solutions.",
+    big: "I'm Muhammad Waseem Qasim, a BS Computer Science graduate from The University of Lahore based in Lahore, Pakistan. I build machine learning systems and full-stack applications with tools such as Python, React, and FastAPI.",
     photos: [] as Array<{ image: string; caption: string; visible: boolean }>,
     education: [
       {

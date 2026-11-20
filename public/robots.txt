@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin
 Disallow: /blink-tuner
 
-Sitemap: https://waseem-portfolio-48383.web.app/sitemap.xml
+Sitemap: https://waseemqasim.vercel.app/sitemap.xml
