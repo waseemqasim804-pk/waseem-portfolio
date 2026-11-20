@@ -191,13 +191,13 @@ export default function BlinkingPhoto({
         className={`absolute inset-0 ${frameRadius}`}
         style={{
           background:
-            'conic-gradient(from 0deg, #f97316, #fb923c, #fbbf24, #f97316)',
+            'conic-gradient(from 0deg, var(--accent), var(--accent-light), rgb(251 191 36), var(--accent))',
           padding: '3px',
           borderRadius,
           filter: 'blur(0px)',
         }}
       >
-        <div className={`w-full h-full ${frameRadius} bg-white dark:bg-neutral-950`} />
+        <div className={`w-full h-full ${frameRadius} bg-surface dark:bg-surface`} />
       </div>
 
       {/* Animated glow pulse */}
@@ -278,7 +278,7 @@ function PlaceholderPhoto({ isBlinking, blinkMs }: { isBlinking: boolean; blinkM
       className="relative w-full h-full flex items-center justify-center select-none overflow-hidden"
       style={{
         background:
-          'linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 70%, #1a1a2e 100%)',
+          'linear-gradient(135deg, rgb(26 26 46) 0%, rgb(22 33 62) 40%, rgb(15 52 96) 70%, rgb(26 26 46) 100%)',
       }}
     >
       {/* Subtle radial glow */}
@@ -293,7 +293,7 @@ function PlaceholderPhoto({ isBlinking, blinkMs }: { isBlinking: boolean; blinkM
 
       {/* Initials */}
       <span
-        className="relative font-bold text-white/90 select-none"
+        className="relative font-bold text-foreground/90 select-none"
         style={{ fontSize: 'clamp(2.5rem, 6vw, 4rem)', letterSpacing: '-0.03em' }}
       >
         MW

@@ -12,7 +12,7 @@ import PageMeta from '../components/PageMeta'
 type ContactForm = { name: string; email: string; type: string; budget: string; message: string; website: string }
 
 const EMPTY_FORM: ContactForm = { name: '', email: '', type: '', budget: '', message: '', website: '' }
-const glass = 'rounded-2xl border border-neutral-200/60 dark:border-neutral-800/60 bg-white/60 dark:bg-neutral-900/40 backdrop-blur-md'
+const glass = 'rounded-2xl border border-neutral-200/60 dark:border-neutral-800/60 bg-surface/60 dark:bg-surface/40 backdrop-blur-md'
 
 function validate(form: ContactForm): string {
   const name = form.name.trim()
@@ -67,7 +67,7 @@ export default function Contact() {
     }
   }
 
-  const inputClass = 'w-full rounded-xl border border-neutral-200 bg-white/70 px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20 dark:border-neutral-700 dark:bg-neutral-950/60 dark:text-neutral-100'
+  const inputClass = 'w-full rounded-xl border border-neutral-200 bg-surface/70 px-4 py-3 text-sm text-foreground placeholder:text-muted focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20 dark:border-neutral-700 dark:bg-surface/60 dark:text-foreground'
 
   return (
     <div className="relative overflow-hidden">
@@ -100,7 +100,7 @@ export default function Contact() {
             <motion.p
               initial={reducedMotion ? false : { opacity: 0, y: 8 }}
               animate={reducedMotion ? undefined : { opacity: 1, y: 0 }}
-              className="mb-6 text-[11px] font-semibold uppercase tracking-[0.28em] text-neutral-500"
+              className="mb-6 text-[11px] font-semibold uppercase tracking-[0.28em] text-muted"
             >
               {siteName}
             </motion.p>
@@ -108,7 +108,7 @@ export default function Contact() {
               initial={reducedMotion ? false : { opacity: 0, y: 16 }}
               animate={reducedMotion ? undefined : { opacity: 1, y: 0 }}
               transition={{ duration: 0.45 }}
-              className="text-4xl font-black uppercase leading-[0.82] tracking-[-0.075em] text-neutral-900 dark:text-white md:text-6xl"
+              className="text-4xl font-black uppercase leading-[0.82] tracking-[-0.075em] text-foreground dark:text-foreground md:text-6xl"
             >
               <span className="block">{contact.headingLine1}</span>
               <span className="block">{`${contact.headingLine2} ${contact.headingLine3}`.trim()}</span>
@@ -124,7 +124,7 @@ export default function Contact() {
             <motion.p
               initial={reducedMotion ? false : { opacity: 0, y: 8 }}
               animate={reducedMotion ? undefined : { opacity: 1, y: 0 }}
-              className="mb-6 text-lg font-semibold uppercase tracking-[0.45em] text-neutral-500 dark:text-neutral-400"
+              className="mb-6 text-lg font-semibold uppercase tracking-[0.45em] text-muted dark:text-muted"
             >
               BOOK / MESSAGE
             </motion.p>
@@ -132,10 +132,10 @@ export default function Contact() {
               initial={reducedMotion ? false : { opacity: 0, y: 16 }}
               animate={reducedMotion ? undefined : { opacity: 1, y: 0 }}
               transition={{ duration: 0.45 }}
-              className="font-sans text-[22vw] font-black uppercase leading-[0.85] tracking-[-0.04em] text-neutral-900 dark:text-white md:max-w-[68%] md:text-[clamp(88px,11vw,160px)]"
+              className="font-sans text-[22vw] font-black uppercase leading-[0.85] tracking-[-0.04em] text-foreground dark:text-foreground md:max-w-[68%] md:text-[clamp(88px,11vw,160px)]"
             >
               <span className="block">{contact.headingLine1}</span>
-              <span className="block text-neutral-300 dark:text-neutral-800">{contact.headingLine2}</span>
+              <span className="block text-muted dark:text-muted">{contact.headingLine2}</span>
               <span className="block">{contact.headingLine3}</span>
             </motion.h1>
           </div>
@@ -151,7 +151,7 @@ export default function Contact() {
             aria-selected={activeTab === 'booking'}
             aria-controls="panel-booking"
             onClick={() => setActiveTab('booking')}
-            className={`inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition-colors duration-200 ${activeTab === 'booking' ? 'bg-neutral-900 text-neutral-100 dark:bg-neutral-100 dark:text-neutral-900' : 'text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-900'}`}
+            className={`inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition-colors duration-200 ${activeTab === 'booking' ? 'bg-neutral-900 text-surface-inverse dark-colorful-selected' : 'text-muted hover:bg-neutral-100 dark:text-muted dark:hover:bg-neutral-900'}`}
           >
             <ContactTabIcon type="video" />
             {contact.bookingTabLabel}
@@ -163,7 +163,7 @@ export default function Contact() {
             aria-selected={activeTab === 'message'}
             aria-controls="panel-message"
             onClick={() => setActiveTab('message')}
-            className={`inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition-colors duration-200 ${activeTab === 'message' ? 'bg-neutral-900 text-neutral-100 dark:bg-neutral-100 dark:text-neutral-900' : 'text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-900'}`}
+            className={`inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition-colors duration-200 ${activeTab === 'message' ? 'bg-neutral-900 text-surface-inverse dark-colorful-selected' : 'text-muted hover:bg-neutral-100 dark:text-muted dark:hover:bg-neutral-900'}`}
           >
             <ContactTabIcon type="mail" />
             {contact.messageTabLabel}
@@ -197,18 +197,18 @@ export default function Contact() {
             >
               <div className={`${glass} mx-auto max-w-4xl p-6 sm:p-8 md:p-10`}>
                 <div className="mb-7 flex items-center gap-3">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand/10 text-brand"><ContactTabIcon type="chat" /></span>
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand/10 text-accent-foreground"><ContactTabIcon type="chat" /></span>
                   <div>
-                    <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100">{contact.messageTitle}</h2>
-                    <p className="mt-0.5 text-sm text-neutral-500">{settings.email}</p>
+                    <h2 className="text-xl font-bold text-foreground dark:text-foreground">{contact.messageTitle}</h2>
+                    <p className="mt-0.5 text-sm text-muted">{settings.email}</p>
                   </div>
                 </div>
 
                 {sent ? (
                   <div className="rounded-2xl border border-brand/30 bg-brand/5 p-10 text-center" role="status">
                     <p className="mb-2 text-2xl">🎉</p>
-                    <p className="mb-1 font-semibold text-neutral-900 dark:text-neutral-100">Message sent!</p>
-                    <p className="text-sm text-neutral-600 dark:text-neutral-400">Your message was saved. I'll get back to you as soon as possible.</p>
+                    <p className="mb-1 font-semibold text-foreground dark:text-foreground">Message sent!</p>
+                    <p className="text-sm text-muted dark:text-muted">Your message was saved. I'll get back to you as soon as possible.</p>
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
@@ -217,28 +217,28 @@ export default function Contact() {
                       <input id="contact-website" name="website" autoComplete="off" tabIndex={-1} value={form.website} onChange={handleChange} />
                     </div>
                     <div className="grid gap-5 sm:grid-cols-2">
-                      <label htmlFor="contact-name" className="block text-xs font-semibold text-neutral-600 dark:text-neutral-400">Name *
+                      <label htmlFor="contact-name" className="block text-xs font-semibold text-muted dark:text-muted">Name *
                         <input id="contact-name" name="name" autoComplete="name" required maxLength={100} value={form.name} onChange={handleChange} placeholder="Muhammad Waseem" className={`${inputClass} mt-1.5`} />
                       </label>
-                      <label htmlFor="contact-email" className="block text-xs font-semibold text-neutral-600 dark:text-neutral-400">Email *
+                      <label htmlFor="contact-email" className="block text-xs font-semibold text-muted dark:text-muted">Email *
                         <input id="contact-email" name="email" type="email" autoComplete="email" required maxLength={254} value={form.email} onChange={handleChange} placeholder="hello@example.com" className={`${inputClass} mt-1.5`} />
                       </label>
                     </div>
                     <div className="grid gap-5 sm:grid-cols-2">
-                      <label htmlFor="contact-type" className="block text-xs font-semibold text-neutral-600 dark:text-neutral-400">Type of project
+                      <label htmlFor="contact-type" className="block text-xs font-semibold text-muted dark:text-muted">Type of project
                         <select id="contact-type" name="type" value={form.type} onChange={handleChange} className={`${inputClass} mt-1.5`}>
                           <option value="">Select…</option>
                           {contact.types.map(type => <option key={type} value={type}>{type}</option>)}
                         </select>
                       </label>
-                      <label htmlFor="contact-budget" className="block text-xs font-semibold text-neutral-600 dark:text-neutral-400">Budget / engagement type
+                      <label htmlFor="contact-budget" className="block text-xs font-semibold text-muted dark:text-muted">Budget / engagement type
                         <select id="contact-budget" name="budget" value={form.budget} onChange={handleChange} className={`${inputClass} mt-1.5`}>
                           <option value="">Select…</option>
                           {contact.budgets.map(budget => <option key={budget} value={budget}>{budget}</option>)}
                         </select>
                       </label>
                     </div>
-                    <label htmlFor="contact-message" className="block text-xs font-semibold text-neutral-600 dark:text-neutral-400">Message *
+                    <label htmlFor="contact-message" className="block text-xs font-semibold text-muted dark:text-muted">Message *
                       <textarea id="contact-message" name="message" required minLength={10} maxLength={5000} rows={5} value={form.message} onChange={handleChange} placeholder="Tell me about your project or opportunity…" className={`${inputClass} mt-1.5 resize-none`} />
                     </label>
                     {error && <p className="text-sm text-red-600 dark:text-red-400" role="alert">{error}</p>}
@@ -250,8 +250,8 @@ export default function Contact() {
 
                 {(settings.phone || linkedinUrl) && (
                   <div className="mt-7 flex flex-wrap gap-x-5 gap-y-2 border-t border-neutral-200 pt-5 text-sm dark:border-neutral-800">
-                    {settings.phone && <a href={`tel:${settings.phone}`} className="text-neutral-500 transition-colors hover:text-neutral-900 dark:hover:text-neutral-100">{settings.phone}</a>}
-                    {linkedinUrl && <a href={linkedinUrl} target="_blank" rel="me noopener noreferrer" className="text-neutral-500 transition-colors hover:text-neutral-900 dark:hover:text-neutral-100">LinkedIn</a>}
+                    {settings.phone && <a href={`tel:${settings.phone}`} className="text-muted transition-colors hover:text-foreground dark:hover:text-foreground">{settings.phone}</a>}
+                    {linkedinUrl && <a href={linkedinUrl} target="_blank" rel="me noopener noreferrer" className="text-muted transition-colors hover:text-foreground dark:hover:text-foreground">LinkedIn</a>}
                   </div>
                 )}
               </div>

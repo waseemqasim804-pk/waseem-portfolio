@@ -3,12 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0a0a0a" />
+    <meta name="theme-color" content="#ffffff" />
     <meta name="robots" content="index, follow" />
     <meta name="author" content="Waseem Qasim" />
     <meta name="description" content="Waseem Qasim is an AI/ML Engineer and React Developer in Pakistan, building AI solutions with Python, LangChain, RAG, computer vision, FastAPI and React." />
     <meta name="keywords" content="Waseem Qasim, Muhammad Waseem Qasim, AI/ML Engineer, React Developer, Python, LangChain, RAG, computer vision, FastAPI, Pakistan" />
     <title>Waseem Qasim | AI/ML Engineer &amp; React Developer Portfolio</title>
+
+    <script>
+      try {
+        const savedTheme = localStorage.getItem('theme')
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+        document.documentElement.classList.toggle('dark', savedTheme === 'dark' || (savedTheme !== 'light' && prefersDark))
+      } catch (error) {
+        document.documentElement.classList.toggle('dark', window.matchMedia('(prefers-color-scheme: dark)').matches)
+      }
+    </script>
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
@@ -72,13 +82,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&family=Instrument+Serif:ital@0;1&family=Playfair+Display:ital,wght@0,700;1,400;1,700&family=Great+Vibes&display=swap" rel="stylesheet" />
   </head>
-  <body class="bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 font-sans antialiased transition-colors duration-300">
+  <body class="bg-background text-foreground font-sans antialiased transition-colors duration-300">
     <div id="root">
       <main>
         <header style="font-family:system-ui,sans-serif;max-width:900px;margin:3rem auto;padding:0 1.5rem">
-          <h1 style="font-size:2.25rem;font-weight:800;color:#111">Waseem Qasim</h1>
-          <p style="font-size:1.125rem;color:#f97316;font-weight:600;margin:.5rem 0">AI/ML Engineer &amp; React Developer</p>
-          <p style="color:#555;max-width:650px;line-height:1.6">Based in Lahore / Dera Ghazi Khan, Punjab, Pakistan. BS Computer Science, The University of Lahore (2022-2026), GPA 3.67/4.00, 50% merit-based scholarship.</p>
+          <h1 style="font-size:2.25rem;font-weight:800;color:var(--text)">Waseem Qasim</h1>
+          <p style="font-size:1.125rem;color:var(--accent);font-weight:600;margin:.5rem 0">AI/ML Engineer &amp; React Developer</p>
+          <p style="color:var(--muted);max-width:650px;line-height:1.6">Based in Lahore / Dera Ghazi Khan, Punjab, Pakistan. BS Computer Science, The University of Lahore (2022-2026), GPA 3.67/4.00, 50% merit-based scholarship.</p>
           <section aria-labelledby="starter-projects">
             <h2 id="starter-projects">Selected Projects</h2>
             <article><h3>HireGen-AI</h3><p>Final-year project using React.js, FastAPI, Python, Groq LLM, YOLOv8, Supabase, WebSockets and Azure; integrates LLMs, NLP, RAG and computer vision.</p></article>

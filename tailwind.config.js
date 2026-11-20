@@ -9,6 +9,14 @@ export default {
         mono: ['Fira Code', 'monospace'],
       },
       colors: {
+        background: 'var(--bg)',
+        surface: 'var(--surface)',
+        foreground: 'var(--text)',
+        muted: 'var(--muted)',
+        border: 'var(--border)',
+        accent: 'var(--accent)',
+        'on-accent': 'var(--on-accent)',
+        'accent-foreground': 'var(--accent-foreground)',
         brand: {
           DEFAULT: '#f97316', // orange-500
           light: '#fb923c',   // orange-400

@@ -16,8 +16,12 @@ const ThemeContext = createContext<ThemeContextValue>({
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('theme') as Theme | null
-      if (stored) return stored
+      try {
+        const stored = localStorage.getItem('theme')
+        if (stored === 'light' || stored === 'dark') return stored
+      } catch (error) {
+        console.error('Unable to read the saved theme.', error)
+      }
       return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
     }
     return 'dark'
@@ -25,12 +29,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const root = document.documentElement
-    if (theme === 'dark') {
-      root.classList.add('dark')
-    } else {
-      root.classList.remove('dark')
+    root.classList.toggle('dark', theme === 'dark')
+    try {
+      localStorage.setItem('theme', theme)
+    } catch (error) {
+      console.error('Unable to save the selected theme.', error)
     }
-    localStorage.setItem('theme', theme)
   }, [theme])
 
   const toggle = () => setTheme(t => (t === 'dark' ? 'light' : 'dark'))

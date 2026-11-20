@@ -92,11 +92,13 @@ export const createContactMessage = onCall(
 )
 
 export const createGuestbookEntry = onCall(
-  { region: REGION, enforceAppCheck: true, maxInstances: 10 },
+  { region: REGION, maxInstances: 10 },
   async request => {
-    if (!request.auth) throw new HttpsError('unauthenticated', 'Sign in with Google before signing the guestbook.')
+    if (!request.auth) throw new HttpsError('unauthenticated', 'Sign in with Google or Facebook before signing the guestbook.')
     const authProvider = (request.auth.token.firebase as { sign_in_provider?: string } | undefined)?.sign_in_provider
-    if (authProvider !== 'google.com') throw new HttpsError('permission-denied', 'Sign in with Google before signing the guestbook.')
+    if (!['google.com', 'facebook.com'].includes(authProvider ?? '')) {
+      throw new HttpsError('permission-denied', 'Sign in with Google or Facebook before signing the guestbook.')
+    }
 
     const uid = request.auth.uid
     const rawMessage = request.data?.message
@@ -104,20 +106,27 @@ export const createGuestbookEntry = onCall(
     if (typeof rawMessage !== 'string' || rawMessage.trim().length < 1 || rawMessage.trim().length > 280) {
       throw new HttpsError('invalid-argument', 'Your note must be between 1 and 280 characters.')
     }
+    const matchedUrls = message.match(/(https?:\/\/[^\s]+|www\.[^\s]+)/gi) ?? []
+    if (matchedUrls.length > 1) throw new HttpsError('invalid-argument', 'Signatures may contain at most one link.')
     const name = cleanText(request.auth.token.name, 80) || 'Anonymous'
     const picture = request.auth.token.picture
     const avatar = typeof picture === 'string' && picture.startsWith('https://') ? picture.slice(0, 500) : ''
     const entryRef = db.collection('guestbook').doc(uid)
     const uniquenessRef = db.collection('guestbookUsers').doc(uid)
     const existingQuery = db.collection('guestbook').where('uid', '==', uid).limit(1)
+    const rateRef = ipRateRef(request.rawRequest.ip ?? '', 'guestbook')
+    const now = Date.now()
 
     await db.runTransaction(async transaction => {
-      const [entrySnapshot, uniquenessSnapshot, existingSnapshot] = await Promise.all([
+      const [entrySnapshot, uniquenessSnapshot, existingSnapshot, rateSnapshot] = await Promise.all([
         transaction.get(entryRef), transaction.get(uniquenessRef), transaction.get(existingQuery),
+        transaction.get(rateRef),
       ])
       if (entrySnapshot.exists || uniquenessSnapshot.exists || !existingSnapshot.empty) {
         throw new HttpsError('already-exists', 'You have already signed the guestbook.')
       }
+      const rate = checkRateLimit(rateSnapshot.data(), now, 8, 24 * 60 * 60 * 1000)
+      transaction.set(rateRef, rate)
       transaction.create(entryRef, {
         uid,
         name,
@@ -129,6 +138,70 @@ export const createGuestbookEntry = onCall(
         createdAt: FieldValue.serverTimestamp(),
       })
       transaction.create(uniquenessRef, { uid, createdAt: FieldValue.serverTimestamp() })
+    })
+    return { ok: true }
+  },
+)
+
+export const updateGuestbookEntry = onCall(
+  { region: REGION, maxInstances: 10 },
+  async request => {
+    if (!request.auth) throw new HttpsError('unauthenticated', 'Sign in before editing your guestbook entry.')
+    const authProvider = (request.auth.token.firebase as { sign_in_provider?: string } | undefined)?.sign_in_provider
+    if (!['google.com', 'facebook.com'].includes(authProvider ?? '')) {
+      throw new HttpsError('permission-denied', 'Use the Google or Facebook account that owns this entry.')
+    }
+
+    const rawMessage = request.data?.message
+    const message = cleanText(rawMessage, 280)
+    if (typeof rawMessage !== 'string' || rawMessage.trim().length < 1 || rawMessage.trim().length > 280) {
+      throw new HttpsError('invalid-argument', 'Your note must be between 1 and 280 characters.')
+    }
+    const matchedUrls = message.match(/(https?:\/\/[^\s]+|www\.[^\s]+)/gi) ?? []
+    if (matchedUrls.length > 1) throw new HttpsError('invalid-argument', 'Signatures may contain at most one link.')
+
+    const uid = request.auth.uid
+    const entryRef = db.collection('guestbook').doc(uid)
+    const rateRef = ipRateRef(request.rawRequest.ip ?? '', 'guestbook-update')
+    const now = Date.now()
+    await db.runTransaction(async transaction => {
+      const [entry, rateSnapshot] = await Promise.all([transaction.get(entryRef), transaction.get(rateRef)])
+      if (!entry.exists || entry.data()?.uid !== uid) {
+        throw new HttpsError('not-found', 'Your guestbook entry could not be found.')
+      }
+      transaction.set(rateRef, checkRateLimit(rateSnapshot.data(), now, 12, 60 * 60 * 1000))
+      transaction.update(entryRef, { message, updatedAt: FieldValue.serverTimestamp() })
+    })
+    return { ok: true }
+  },
+)
+
+export const deleteGuestbookEntry = onCall(
+  { region: REGION, maxInstances: 10 },
+  async request => {
+    if (!request.auth) throw new HttpsError('unauthenticated', 'Sign in before deleting your guestbook entry.')
+    const authProvider = (request.auth.token.firebase as { sign_in_provider?: string } | undefined)?.sign_in_provider
+    if (!['google.com', 'facebook.com'].includes(authProvider ?? '')) {
+      throw new HttpsError('permission-denied', 'Use the Google or Facebook account that owns this entry.')
+    }
+
+    const uid = request.auth.uid
+    const entryRef = db.collection('guestbook').doc(uid)
+    const uniquenessRef = db.collection('guestbookUsers').doc(uid)
+    const rateRef = ipRateRef(request.rawRequest.ip ?? '', 'guestbook-delete')
+    const now = Date.now()
+    await db.runTransaction(async transaction => {
+      const [entry, uniqueness, rateSnapshot] = await Promise.all([
+        transaction.get(entryRef),
+        transaction.get(uniquenessRef),
+        transaction.get(rateRef),
+      ])
+      if (!entry.exists || entry.data()?.uid !== uid) {
+        throw new HttpsError('not-found', 'Your guestbook entry could not be found.')
+      }
+      transaction.set(rateRef, checkRateLimit(rateSnapshot.data(), now, 12, 60 * 60 * 1000))
+      transaction.delete(entryRef)
+      if (uniqueness.exists) transaction.delete(uniquenessRef)
     })
     return { ok: true }
   },

@@ -108,7 +108,7 @@ const COUNTRY_LOCATIONS = {
 
 type Country = keyof typeof COUNTRY_LOCATIONS
 const COUNTRY_NAMES = Object.keys(COUNTRY_LOCATIONS) as Country[]
-const glass = 'rounded-2xl border border-neutral-200/60 dark:border-neutral-800/60 bg-white/60 dark:bg-neutral-900/40 backdrop-blur-md'
+const glass = 'rounded-2xl border border-neutral-200/60 dark:border-neutral-800/60 bg-surface/60 dark:bg-surface/40 backdrop-blur-md'
 
 function utcCalendarValue(date: Date): string {
   return date.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z')
@@ -156,7 +156,7 @@ export function BookingPanel() {
   const countryCities = COUNTRY_LOCATIONS[selectedCountry]
   const selectedCity = countryCities.find(location => location.city === city) ?? countryCities[0]
   const selectedTimeZone = selectedCity?.timeZone ?? sourceTimeZone
-  const selectClass = 'mt-1 w-full rounded-xl border border-neutral-200 bg-white/70 px-3 py-2.5 text-sm text-neutral-900 focus:border-brand focus:outline-none dark:border-neutral-700 dark:bg-neutral-950/60 dark:text-neutral-100'
+  const selectClass = 'mt-1 w-full rounded-xl border border-neutral-200 bg-surface/70 px-3 py-2.5 text-sm text-foreground focus:border-brand focus:outline-none dark:border-neutral-700 dark:bg-surface/60 dark:text-foreground'
 
   const slots = useMemo(() => generateSlots(availability), [availability])
   const calDays = useMemo(() => {
@@ -282,7 +282,7 @@ export function BookingPanel() {
     <div>
       {!isFirebaseConfigured && (
         <div className={glass + ' mb-4 rounded-xl border-dashed p-4 text-center'}>
-          <p className="text-sm text-neutral-600 dark:text-neutral-400">Booking unavailable — Firebase is not configured.</p>
+          <p className="text-sm text-muted dark:text-muted">Booking unavailable — Firebase is not configured.</p>
         </div>
       )}
 
@@ -292,20 +292,20 @@ export function BookingPanel() {
             {photo ? (
               <img src={photo} alt={contact.meetingName} className="h-14 w-14 rounded-full object-cover" />
             ) : (
-              <span aria-hidden="true" className="flex h-14 w-14 items-center justify-center rounded-full bg-brand/10 font-semibold text-brand">WQ</span>
+              <span aria-hidden="true" className="flex h-14 w-14 items-center justify-center rounded-full bg-brand/10 font-semibold text-accent-foreground">WQ</span>
             )}
             <div className="min-w-0">
-              <p className="truncate font-semibold text-neutral-900 dark:text-neutral-100">{contact.meetingName}</p>
-              <p className="mt-0.5 text-xs text-neutral-500">{contact.meetingTitle}</p>
+              <p className="truncate font-semibold text-foreground dark:text-foreground">{contact.meetingName}</p>
+              <p className="mt-0.5 text-xs text-muted">{contact.meetingTitle}</p>
             </div>
           </div>
-          <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100">{contact.meetingTitle}</h2>
-          <div className="mt-4 space-y-3 text-sm text-neutral-600 dark:text-neutral-400">
+          <h2 className="text-xl font-bold text-foreground dark:text-foreground">{contact.meetingTitle}</h2>
+          <div className="mt-4 space-y-3 text-sm text-muted dark:text-muted">
             <p className="flex items-center gap-2"><BookingIcon type="clock" />{availability.slotMinutes}m</p>
             <p className="flex items-center gap-2"><BookingIcon type="video" />Online call</p>
           </div>
           <div className="mt-8 space-y-4">
-            <label className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-500">Select country
+            <label className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">Select country
               <select value={selectedCountry} onChange={event => {
                 const nextCountry = event.target.value as Country
                 setCountry(nextCountry)
@@ -314,29 +314,29 @@ export function BookingPanel() {
                 {COUNTRY_NAMES.map(name => <option key={name} value={name}>{name}</option>)}
               </select>
             </label>
-            <label className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-500">Select city
+            <label className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">Select city
               <select value={selectedCity?.city ?? ''} onChange={event => setCity(event.target.value)} className={selectClass}>
                 {countryCities.map(location => <option key={location.city} value={location.city}>{location.city}</option>)}
               </select>
             </label>
-            <p className="text-xs text-neutral-500">{selectedTimeZone}</p>
+            <p className="text-xs text-muted">{selectedTimeZone}</p>
           </div>
         </section>
 
         <section className="border-b border-neutral-200/80 p-5 dark:border-neutral-800/80 sm:p-6 md:border-b-0 md:border-r">
           <div className="mb-5 flex items-center justify-between gap-3">
-            <h2 className="font-semibold text-neutral-900 dark:text-neutral-100">{MONTH_NAMES[viewMonth]} {viewYear}</h2>
+            <h2 className="font-semibold text-foreground dark:text-foreground">{MONTH_NAMES[viewMonth]} {viewYear}</h2>
             <div className="flex items-center gap-1">
-              <button type="button" aria-label="Previous month" onClick={goPreviousMonth} className="flex h-8 w-8 items-center justify-center rounded-full text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-neutral-900 dark:hover:bg-neutral-800 dark:hover:text-neutral-100">
+              <button type="button" aria-label="Previous month" onClick={goPreviousMonth} className="flex h-8 w-8 items-center justify-center rounded-full text-muted transition-colors hover:bg-neutral-100 hover:text-foreground dark:hover:bg-neutral-800 dark:hover:text-foreground">
                 <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
               </button>
-              <button type="button" aria-label="Next month" onClick={goNextMonth} className="flex h-8 w-8 items-center justify-center rounded-full text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-neutral-900 dark:hover:bg-neutral-800 dark:hover:text-neutral-100">
+              <button type="button" aria-label="Next month" onClick={goNextMonth} className="flex h-8 w-8 items-center justify-center rounded-full text-muted transition-colors hover:bg-neutral-100 hover:text-foreground dark:hover:bg-neutral-800 dark:hover:text-foreground">
                 <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L10.586 13.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4z" clipRule="evenodd" /></svg>
               </button>
             </div>
           </div>
           <div className="mb-2 grid grid-cols-7 gap-1">
-            {DAY_NAMES.map(day => <div key={day} className="py-2 text-center text-[9px] font-semibold uppercase tracking-wide text-neutral-400">{day}</div>)}
+            {DAY_NAMES.map(day => <div key={day} className="py-2 text-center text-[9px] font-semibold uppercase tracking-wide text-muted">{day}</div>)}
           </div>
           <div className="grid grid-cols-7 gap-1">
             {calDays.map((date, index) => {
@@ -355,8 +355,8 @@ export function BookingPanel() {
                   className={'relative aspect-square rounded-xl text-sm font-medium transition-colors ' + (selected
                     ? 'bg-brand text-neutral-50 shadow-md shadow-brand/25'
                     : available
-                      ? 'text-neutral-800 hover:bg-brand/10 hover:text-brand dark:text-neutral-200'
-                      : 'cursor-not-allowed text-neutral-300 dark:text-neutral-700')}
+                      ? 'text-muted hover:bg-brand/10 hover:text-accent-foreground dark:text-foreground'
+                      : 'cursor-not-allowed text-muted dark:text-muted')}
                 >
                   {Number(date.slice(-2))}
                   {isToday && <span aria-hidden="true" className={'absolute bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full ' + (selected ? 'bg-neutral-50' : 'bg-brand')} />}
@@ -364,23 +364,23 @@ export function BookingPanel() {
               )
             })}
           </div>
-          {loadingSlots && <p className="mt-4 text-center text-xs text-neutral-500" role="status">Loading available times…</p>}
+          {loadingSlots && <p className="mt-4 text-center text-xs text-muted" role="status">Loading available times…</p>}
         </section>
 
         <section className="min-w-0 p-5 sm:p-6">
           <div className="mb-4 flex items-center justify-between gap-3">
-            <h2 className="font-semibold text-neutral-900 dark:text-neutral-100">{selectedDateLabel || 'Choose a day'}</h2>
+            <h2 className="font-semibold text-foreground dark:text-foreground">{selectedDateLabel || 'Choose a day'}</h2>
             <div className="inline-flex rounded-full border border-neutral-200 p-0.5 dark:border-neutral-700" aria-label="Time format">
-              <button type="button" aria-pressed={!use24Hour} onClick={() => setUse24Hour(false)} className={'rounded-full px-2.5 py-1 text-[10px] font-semibold transition-colors ' + (!use24Hour ? 'bg-neutral-900 text-neutral-100 dark:bg-neutral-100 dark:text-neutral-900' : 'text-neutral-500')}>12h</button>
-              <button type="button" aria-pressed={use24Hour} onClick={() => setUse24Hour(true)} className={'rounded-full px-2.5 py-1 text-[10px] font-semibold transition-colors ' + (use24Hour ? 'bg-neutral-900 text-neutral-100 dark:bg-neutral-100 dark:text-neutral-900' : 'text-neutral-500')}>24h</button>
+              <button type="button" aria-pressed={!use24Hour} onClick={() => setUse24Hour(false)} className={'rounded-full px-2.5 py-1 text-[10px] font-semibold transition-colors ' + (!use24Hour ? 'bg-neutral-900 text-surface-inverse dark-colorful-selected' : 'text-muted')}>12h</button>
+              <button type="button" aria-pressed={use24Hour} onClick={() => setUse24Hour(true)} className={'rounded-full px-2.5 py-1 text-[10px] font-semibold transition-colors ' + (use24Hour ? 'bg-neutral-900 text-surface-inverse dark-colorful-selected' : 'text-muted')}>24h</button>
             </div>
           </div>
           {selectedDate ? (
             <div className="max-h-64 overflow-y-auto pr-1">
               {loadingSlots ? (
-                <p className="py-6 text-center text-sm text-neutral-500" role="status">Loading available times…</p>
+                <p className="py-6 text-center text-sm text-muted" role="status">Loading available times…</p>
               ) : slots.length === 0 ? (
-                <p className="py-6 text-center text-sm text-neutral-500">No available times.</p>
+                <p className="py-6 text-center text-sm text-muted">No available times.</p>
               ) : slots.map(slot => {
                 const reserved = bookedSlots.includes(to24Hour(slot)) || !isFutureSlot(selectedDate, slot)
                 const selected = selectedTime === slot
@@ -395,8 +395,8 @@ export function BookingPanel() {
                     className={'flex w-full items-center justify-between border-b border-neutral-200/80 px-2 py-3 text-left text-sm transition-colors dark:border-neutral-800/80 ' + (selected
                       ? 'rounded-lg border-transparent bg-brand px-3 font-semibold text-neutral-50'
                       : reserved
-                        ? 'cursor-not-allowed text-neutral-300 line-through dark:text-neutral-700'
-                        : 'text-neutral-700 hover:bg-brand/5 hover:text-brand dark:text-neutral-300')}
+                        ? 'cursor-not-allowed text-muted line-through dark:text-muted'
+                        : 'text-muted hover:bg-brand/5 hover:text-accent-foreground dark:text-muted')}
                   >
                     <span>{displayTime}</span>
                     {selected && <span className="text-[10px] uppercase tracking-wider">Selected</span>}
@@ -406,19 +406,19 @@ export function BookingPanel() {
               })}
             </div>
           ) : (
-            <p className="rounded-xl bg-neutral-100/70 px-4 py-8 text-center text-sm text-neutral-500 dark:bg-neutral-950/40">Select a date to see available times.</p>
+            <p className="rounded-xl bg-neutral-100/70 px-4 py-8 text-center text-sm text-muted dark:bg-surface/40">Select a date to see available times.</p>
           )}
 
           {step === 'form' && selectedTime && (
             <motion.form onSubmit={handleSubmit} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-5 flex flex-col gap-4 border-t border-neutral-200 pt-5 dark:border-neutral-800">
-              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Your details</h3>
-              <label className="text-xs font-semibold text-neutral-600 dark:text-neutral-400">Name
+              <h3 className="text-sm font-semibold text-foreground dark:text-foreground">Your details</h3>
+              <label className="text-xs font-semibold text-muted dark:text-muted">Name
                 <input type="text" required minLength={2} maxLength={100} autoComplete="name" value={form.name} onChange={event => setForm(current => ({ ...current, name: event.target.value }))} className={selectClass + ' mt-1'} />
               </label>
-              <label className="text-xs font-semibold text-neutral-600 dark:text-neutral-400">Email
+              <label className="text-xs font-semibold text-muted dark:text-muted">Email
                 <input type="email" required maxLength={254} autoComplete="email" value={form.email} onChange={event => setForm(current => ({ ...current, email: event.target.value }))} className={selectClass + ' mt-1'} />
               </label>
-              <label className="text-xs font-semibold text-neutral-600 dark:text-neutral-400">Note (optional)
+              <label className="text-xs font-semibold text-muted dark:text-muted">Note (optional)
                 <textarea rows={3} maxLength={1000} value={form.message} onChange={event => setForm(current => ({ ...current, message: event.target.value }))} className={selectClass + ' mt-1 resize-none'} />
               </label>
               {errorMsg && <p className="text-sm text-red-600 dark:text-red-400" role="alert">{errorMsg}</p>}
@@ -428,11 +428,11 @@ export function BookingPanel() {
 
           {step === 'done' && selectedDate && selectedTime && (
             <motion.div initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} className="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50/70 p-5 text-center dark:border-emerald-900 dark:bg-emerald-950/30">
-              <h3 className="mb-2 text-lg font-bold text-neutral-900 dark:text-neutral-100">You're booked!</h3>
-              <p className="mb-5 text-sm text-neutral-600 dark:text-neutral-400">{selectedDateLabel} at {selectedLocalTime} · {selectedTimeZone}</p>
+              <h3 className="mb-2 text-lg font-bold text-foreground dark:text-foreground">You're booked!</h3>
+              <p className="mb-5 text-sm text-muted dark:text-muted">{selectedDateLabel} at {selectedLocalTime} · {selectedTimeZone}</p>
               <div className="flex flex-col gap-2">
                 <a href={googleCalLink()} target="_blank" rel="noopener noreferrer" className="rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-neutral-50 transition-colors hover:bg-brand-dark">Add to Google Calendar</a>
-                <button type="button" onClick={downloadIcs} className="rounded-xl border border-neutral-300 px-4 py-2.5 text-sm font-semibold text-neutral-700 transition-colors hover:border-brand hover:text-brand dark:border-neutral-700 dark:text-neutral-300">Download .ics</button>
+                <button type="button" onClick={downloadIcs} className="rounded-xl border border-neutral-300 px-4 py-2.5 text-sm font-semibold text-muted transition-colors hover:border-brand hover:text-accent-foreground dark:border-neutral-700 dark:text-muted">Download .ics</button>
               </div>
             </motion.div>
           )}
@@ -444,8 +444,8 @@ export function BookingPanel() {
 }
 
 function BookingIcon({ type }: { type: 'clock' | 'video' }) {
-  if (type === 'clock') return <svg className="h-4 w-4 text-neutral-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
-  return <svg className="h-4 w-4 text-neutral-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2" /><path d="m16 10 5-3v10l-5-3" /></svg>
+  if (type === 'clock') return <svg className="h-4 w-4 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+  return <svg className="h-4 w-4 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2" /><path d="m16 10 5-3v10l-5-3" /></svg>
 }
 
 export default function BookACall() {

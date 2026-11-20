@@ -57,7 +57,7 @@ export default function CtaSection() {
     if (event.pointerType === 'mouse') setIsHovered(false)
   }
 
-  const gradient = 'conic-gradient(from 45deg, #f97316 0%, #fb923c 25%, #60a5fa 48%, #2563eb 68%, #3b82f6 82%, #ea580c 94%, #f97316 100%)'
+  const gradient = 'conic-gradient(from 45deg, var(--accent) 0%, var(--accent-light) 25%, rgb(96 165 250) 48%, rgb(37 99 235) 68%, rgb(59 130 246) 82%, var(--accent-dark) 94%, var(--accent) 100%)'
 
   return (
     <section
@@ -65,7 +65,7 @@ export default function CtaSection() {
       ref={sectionRef}
       onPointerMove={handlePointerMove}
       onPointerLeave={resetPointer}
-      className="relative isolate box-border mx-0 flex min-h-[max(70vh,460px)] w-full min-w-0 max-w-none self-stretch items-center overflow-hidden rounded-none border-x-0 border-y border-neutral-200/70 bg-neutral-50/90 px-0 text-neutral-950 backdrop-blur-2xl dark:border-white/10 dark:bg-neutral-950/90 dark:text-white"
+      className="relative isolate box-border mx-0 flex min-h-[max(70vh,460px)] w-full min-w-0 max-w-none self-stretch items-center overflow-hidden rounded-none border-x-0 border-y border-neutral-200/70 bg-neutral-50/90 px-0 text-foreground backdrop-blur-2xl dark:border-border/10 dark:bg-surface/90 dark:text-foreground"
     >
       <div
         aria-hidden="true"
@@ -79,16 +79,16 @@ export default function CtaSection() {
 
       <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col justify-between gap-10 px-5 py-14 sm:px-6 md:flex-row md:items-center md:gap-12 lg:px-10 xl:px-12">
           <div className="min-w-0 max-w-3xl">
-            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.28em] text-orange-600 dark:text-orange-400 sm:mb-6">{eyebrow}</p>
-            <h2 className="text-[clamp(2.75rem,7vw,7rem)] font-extrabold leading-[0.95] tracking-tight text-neutral-950 dark:text-white">
+            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.28em] text-accent-foreground dark:text-orange-400 sm:mb-6">{eyebrow}</p>
+            <h2 className="text-[clamp(2.75rem,7vw,7rem)] font-extrabold leading-[0.95] tracking-tight text-foreground dark:text-foreground">
               <span className="block">{title}</span>
-              <span className="mt-2 block font-instrument-serif font-normal italic tracking-normal [word-spacing:normal] text-neutral-500 dark:text-neutral-400">{accent}</span>
+              <span className="mt-2 block font-instrument-serif font-normal italic tracking-normal [word-spacing:normal] text-muted dark:text-muted">{accent}</span>
             </h2>
             <div className="mt-8 sm:mt-10">
               <Link
                 to={link}
                 className={[
-                  'group/btn inline-flex min-h-12 items-center gap-3 rounded-full bg-white px-8 py-3.5 text-base font-semibold text-neutral-950 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-100 dark:focus-visible:ring-offset-neutral-900',
+                  'group/btn inline-flex min-h-12 items-center gap-3 rounded-full bg-surface px-8 py-3.5 text-base font-semibold text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-100 dark:focus-visible:ring-offset-neutral-900',
                   !reducedMotion && 'transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg active:scale-[0.98]',
                 ].filter(Boolean).join(' ')}
               >
@@ -128,7 +128,7 @@ export default function CtaSection() {
                   className="absolute inset-0 rounded-full p-[3px]"
                   style={{ background: gradient }}
                 />
-                <div aria-hidden="true" className="relative grid h-full w-full place-items-center rounded-full bg-neutral-100 text-neutral-900 transition-colors duration-300 dark:bg-[#0b0c10] dark:text-white">
+                <div aria-hidden="true" className="relative grid h-full w-full place-items-center rounded-full bg-neutral-100 text-foreground transition-colors duration-300 dark:bg-background dark:text-foreground">
                   <svg className={'h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12' + (reducedMotion ? '' : ' transition-transform duration-300 group-hover:translate-x-2')} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M5 12h14m-6-6 6 6-6 6" />
                   </svg>

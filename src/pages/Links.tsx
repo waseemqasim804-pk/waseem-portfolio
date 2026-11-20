@@ -66,7 +66,7 @@ export default function Links() {
           <motion.p
             initial={reducedMotion ? false : { opacity: 0, y: 8 }}
             animate={reducedMotion ? undefined : { opacity: 1, y: 0 }}
-            className="mb-6 text-lg font-semibold uppercase tracking-[0.45em] text-neutral-500 dark:text-neutral-400"
+            className="mb-6 text-lg font-semibold uppercase tracking-[0.45em] text-muted dark:text-muted"
           >
             {links.tag}
           </motion.p>
@@ -77,14 +77,14 @@ export default function Links() {
             initial={reducedMotion ? false : { opacity: 0, y: 16 }}
             animate={reducedMotion ? undefined : { opacity: 1, y: 0 }}
             transition={{ delay: reducedMotion ? 0 : 0.05, duration: 0.45 }}
-            className="font-sans text-[clamp(3rem,14vw,11rem)] font-black uppercase leading-[0.9] tracking-[-0.065em] text-neutral-900 dark:text-white md:max-w-[72%]"
+            className="font-sans text-[clamp(3rem,14vw,11rem)] font-black uppercase leading-[0.9] tracking-[-0.065em] text-foreground dark:text-foreground md:max-w-[72%]"
           >
             <span className="block">{links.headingLine1}</span>
-            <span ref={middleWordRef} className="links-spotlight-word relative block text-neutral-300 dark:text-white/[0.14]">
+            <span ref={middleWordRef} className="links-spotlight-word relative block text-muted dark:text-muted">
               {links.headingLine2}
               <motion.span
                 aria-hidden="true"
-                className={`links-spotlight-overlay pointer-events-none absolute inset-0 bg-gradient-to-r from-white via-orange-300 to-blue-300 bg-clip-text text-transparent ${finePointer && !reducedMotion ? 'links-spotlight-mask' : ''}`}
+                className={`links-spotlight-overlay pointer-events-none absolute inset-0 bg-gradient-to-r from-orange-700 via-orange-700 to-blue-700 bg-clip-text text-transparent dark:from-white dark:via-orange-300 dark:to-blue-300 ${finePointer && !reducedMotion ? 'links-spotlight-mask' : ''}`}
                 initial={{ opacity: 0.12 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true, amount: 0.7 }}
@@ -97,8 +97,8 @@ export default function Links() {
           </motion.h1>
           <style>{`
             .links-spotlight-mask {
-              -webkit-mask-image: radial-gradient(circle 105px at var(--spot-x, -999px) var(--spot-y, -999px), #000 0%, rgba(0,0,0,.85) 32%, transparent 100%);
-              mask-image: radial-gradient(circle 105px at var(--spot-x, -999px) var(--spot-y, -999px), #000 0%, rgba(0,0,0,.85) 32%, transparent 100%);
+              -webkit-mask-image: radial-gradient(circle 105px at var(--spot-x, -999px) var(--spot-y, -999px), black 0%, rgba(0,0,0,.85) 32%, transparent 100%);
+              mask-image: radial-gradient(circle 105px at var(--spot-x, -999px) var(--spot-y, -999px), black 0%, rgba(0,0,0,.85) 32%, transparent 100%);
             }
             @media (prefers-reduced-motion: reduce) {
               .links-spotlight-overlay { transition-duration: .6s; }
@@ -130,17 +130,18 @@ function PresenceRow({ item, index, reducedMotion }: { item: LinkItem; index: nu
         target="_blank"
         rel="me noopener noreferrer"
         aria-label={item.label}
-        className="presence-row-link flex h-[110px] cursor-pointer items-center gap-3 rounded-3xl pl-[35px] pr-0 md:h-[200px] md:gap-[47px]"
+        data-hover-list="links"
+        className="hover-card hover-white presence-row-link flex h-[110px] cursor-pointer items-center gap-3 rounded-3xl pl-[35px] pr-0 md:h-[200px] md:gap-[47px]"
       >
-        <span className="presence-row-number w-7 shrink-0 text-right font-mono text-sm tabular-nums text-neutral-500 md:w-7">
+        <span className="presence-row-number w-7 shrink-0 text-right font-mono text-sm tabular-nums text-muted md:w-7">
           {String(index + 1).padStart(2, '0')}
         </span>
-        <span className="presence-row-name min-w-0 flex-1 text-[48px] font-black uppercase leading-none tracking-[-0.065em] text-neutral-900 dark:text-neutral-100 md:text-[100px]">
+        <span className="presence-row-name min-w-0 flex-1 text-[48px] font-black uppercase leading-none tracking-[-0.065em] text-foreground dark:text-foreground md:text-[100px]">
           {item.label}
         </span>
         <span className="flex shrink-0 items-center gap-3">
-          <span className="presence-row-visit text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500">VISIT</span>
-          <span aria-hidden="true" className="presence-row-arrow flex h-12 w-12 items-center justify-center rounded-full bg-neutral-900 text-white ring-1 ring-neutral-800 transition-colors dark:bg-neutral-800 dark:text-neutral-200 dark:ring-neutral-700 md:h-[75px] md:w-[75px]">
+          <span className="presence-row-visit text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">VISIT</span>
+          <span aria-hidden="true" className="hover-card-arrow presence-row-arrow flex h-12 w-12 items-center justify-center rounded-full bg-neutral-900 text-surface-inverse ring-1 ring-neutral-800 transition-colors dark:bg-neutral-800 dark:text-surface-inverse dark:ring-neutral-700 md:h-[75px] md:w-[75px]">
             <svg className="h-4 w-4 sm:h-5 sm:w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
               <path d="M7 17 17 7M8 7h9v9" />
             </svg>

@@ -124,9 +124,9 @@ export default function TechIcon({ name, size = 16, responsive = false, colorful
   const glyph = localGlyph(name, glyphSize)
   const contrastMode = colorful ? getContrastMode(name, icon) : undefined
   const badgeClass = contrastMode === 'dark'
-    ? 'rounded-full bg-neutral-100 text-neutral-950 dark:bg-neutral-700 dark:text-neutral-100 p-1'
+    ? 'rounded-full bg-neutral-100 text-foreground dark:bg-neutral-700 dark:text-foreground p-1'
     : contrastMode === 'bright'
-      ? 'rounded-full bg-neutral-900 text-[#f7df1e] dark:bg-neutral-800 p-1'
+      ? 'rounded-full bg-neutral-900 text-[var(--icon-accent)] dark:bg-neutral-800 p-1'
       : ''
   const iconColor = colorful && !contrastMode ? getTechBrandColor(name) : undefined
   const iconDimension = responsive ? 'clamp(18px, calc(1.53vw + 12px), 22px)' : `${size}px`
@@ -146,7 +146,7 @@ export default function TechIcon({ name, size = 16, responsive = false, colorful
     return (
       <span
         aria-hidden="true"
-        className={`inline-flex items-center justify-center rounded-md bg-neutral-200 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 font-bold text-[10px] leading-none shrink-0 ${className}`}
+        className={`inline-flex items-center justify-center rounded-md bg-neutral-200 dark:bg-neutral-700 text-muted dark:text-muted font-bold text-[10px] leading-none shrink-0 ${className}`}
         style={wrapperStyle}
       >
         {letter}

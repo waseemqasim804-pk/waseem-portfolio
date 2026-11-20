@@ -14,13 +14,13 @@ export default function Footer() {
 
   return (
     <footer className="w-full px-4 pb-7 sm:px-5 md:px-[30px]">
-      <div className="w-full rounded-[48px] bg-neutral-100 px-7 py-10 text-neutral-950 sm:px-10 md:px-[clamp(40px,6vw,85px)] md:py-[55px] dark:bg-neutral-900 dark:text-white">
+      <div className="w-full rounded-[48px] bg-neutral-100 px-7 py-10 text-foreground sm:px-10 md:px-[clamp(40px,6vw,85px)] md:py-[55px] dark:bg-surface dark:text-foreground">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,0.35fr)_minmax(0,0.65fr)] lg:gap-10">
           <div className="min-w-0">
-            <Link to="/" className="inline-block text-[34px] font-black uppercase leading-none tracking-[-0.06em] text-neutral-950 transition-colors duration-150 hover:text-neutral-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand dark:text-white dark:hover:text-neutral-300">
+            <Link to="/" className="inline-block text-[34px] font-black uppercase leading-none tracking-[-0.06em] text-foreground transition-colors duration-150 hover:text-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand dark:text-foreground dark:hover:text-muted">
               {footer.wordmark}
             </Link>
-            <p className="mt-4 max-w-[500px] text-xl italic leading-[1.55] text-neutral-500 dark:text-neutral-400" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{footer.tagline}</p>
+            <p className="mt-4 max-w-[500px] text-xl italic leading-[1.55] text-muted dark:text-muted" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{footer.tagline}</p>
           </div>
 
           <div className="grid grid-cols-2 gap-x-5 gap-y-10 sm:gap-x-8 lg:grid-cols-4 lg:gap-x-6 xl:gap-x-10">
@@ -32,7 +32,7 @@ export default function Footer() {
       </div>
 
       <div className="flex flex-col items-center gap-4 px-2 pt-6 md:flex-row md:justify-between">
-        <p className="text-center text-[10px] font-medium uppercase tracking-[0.14em] text-neutral-500 md:text-left">{footer.copyright}</p>
+        <p className="text-center text-[10px] font-medium uppercase tracking-[0.14em] text-muted md:text-left">{footer.copyright}</p>
         <nav aria-label="Social media" className="flex items-center justify-center gap-4">
           {socialLinks.map(item => (
             <a
@@ -42,7 +42,7 @@ export default function Footer() {
               rel="me noopener noreferrer"
               aria-label={`${item.label}, opens in a new tab`}
               title={item.label}
-              className="flex h-9 w-9 items-center justify-center rounded-full text-neutral-500 transition-colors duration-150 hover:text-neutral-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand dark:text-neutral-400 dark:hover:text-white"
+              className="flex h-9 w-9 items-center justify-center rounded-full text-muted transition-colors duration-150 hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand dark:text-muted dark:hover:text-foreground"
             >
               <SocialMark label={item.label} />
             </a>
@@ -57,14 +57,14 @@ function FooterLinks({ column }: { column: FooterColumn }) {
   const visibleLinks = column.links.filter(item => (item.to as string) !== '/resume')
   return (
     <div className="min-w-0">
-      <h2 className="mb-7 text-sm font-semibold uppercase tracking-[0.22em] text-neutral-500">{column.title}</h2>
+      <h2 className="mb-7 text-sm font-semibold uppercase tracking-[0.22em] text-muted">{column.title}</h2>
       <ul className="flex flex-col gap-12">
         {(visibleLinks as FooterItem[]).map(item => {
           const isLive = 'live' in item && Boolean(item.live)
           return (
             <li key={`${item.label}-${item.to}`} className="flex min-w-0 items-center gap-2">
               {isLive && <span aria-hidden="true" className="h-2 w-2 shrink-0 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.75)]" />}
-              <Link to={item.to} className="text-[21px] font-semibold leading-tight text-neutral-700 transition duration-150 ease-out hover:translate-x-[2px] hover:text-neutral-950 focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand dark:text-neutral-300 dark:hover:text-white">{item.label}</Link>
+              <Link to={item.to} className="text-[21px] font-semibold leading-tight text-muted transition duration-150 ease-out hover:translate-x-[2px] hover:text-foreground focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand dark:text-muted dark:hover:text-foreground">{item.label}</Link>
             </li>
           )
         })}

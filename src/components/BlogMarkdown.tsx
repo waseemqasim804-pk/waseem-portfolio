@@ -111,20 +111,20 @@ function renderInline(text: string): ReactNode[] {
   const tokens = text.split(/(\[[^\]]+\]\([^)]+\)|`[^`]+`|\*\*[\s\S]+?\*\*|__[\s\S]+?__|\*[^*\n]+\*|_[^_\n]+_)/g)
   return tokens.map((token, index) => {
     if (token.startsWith('`') && token.endsWith('`')) {
-      return <code key={index} className="rounded-md bg-neutral-200/70 px-1.5 py-0.5 font-mono text-[0.9em] text-orange-700 dark:bg-neutral-800 dark:text-orange-300">{token.slice(1, -1)}</code>
+      return <code key={index} className="rounded-md bg-neutral-200/70 px-1.5 py-0.5 font-mono text-[0.9em] text-accent-foreground dark:bg-neutral-800 dark:text-orange-300">{token.slice(1, -1)}</code>
     }
     if ((token.startsWith('**') && token.endsWith('**')) || (token.startsWith('__') && token.endsWith('__'))) {
-      return <strong key={index} className="font-semibold text-neutral-900 dark:text-white">{token.slice(2, -2)}</strong>
+      return <strong key={index} className="font-semibold text-foreground dark:text-foreground">{token.slice(2, -2)}</strong>
     }
     if ((token.startsWith('*') && token.endsWith('*')) || (token.startsWith('_') && token.endsWith('_'))) {
-      return <em key={index} className="italic text-neutral-800 dark:text-neutral-200">{token.slice(1, -1)}</em>
+      return <em key={index} className="italic text-muted dark:text-foreground">{token.slice(1, -1)}</em>
     }
     const link = /^\[([^\]]+)\]\(([^)]+)\)$/.exec(token)
     if (link) {
       const href = safeUrl(link[2])
       if (!href) return <span key={index}>{link[1]}</span>
       const external = /^https?:\/\//i.test(href)
-      return <a key={index} href={href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined} className="text-orange-600 underline decoration-orange-500/40 underline-offset-4 transition-colors hover:text-blue-500 dark:text-orange-300 dark:hover:text-blue-300">{link[1]}</a>
+      return <a key={index} href={href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined} className="text-accent-foreground underline decoration-orange-500/40 underline-offset-4 transition-colors hover:text-blue-500 dark:text-orange-300 dark:hover:text-blue-300">{link[1]}</a>
     }
     return token
   })
@@ -135,9 +135,9 @@ function MarkdownImage({ alt, src, caption }: { alt: string; src: string; captio
   const resolvedSrc = useResolvedMedia(safeSrc ?? '', '')
   if (!safeSrc || !resolvedSrc) return null
   return (
-    <figure className="my-8 overflow-hidden rounded-2xl border border-neutral-200/70 bg-neutral-100/70 dark:border-white/10 dark:bg-white/[0.03]">
+    <figure className="my-8 overflow-hidden rounded-2xl border border-neutral-200/70 bg-neutral-100/70 dark:border-border/10 dark:bg-surface-inverse/[0.03]">
       <img src={resolvedSrc} alt={alt} loading="lazy" className="max-h-[640px] w-full object-contain" />
-      {caption && <figcaption className="px-4 py-3 text-center text-sm text-neutral-500 dark:text-neutral-400">{caption}</figcaption>}
+      {caption && <figcaption className="px-4 py-3 text-center text-sm text-muted dark:text-muted">{caption}</figcaption>}
     </figure>
   )
 }
@@ -154,10 +154,10 @@ function CodeBlock({ language, text, copyLabel, copiedLabel, copyAriaLabel }: { 
     }
   }
   return (
-    <div className="group relative my-6 overflow-hidden rounded-2xl border border-white/10 bg-[#111316] text-neutral-100 shadow-xl shadow-black/10">
-      <div className="flex min-h-10 items-center justify-between border-b border-white/10 px-4 text-[11px] uppercase tracking-[0.18em] text-neutral-500">
+    <div className="group relative my-6 overflow-hidden rounded-2xl border border-border/10 bg-[var(--surface)] text-foreground shadow-xl shadow-black/10">
+      <div className="flex min-h-10 items-center justify-between border-b border-border/10 px-4 text-[11px] uppercase tracking-[0.18em] text-muted">
         <span>{language || 'Code'}</span>
-        <button type="button" onClick={() => void copy()} className="rounded-md px-2 py-1 text-neutral-400 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400" aria-label={copyAriaLabel}>
+        <button type="button" onClick={() => void copy()} className="rounded-md px-2 py-1 text-muted transition-colors hover:bg-surface/10 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400" aria-label={copyAriaLabel}>
           {copied ? copiedLabel : copyLabel}
         </button>
       </div>
@@ -170,21 +170,21 @@ export default function BlogMarkdown({ markdown }: { markdown: string }) {
   const { blog } = useSiteContent()
   const blocks = parseMarkdown(markdown)
   return (
-    <div className="blog-markdown min-w-0 text-[16px] leading-8 text-neutral-600 dark:text-neutral-300 sm:text-[17px]">
+    <div className="blog-markdown min-w-0 text-[16px] leading-8 text-muted dark:text-muted sm:text-[17px]">
       {blocks.map((block, index) => {
         if (block.type === 'code') return <CodeBlock key={index} language={block.language} text={block.text} copyLabel={blog.copyCode} copiedLabel={blog.copiedCode} copyAriaLabel={blog.copyCodeAria} />
         if (block.type === 'image') return <MarkdownImage key={index} alt={block.alt} src={block.src} caption={block.caption} />
-        if (block.type === 'quote') return <blockquote key={index} className="my-6 border-l-2 border-orange-400 py-1 pl-5 text-lg italic leading-relaxed text-neutral-700 dark:text-neutral-200">{renderInline(block.text)}</blockquote>
+        if (block.type === 'quote') return <blockquote key={index} className="my-6 border-l-2 border-orange-400 py-1 pl-5 text-lg italic leading-relaxed text-muted dark:text-foreground">{renderInline(block.text)}</blockquote>
         if (block.type === 'list') {
           const Tag = block.ordered ? 'ol' : 'ul'
-          return <Tag key={index} className={`my-5 space-y-2 pl-6 marker:text-orange-500 ${block.ordered ? 'list-decimal' : 'list-disc'}`}>
+          return <Tag key={index} className={`my-5 space-y-2 pl-6 marker:text-accent-foreground ${block.ordered ? 'list-decimal' : 'list-disc'}`}>
             {block.items.map((item, itemIndex) => <li key={itemIndex} className="pl-1">{renderInline(item)}</li>)}
           </Tag>
         }
         if (block.type === 'heading') {
           const Tag = block.level === 1 ? 'h2' : block.level === 2 ? 'h2' : block.level === 3 ? 'h3' : block.level === 4 ? 'h4' : 'h5'
           const size = block.level <= 2 ? 'mt-14 text-3xl sm:text-4xl' : block.level === 3 ? 'mt-10 text-2xl' : 'mt-8 text-xl'
-          return <Tag key={index} id={block.id} className={`scroll-mt-28 font-bold leading-tight tracking-tight text-neutral-950 dark:text-white ${size}`}>{renderInline(block.text)}</Tag>
+          return <Tag key={index} id={block.id} className={`scroll-mt-28 font-bold leading-tight tracking-tight text-foreground dark:text-foreground ${size}`}>{renderInline(block.text)}</Tag>
         }
         return <p key={index} className="my-5 whitespace-pre-line">{renderInline(block.text)}</p>
       })}

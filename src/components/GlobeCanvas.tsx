@@ -3,6 +3,7 @@
 // Lazy-loaded via React.lazy() on Home. Respects prefers-reduced-motion.
 
 import { useEffect, useRef } from 'react'
+import { useTheme } from '../context/ThemeContext'
 
 const LAHORE_LAT = 31.5497
 const LAHORE_LNG = 74.3436
@@ -34,6 +35,7 @@ function project(lat: number, lng: number, rotation: number, cx: number, cy: num
 export default function GlobeCanvas({ className = '' }: { className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const ptsRef = useRef(randomSpherePoints(DOT_COUNT))
+  const { theme } = useTheme()
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -41,6 +43,7 @@ export default function GlobeCanvas({ className = '' }: { className?: string }) 
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
+    const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     let rotation = -LAHORE_LNG // start facing Lahore
     let raf = 0
@@ -68,8 +71,10 @@ export default function GlobeCanvas({ className = '' }: { className?: string }) 
         const alpha = 0.15 + z * 0.45
         ctx!.beginPath()
         ctx!.arc(x, y, DOT_RADIUS, 0, Math.PI * 2)
-        ctx!.fillStyle = `rgba(249,115,22,${alpha})`
+        ctx!.fillStyle = accent
+        ctx!.globalAlpha = alpha
         ctx!.fill()
+        ctx!.globalAlpha = 1
       }
 
       // Lahore marker
@@ -77,13 +82,15 @@ export default function GlobeCanvas({ className = '' }: { className?: string }) 
       if (lh.z > 0) {
         ctx!.beginPath()
         ctx!.arc(lh.x, lh.y, MARKER_RADIUS, 0, Math.PI * 2)
-        ctx!.fillStyle = '#f97316'
+        ctx!.fillStyle = accent
         ctx!.fill()
         ctx!.beginPath()
         ctx!.arc(lh.x, lh.y, MARKER_RADIUS + 4, 0, Math.PI * 2)
-        ctx!.strokeStyle = 'rgba(249,115,22,0.4)'
+        ctx!.strokeStyle = accent
         ctx!.lineWidth = 1.5
+        ctx!.globalAlpha = 0.4
         ctx!.stroke()
+        ctx!.globalAlpha = 1
       }
 
       if (!prefersReduced && isVisible) {
@@ -109,7 +116,7 @@ export default function GlobeCanvas({ className = '' }: { className?: string }) 
       observer?.disconnect()
       cancelAnimationFrame(raf)
     }
-  }, [])
+  }, [theme])
 
   return <canvas ref={canvasRef} className={className} style={{ width: '100%', height: '100%' }} />
 }

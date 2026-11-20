@@ -1,6 +1,6 @@
 // src/components/ScrollReveal.tsx
 // Wraps children in a fade-up-on-scroll animation via Framer Motion
-import { motion, type MotionProps } from 'framer-motion'
+import { motion, useReducedMotion, type MotionProps } from 'framer-motion'
 import type { ReactNode } from 'react'
 
 interface ScrollRevealProps extends MotionProps {
@@ -10,12 +10,14 @@ interface ScrollRevealProps extends MotionProps {
 }
 
 export default function ScrollReveal({ children, delay = 0, className = '', ...rest }: ScrollRevealProps) {
+  const reducedMotion = useReducedMotion() ?? false
   return (
     <motion.div
-      initial={{ opacity: 0, y: 28 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      data-scroll-reveal
+      initial={reducedMotion ? false : { opacity: 0, y: 28 }}
+      whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-60px' }}
-      transition={{ duration: 0.55, delay, ease: [0.22, 1, 0.36, 1] }}
+      transition={reducedMotion ? { duration: 0 } : { duration: 0.55, delay, ease: [0.22, 1, 0.36, 1] }}
       className={className}
       {...rest}
     >

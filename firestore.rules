@@ -15,11 +15,11 @@ service cloud.firestore {
       allow read, write: if isAdmin();
     }
 
-    // Callable Functions validate Google identity and uniqueness before writing entries.
+    // Callable Functions validate Google/Facebook identity and enforce uniqueness.
     match /guestbook/{uid} {
-      allow read: if resource.data.approved == true
-        || isAdmin()
-        || (request.auth != null && request.auth.uid == uid && resource.data.uid == uid);
+      allow read: if isAdmin()
+        || (request.auth != null && request.auth.uid == uid)
+        || resource.data.approved == true;
       allow create: if false;
       allow update, delete: if isAdmin();
     }

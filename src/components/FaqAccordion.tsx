@@ -25,7 +25,9 @@ export default function FaqAccordion({ items }: { items: Faq[] }) {
             transition={reducedMotion ? { duration: 0 } : { duration: 0.38, delay: index * 0.035 }}
             onPointerMove={moveSpotlight}
             onPointerLeave={resetSpotlight}
-            className={`faq-spotlight-card group relative isolate overflow-hidden rounded-2xl border border-neutral-200/80 bg-white/65 shadow-sm transition-[transform,border-color,box-shadow] motion-safe:hover:-translate-y-0.5 motion-safe:focus-within:-translate-y-0.5 focus-within:border-orange-400/70 dark:border-neutral-800/80 dark:bg-neutral-900/45 ${canHover ? 'hover:border-orange-400/70' : ''}`}
+            data-selected={isOpen ? 'true' : undefined}
+            data-hover-list="faqs"
+            className={`hover-card hover-white faq-spotlight-card group relative isolate overflow-hidden rounded-2xl border border-neutral-200/80 bg-surface/65 shadow-sm transition-[transform,border-color,box-shadow] motion-safe:hover:-translate-y-0.5 motion-safe:focus-within:-translate-y-0.5 focus-within:border-orange-400/70 dark:border-neutral-800/80 dark:bg-surface/45 ${canHover ? 'hover:border-orange-400/70' : ''}`}
           >
             <span aria-hidden="true" className={`pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-200 group-focus-within:opacity-100 ${canHover ? 'group-hover:opacity-100' : ''}`} style={{ background: 'radial-gradient(circle 220px at var(--spot-x, -500px) var(--spot-y, -500px), rgba(249,115,22,.13), rgba(59,130,246,.05) 52%, transparent 100%)' }} />
             <button
@@ -35,8 +37,8 @@ export default function FaqAccordion({ items }: { items: Faq[] }) {
               aria-controls={answerId}
               className="relative z-10 flex min-h-16 w-full items-center justify-between gap-4 px-5 py-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-orange-500 sm:px-7"
             >
-              <span className="font-semibold text-neutral-900 dark:text-neutral-100">{faq.q}</span>
-              <span aria-hidden="true" className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-neutral-300 text-neutral-600 transition-colors group-focus-within:border-orange-500 group-focus-within:bg-orange-500 group-focus-within:text-white dark:border-neutral-700 dark:text-neutral-300 ${canHover ? 'group-hover:border-orange-500 group-hover:bg-orange-500 group-hover:text-white' : ''} ${isOpen ? 'rotate-45 border-orange-500 bg-orange-500 text-white dark:border-orange-500 dark:text-white' : ''}`}>
+              <span className="font-semibold text-foreground dark:text-foreground">{faq.q}</span>
+              <span aria-hidden="true" className={`hover-card-arrow flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-neutral-300 text-muted transition-colors group-focus-within:border-orange-500 group-focus-within:bg-orange-500 group-focus-within:text-foreground dark:border-neutral-700 dark:text-muted ${canHover ? 'group-hover:border-orange-500 group-hover:bg-orange-500 group-hover:text-foreground' : ''} ${isOpen ? 'rotate-45 border-orange-500 bg-orange-500 text-foreground dark:border-orange-500 dark:text-foreground' : ''}`}>
                 <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
               </span>
             </button>
@@ -50,7 +52,7 @@ export default function FaqAccordion({ items }: { items: Faq[] }) {
                   transition={{ duration: reducedMotion ? 0 : 0.24, ease: 'easeOut' }}
                   className="relative z-10 overflow-hidden"
                 >
-                  <p className="mx-5 border-t border-neutral-200 py-5 leading-relaxed text-neutral-600 dark:border-neutral-800 dark:text-neutral-400 sm:mx-7">{faq.a}</p>
+                  <p className="mx-5 border-t border-neutral-200 py-5 leading-relaxed text-muted dark:border-neutral-800 dark:text-muted sm:mx-7">{faq.a}</p>
                 </motion.div>
               )}
             </AnimatePresence>

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type PointerEvent } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { useLocation } from 'react-router-dom'
 import { useSiteContent, type SiteContent } from '../hooks/useSiteContent'
+import { content as defaultSiteContent } from '../data/content'
 import { useResolvedMedia } from '../hooks/useMedia'
 import { useListRenderWarning } from '../hooks/useListRenderWarning'
 import ScrollReveal from '../components/ScrollReveal'
@@ -11,6 +12,7 @@ import { Timeline, type EducationEntry, type ExperienceEntry } from '../componen
 import CertLightbox, { type CertItem } from '../components/CertLightbox'
 import FaqAccordion from '../components/FaqAccordion'
 import TechIcon, { getTechBrandTint } from '../components/TechIcon'
+import { useTheme } from '../context/ThemeContext'
 
 type AboutPhoto = SiteContent['about']['photos'][number]
 type Certificate = {
@@ -28,7 +30,7 @@ type Certificate = {
 }
 type Skill = SiteContent['home']['techSkills'][number]
 
-const glass = 'rounded-2xl border border-neutral-200/60 bg-white/60 backdrop-blur-md dark:border-neutral-800/60 dark:bg-neutral-900/40'
+const glass = 'rounded-2xl border border-neutral-200/60 bg-surface/60 backdrop-blur-md dark:border-neutral-800/60 dark:bg-surface/40'
 const ABOUT_INTRO_WIDTH = 'max-w-[680px]'
 const ABOUT_SPACING = {
   introParagraphs: 'gap-6',
@@ -37,12 +39,32 @@ const ABOUT_SPACING = {
 
 export default function About() {
   const { about, home, cv, faqs } = useSiteContent()
+  const { theme } = useTheme()
   const location = useLocation()
   const reducedMotion = useReducedMotion() ?? false
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const education = useMemo(() => (about.education as unknown as EducationEntry[]).filter(item => item.visible !== false), [about.education])
   const experience = cv.experience as unknown as ExperienceEntry[]
-  const certificates = useMemo(() => (cv.certificates as unknown as Certificate[]).filter(item => item.visible !== false), [cv.certificates])
+  const certificates = useMemo(() => {
+    const configured = cv.certificates as unknown as Certificate[]
+    const bundled = (defaultSiteContent.cv.certificates as unknown as Certificate[])
+      .filter(item => item.file?.startsWith('/certificates/'))
+    const bundledById = new Map(bundled.filter(item => item.id).map(item => [item.id as string, item]))
+    const configuredWithAssets = configured.map(item => {
+      const local = item.id ? bundledById.get(item.id) : undefined
+      if (!local) return item
+      return {
+        ...local,
+        ...item,
+        file: item.file || local.file,
+        thumbnail: item.thumbnail || local.thumbnail,
+        credentialUrl: item.credentialUrl || local.credentialUrl,
+      }
+    })
+    const configuredIds = new Set(configuredWithAssets.map(item => item.id).filter((id): id is string => Boolean(id)))
+    const missingBundled = bundled.filter(item => !item.id || !configuredIds.has(item.id))
+    return [...configuredWithAssets, ...missingBundled].filter(item => item.visible !== false)
+  }, [cv.certificates])
   const skills = useMemo(() => home.techSkills.filter(item => item.visible !== false && item.name.trim()), [home.techSkills])
   const skillGroups = useMemo(() => groupSkills(skills), [skills])
   const lightboxCertificates = certificates.map(toLightboxCertificate)
@@ -78,27 +100,31 @@ export default function About() {
           <div className="mx-auto w-full">
             <div className="grid grid-cols-1 items-start gap-7 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:grid-rows-[auto_auto_auto_auto] lg:gap-x-10 lg:gap-y-7">
               <ScrollReveal className={`order-1 w-full ${ABOUT_INTRO_WIDTH} lg:order-none lg:col-start-1 lg:row-start-1`}>
-                <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-brand">{about.introTag}</p>
-                <h2 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-white sm:text-4xl md:text-5xl">
+                <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-accent-foreground">{about.introTag}</p>
+                <h2 className="text-3xl font-bold tracking-tight text-foreground dark:text-foreground sm:text-4xl md:text-5xl">
                   {about.introHeading}
                 </h2>
-                <p className="mt-2 bg-gradient-to-r from-brand via-orange-300 to-brand-dark bg-clip-text font-instrument-serif text-4xl italic text-transparent sm:text-5xl md:text-6xl">
+                <p className="mt-2 font-instrument-serif text-4xl italic text-accent-foreground sm:text-5xl md:text-6xl dark:bg-gradient-to-r dark:from-brand dark:via-orange-300 dark:to-brand-dark dark:bg-clip-text dark:text-transparent">
                   {about.introName}
                 </p>
               </ScrollReveal>
               <ScrollReveal className={`${glass} order-4 w-full ${ABOUT_INTRO_WIDTH} ${ABOUT_SPACING.factualSummaryPadding} lg:order-none lg:col-start-1 lg:row-start-2`}>
-                <h3 className="mb-4 text-2xl font-bold text-neutral-900 dark:text-white">
+                <h3 className="mb-4 text-2xl font-bold text-foreground dark:text-foreground">
                   {about.factualSummaryTitle}
                 </h3>
-                <p className="max-w-[70ch] text-[19px] leading-[1.85] text-neutral-600 dark:text-neutral-400">
+                <p className="max-w-[70ch] text-[19px] leading-[1.85] text-muted dark:text-muted">
                   <SummaryCopy text={about.factualSummary} name={home.name} />
                 </p>
               </ScrollReveal>
               <ScrollReveal className={`order-2 w-full ${ABOUT_INTRO_WIDTH} lg:order-none lg:col-start-1 lg:row-start-3`}>
-                <p className="max-w-[70ch] text-[19px] leading-[1.85] text-neutral-600 dark:text-neutral-400">{about.big}</p>
+                <p className="max-w-[70ch] text-[19px] leading-[1.85] text-muted dark:text-muted">{about.big}</p>
               </ScrollReveal>
               <UniversityMemories
-                photos={about.photos ?? []}
+                photos={about.photos?.some(photo => photo.visible !== false && photo.image?.trim())
+                  ? about.photos
+                  : theme === 'light' && home.photo
+                    ? [{ image: home.photo, caption: about.heroName || home.name, visible: true }]
+                    : []}
                 title={about.galleryTitle}
                 emptyText={about.galleryEmptyText}
                 className="order-3 lg:order-none lg:col-start-2 lg:row-start-1 lg:row-span-4"
@@ -106,7 +132,7 @@ export default function About() {
               <div className={`order-5 flex w-full ${ABOUT_INTRO_WIDTH} flex-col ${ABOUT_SPACING.introParagraphs} lg:order-none lg:col-start-1 lg:row-start-4`}>
                 {about.paras.map((paragraph, index) => (
                   <ScrollReveal key={`${index}-${paragraph.slice(0, 24)}`} delay={index * 0.05}>
-                    <p className="w-full text-[19px] leading-[1.85] text-neutral-600 dark:text-neutral-400">{paragraph}</p>
+                    <p className="w-full text-[19px] leading-[1.85] text-muted dark:text-muted">{paragraph}</p>
                   </ScrollReveal>
                 ))}
               </div>
@@ -114,14 +140,14 @@ export default function About() {
           </div>
         </section>
 
-        <section id="education" className="scroll-mt-28 w-full border-y border-neutral-200 bg-neutral-50/70 px-5 py-16 dark:border-neutral-800 dark:bg-neutral-900/30 md:px-10 md:py-24">
+        <section id="education" className="scroll-mt-28 w-full border-y border-neutral-200 bg-neutral-50/70 px-5 py-16 dark:border-neutral-800 dark:bg-surface/30 md:px-10 md:py-24">
           <div className="mx-auto w-full">
             <ScrollReveal className="mb-12 text-center">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-neutral-500 dark:text-neutral-400">{about.educationTag}</p>
-              <h2 className="text-4xl font-bold tracking-tight text-neutral-900 dark:text-white sm:text-5xl">
-                <span className="font-instrument-serif font-normal italic text-brand">{about.educationTitle}</span>
+              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-muted dark:text-muted">{about.educationTag}</p>
+              <h2 className="text-4xl font-bold tracking-tight text-foreground dark:text-foreground sm:text-5xl">
+                <span className="font-instrument-serif font-normal italic text-accent-foreground">{about.educationTitle}</span>
               </h2>
-              <p className="mx-auto mt-3 max-w-2xl text-neutral-500 dark:text-neutral-400">{about.educationLead}</p>
+              <p className="mx-auto mt-3 max-w-2xl text-muted dark:text-muted">{about.educationLead}</p>
             </ScrollReveal>
             <Timeline entries={education} mode="education" />
           </div>
@@ -132,22 +158,22 @@ export default function About() {
         <section id="experience" className="scroll-mt-28 w-full px-5 py-16 md:px-10 md:py-24">
           <div className="mx-auto w-full">
             <ScrollReveal className="mb-12 text-center">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-neutral-500 dark:text-neutral-400">{about.experienceTag}</p>
-              <h2 className="text-4xl font-bold tracking-tight text-neutral-900 dark:text-white sm:text-5xl">
-                {about.experienceTitle} <span className="font-instrument-serif font-normal italic text-brand">{about.experienceAccent}</span>
+              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-muted dark:text-muted">{about.experienceTag}</p>
+              <h2 className="text-4xl font-bold tracking-tight text-foreground dark:text-foreground sm:text-5xl">
+                {about.experienceTitle} <span className="font-instrument-serif font-normal italic text-accent-foreground">{about.experienceAccent}</span>
               </h2>
-              <p className="mx-auto mt-3 max-w-2xl text-neutral-500 dark:text-neutral-400">{about.experienceLead}</p>
+              <p className="mx-auto mt-3 max-w-2xl text-muted dark:text-muted">{about.experienceLead}</p>
             </ScrollReveal>
             <Timeline entries={experience} mode="experience" />
           </div>
         </section>
 
-        <section id="certificates" className="scroll-mt-28 w-full border-y border-neutral-200 bg-neutral-50/70 px-5 py-16 dark:border-neutral-800 dark:bg-neutral-900/30 md:px-10 md:py-24">
+        <section id="certificates" className="scroll-mt-28 w-full border-y border-neutral-200 bg-neutral-50/70 px-5 py-16 dark:border-neutral-800 dark:bg-surface/30 md:px-10 md:py-24">
           <div className="mx-auto w-full">
             <ScrollReveal className="mb-12 text-center">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-neutral-500 dark:text-neutral-400">{about.certificatesTag}</p>
-              <h2 className="text-4xl font-bold tracking-tight text-neutral-900 dark:text-white sm:text-5xl">
-                {about.certificatesTitle} <span className="font-instrument-serif font-normal italic text-brand">{about.certificatesAccent}</span>
+              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-muted dark:text-muted">{about.certificatesTag}</p>
+              <h2 className="text-4xl font-bold tracking-tight text-foreground dark:text-foreground sm:text-5xl">
+                {about.certificatesTitle} <span className="font-instrument-serif font-normal italic text-accent-foreground">{about.certificatesAccent}</span>
               </h2>
             </ScrollReveal>
             {certificates.length > 0 ? (
@@ -157,7 +183,7 @@ export default function About() {
                 ))}
               </div>
             ) : (
-              <p className="rounded-2xl border border-dashed border-neutral-300 px-6 py-12 text-center text-neutral-500 dark:border-white/15 dark:text-neutral-400">{about.certificatesEmptyLabel}</p>
+              <p className="rounded-2xl border border-dashed border-neutral-300 px-6 py-12 text-center text-muted dark:border-border/15 dark:text-muted">{about.certificatesEmptyLabel}</p>
             )}
           </div>
         </section>
@@ -165,16 +191,16 @@ export default function About() {
         <section id="skills" className="scroll-mt-28 w-full px-5 py-16 md:px-10 md:py-24">
           <div className="mx-auto w-full">
             <ScrollReveal className="mb-12 text-center">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-neutral-500 dark:text-neutral-400">{about.skillsTag}</p>
-              <h2 className="text-4xl font-bold tracking-tight text-neutral-900 dark:text-white sm:text-5xl">
-                {about.skillsTitle.split(about.skillsAccent)[0]}<span className="font-instrument-serif font-normal italic text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-pink-400 to-blue-400">{about.skillsAccent}</span>
+              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-muted dark:text-muted">{about.skillsTag}</p>
+              <h2 className="text-4xl font-bold tracking-tight text-foreground dark:text-foreground sm:text-5xl">
+                {about.skillsTitle.split(about.skillsAccent)[0]}<span className="font-instrument-serif font-normal italic text-accent-foreground dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-r dark:from-orange-400 dark:via-pink-400 dark:to-blue-400">{about.skillsAccent}</span>
               </h2>
-              <p className="mx-auto mt-3 max-w-2xl text-neutral-500 dark:text-neutral-400">{about.skillsLead}</p>
+              <p className="mx-auto mt-3 max-w-2xl text-muted dark:text-muted">{about.skillsLead}</p>
             </ScrollReveal>
             <div className="space-y-8">
               {skillGroups.map(([category, categorySkills]) => (
                 <div key={category}>
-                  <h3 className="mb-4 text-center text-xs font-bold uppercase tracking-[0.24em] text-neutral-500 dark:text-neutral-400">{category}</h3>
+                  <h3 className="mb-4 text-center text-xs font-bold uppercase tracking-[0.24em] text-muted dark:text-muted">{category}</h3>
                   <div className="flex flex-wrap justify-center gap-3">
                     {categorySkills.map((skill, index) => <AboutSkillChip key={`${category}-${skill.name}-${index}`} skill={skill} index={index} />)}
                   </div>
@@ -185,14 +211,14 @@ export default function About() {
         </section>
 
         {faqs.items.length > 0 && (
-          <section id="faq" className="scroll-mt-28 w-full border-y border-neutral-200 bg-neutral-50/70 px-5 py-16 dark:border-neutral-800 dark:bg-neutral-900/30 md:px-10 md:py-24">
+          <section id="faq" className="scroll-mt-28 w-full border-y border-neutral-200 bg-neutral-50/70 px-5 py-16 dark:border-neutral-800 dark:bg-surface/30 md:px-10 md:py-24">
             <div className="mx-auto w-full">
               <ScrollReveal className="mb-10 text-center">
-                <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-neutral-500 dark:text-neutral-400">{about.faqTag}</p>
-                <h2 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-white sm:text-4xl md:text-5xl">
-                  {about.faqTitleStart} <span className="font-instrument-serif font-normal italic text-brand">{about.faqTitleAccent}</span>
+                <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-muted dark:text-muted">{about.faqTag}</p>
+                <h2 className="text-3xl font-bold tracking-tight text-foreground dark:text-foreground sm:text-4xl md:text-5xl">
+                  {about.faqTitleStart} <span className="font-instrument-serif font-normal italic text-accent-foreground">{about.faqTitleAccent}</span>
                 </h2>
-                <p className="mx-auto mt-3 max-w-2xl text-neutral-500 dark:text-neutral-400">{about.faqLead}</p>
+                <p className="mx-auto mt-3 max-w-2xl text-muted dark:text-muted">{about.faqLead}</p>
               </ScrollReveal>
               <FaqAccordion items={faqs.items} />
             </div>
@@ -209,7 +235,7 @@ export default function About() {
 function SummaryCopy({ text, name }: { text: string; name: string }) {
   const index = text.indexOf(name)
   if (index < 0) return <>{text}</>
-  return <>{text.slice(0, index)}<strong className="font-semibold text-neutral-900 dark:text-neutral-100">{name}</strong>{text.slice(index + name.length)}</>
+  return <>{text.slice(0, index)}<strong className="font-semibold text-foreground dark:text-foreground">{name}</strong>{text.slice(index + name.length)}</>
 }
 
 function UniversityMemories({
@@ -241,15 +267,15 @@ function UniversityMemories({
   return (
     <div className={`${className} min-w-0`}>
       <div className="lg:sticky lg:top-28">
-        <p className="mb-5 text-xs font-semibold uppercase tracking-[0.3em] text-neutral-500 dark:text-neutral-400">{title}</p>
+        <p className="mb-5 text-xs font-semibold uppercase tracking-[0.3em] text-muted dark:text-muted">{title}</p>
         <div className="relative mx-auto h-[320px] w-full sm:h-[400px] lg:h-[min(65vh,600px)] lg:min-h-[460px]" aria-label={title}>
           {orderedPhotos.length === 0 ? (
-            <div className="absolute inset-0 flex h-full w-full flex-col items-center justify-center rounded-3xl border border-dashed border-neutral-300 bg-white/50 px-5 text-center shadow-sm dark:border-neutral-700 dark:bg-neutral-900/30">
-              <svg className="mb-4 h-8 w-8 text-neutral-400 dark:text-neutral-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <div className="absolute inset-0 flex h-full w-full flex-col items-center justify-center rounded-3xl border border-dashed border-neutral-300 bg-surface/50 px-5 text-center shadow-sm dark:border-neutral-700 dark:bg-surface/30">
+              <svg className="mb-4 h-8 w-8 text-muted dark:text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M4 7.5h3l1.5-2h7L17 7.5h3v11H4z" />
                 <circle cx="12" cy="13" r="3.25" />
               </svg>
-              <p className="max-w-[24ch] text-sm font-medium leading-relaxed text-neutral-500 dark:text-neutral-400">{emptyText}</p>
+              <p className="max-w-[24ch] text-sm font-medium leading-relaxed text-muted dark:text-muted">{emptyText}</p>
             </div>
           ) : orderedPhotos.map((photo, index) => (
             <UniversityMemoryCard
@@ -264,7 +290,7 @@ function UniversityMemories({
           ))}
         </div>
         {orderedPhotos[0]?.caption?.trim() && (
-          <p className="mx-auto mt-1 max-w-[70ch] text-center text-sm leading-relaxed text-neutral-500 dark:text-neutral-400">{orderedPhotos[0].caption}</p>
+          <p className="mx-auto mt-1 max-w-[70ch] text-center text-sm leading-relaxed text-muted dark:text-muted">{orderedPhotos[0].caption}</p>
         )}
       </div>
     </div>
@@ -306,7 +332,7 @@ function UniversityMemoryCard({
         transition={reducedMotion ? { duration: 0 } : { type: 'spring', stiffness: 190, damping: 20, delay: index * 0.04 }}
         whileHover={reducedMotion ? undefined : { y: -10, scale: 1.025 }}
         aria-label={index === 0 ? `${photo.caption?.trim() || `${title} photo ${index + 1}`}. Tap to send the front photo to the back, or drag to shuffle.` : `${photo.caption?.trim() || `${title} photo ${index + 1}`}. Drag to shuffle.`}
-        className="h-[300px] w-[92%] cursor-grab touch-pan-y rounded-3xl border-[6px] border-white bg-white p-1 text-left shadow-xl outline-none focus-visible:ring-2 focus-visible:ring-brand active:cursor-grabbing dark:border-neutral-100 dark:bg-neutral-100 sm:h-[380px] lg:h-full lg:w-[min(92%,540px)]"
+        className="h-[300px] w-[92%] cursor-grab touch-pan-y rounded-3xl border-[6px] border-border bg-surface p-1 text-left shadow-xl outline-none focus-visible:ring-2 focus-visible:ring-brand active:cursor-grabbing dark:border-neutral-100 dark:bg-neutral-100 sm:h-[380px] lg:h-full lg:w-[min(92%,540px)]"
       >
         {image ? (
           <img src={image} alt={photo.caption?.trim() || `${title} photo ${index + 1}`} className="h-full w-full rounded-2xl object-cover object-top" draggable={false} />
@@ -326,15 +352,15 @@ function EducationMap({ about }: { about: SiteContent['about'] }) {
     <section className="w-full px-5 py-16 md:px-10 md:py-24">
       <div className="mx-auto w-full">
         <ScrollReveal className="mb-10 text-center">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-neutral-500 dark:text-neutral-400">{about.locationsTag}</p>
-          <h2 className="text-3xl font-bold text-neutral-900 dark:text-white sm:text-4xl">
-            {about.locationsTitleStart} <span className="font-instrument-serif font-normal italic text-brand">{about.locationsTitleAccent}</span>
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-muted dark:text-muted">{about.locationsTag}</p>
+          <h2 className="text-3xl font-bold text-foreground dark:text-foreground sm:text-4xl">
+            {about.locationsTitleStart} <span className="font-instrument-serif font-normal italic text-accent-foreground">{about.locationsTitleAccent}</span>
           </h2>
-          <p className="mx-auto mt-3 max-w-2xl text-neutral-500 dark:text-neutral-400">{about.locationsLead}</p>
+          <p className="mx-auto mt-3 max-w-2xl text-muted dark:text-muted">{about.locationsLead}</p>
         </ScrollReveal>
         <div className={`${glass} overflow-hidden p-3 sm:p-6`}>
-          <div className="relative overflow-hidden rounded-xl bg-neutral-100/70 dark:bg-neutral-950/45">
-            <svg viewBox="0 0 900 450" role="img" aria-label="Dotted world map showing Dera Ghazi Khan and Lahore" className="h-auto min-h-[220px] w-full text-neutral-400 transition-transform duration-300 dark:text-neutral-700 sm:min-h-[340px]" style={{ transform: `scale(${zoom})`, transformOrigin: 'center' }}>
+          <div className="relative overflow-hidden rounded-xl bg-neutral-100/70 dark:bg-surface/45">
+            <svg viewBox="0 0 900 450" role="img" aria-label="Dotted world map showing Dera Ghazi Khan and Lahore" className="h-auto min-h-[220px] w-full text-muted transition-transform duration-300 dark:text-muted sm:min-h-[340px]" style={{ transform: `scale(${zoom})`, transformOrigin: 'center' }}>
               <defs>
                 <pattern id="about-map-dots" width="9" height="9" patternUnits="userSpaceOnUse">
                   <circle cx="2" cy="2" r="1.6" fill="currentColor" />
@@ -358,14 +384,14 @@ function EducationMap({ about }: { about: SiteContent['about'] }) {
               <MapPin cx={626.6} cy={170.5} label={deraGhaziKhan} labelX={570} labelY={204} />
               <MapPin cx={635.85} cy={165.9} label={lahore} labelX={646} labelY={151} />
             </svg>
-            <div className="absolute bottom-3 right-3 flex items-center gap-1 rounded-xl border border-neutral-200 bg-white/90 p-1 shadow-lg backdrop-blur dark:border-neutral-700 dark:bg-neutral-900/90">
+            <div className="absolute bottom-3 right-3 flex items-center gap-1 rounded-xl border border-neutral-200 bg-surface/90 p-1 shadow-lg backdrop-blur dark:border-neutral-700 dark:bg-surface/90">
               <MapControl label={about.mapZoomInLabel} onClick={() => setZoom(value => Math.min(2.4, Number((value + 0.2).toFixed(1))))}>
                 <path d="M12 5v14M5 12h14" />
               </MapControl>
               <MapControl label={about.mapZoomOutLabel} onClick={() => setZoom(value => Math.max(1, Number((value - 0.2).toFixed(1))))}>
                 <path d="M5 12h14" />
               </MapControl>
-              <button type="button" onClick={() => setZoom(1)} className="rounded-lg px-3 py-2 text-xs font-semibold text-neutral-600 transition-colors hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800">{about.mapResetLabel}</button>
+              <button type="button" onClick={() => setZoom(1)} className="rounded-lg px-3 py-2 text-xs font-semibold text-muted transition-colors hover:bg-neutral-100 dark:text-muted dark:hover:bg-neutral-800">{about.mapResetLabel}</button>
             </div>
           </div>
         </div>
@@ -386,13 +412,13 @@ function MapPin({ cx, cy, label, labelX, labelY }: { cx: number; cy: number; lab
       onFocus={() => setActive(true)}
       onBlur={() => setActive(false)}
       onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') setActive(value => !value) }}
-      className="cursor-pointer text-brand"
+      className="cursor-pointer text-accent-foreground"
     >
       <circle cx={cx} cy={cy} r="13" fill="currentColor" opacity="0.18" className="motion-safe:animate-pulse" />
-      <circle cx={cx} cy={cy} r="5.5" fill="currentColor" stroke="white" strokeWidth="2" />
+      <circle cx={cx} cy={cy} r="5.5" fill="currentColor" stroke="var(--bg)" strokeWidth="2" />
       <g className={`transition-opacity duration-200 ${active ? 'opacity-100' : 'opacity-0'}`}>
         <path d={`M${cx} ${cy} L${labelX} ${labelY - 7}`} fill="none" stroke="currentColor" strokeWidth="1.5" />
-        <text x={labelX} y={labelY} fill="currentColor" fontSize="13" fontWeight="700" paintOrder="stroke" stroke="var(--map-label-outline, #fff)" strokeWidth="4" strokeLinejoin="round">{label}</text>
+        <text x={labelX} y={labelY} fill="currentColor" fontSize="13" fontWeight="700" paintOrder="stroke" stroke="var(--map-label-outline, var(--bg))" strokeWidth="4" strokeLinejoin="round">{label}</text>
       </g>
     </g>
   )
@@ -400,7 +426,7 @@ function MapPin({ cx, cy, label, labelX, labelY }: { cx: number; cy: number; lab
 
 function MapControl({ label, onClick, children }: { label: string; onClick: () => void; children: React.ReactNode }) {
   return (
-    <button type="button" aria-label={label} onClick={onClick} className="rounded-lg p-2 text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-brand dark:text-neutral-300 dark:hover:bg-neutral-800">
+    <button type="button" aria-label={label} onClick={onClick} className="rounded-lg p-2 text-muted transition-colors hover:bg-neutral-100 hover:text-accent-foreground dark:text-muted dark:hover:bg-neutral-800">
       <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">{children}</svg>
     </button>
   )
@@ -412,19 +438,20 @@ function CertificateCard({ certificate, index, onOpen }: { certificate: Certific
   const preview = useResolvedMedia(certificate.thumbnail || certificate.file || '', '')
   const actionable = Boolean(certificate.file || certificate.credentialUrl)
   const isPdf = /\.pdf(?:$|[?#])/i.test(certificate.file || '') || (certificate.file || '').startsWith('data:application/pdf')
-  const cardClass = `certificate-spotlight-card group relative isolate flex w-full flex-col overflow-hidden rounded-3xl border border-neutral-200 bg-white/70 p-4 text-left shadow-sm transition-[transform,border-color,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 dark:border-white/10 dark:bg-white/[0.035] sm:p-5 motion-safe:focus-visible:-translate-y-1 ${canHover ? 'hover:border-orange-400/70 hover:shadow-lg motion-safe:hover:-translate-y-1' : ''}`
+  const hasThumbnail = Boolean(certificate.thumbnail)
+  const cardClass = `hover-card certificate-spotlight-card group relative isolate flex w-full flex-col overflow-hidden rounded-3xl border border-neutral-200 bg-surface/70 p-4 text-left shadow-sm transition-[transform,border-color,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 dark:border-border/10 dark:bg-surface-inverse/[0.035] sm:p-5 motion-safe:focus-visible:-translate-y-1 ${canHover ? 'hover:border-orange-400/70 hover:shadow-lg motion-safe:hover:-translate-y-1' : ''}`
   const contents = (
     <>
       <span aria-hidden="true" className={`pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-200 group-focus-visible:opacity-100 ${canHover ? 'group-hover:opacity-100' : ''}`} style={{ background: 'radial-gradient(circle 220px at var(--spot-x, -500px) var(--spot-y, -500px), rgba(249,115,22,.13), rgba(59,130,246,.05) 52%, transparent 100%)' }} />
-      <span className="relative flex aspect-[16/8] items-center justify-center overflow-hidden rounded-2xl bg-neutral-100 dark:bg-neutral-950">
-        {preview && !isPdf ? <img src={preview} alt={`${certificate.name} certificate image`} loading="lazy" decoding="async" className="h-full w-full object-contain p-3" /> : <DocumentIcon />}
-        {isPdf && <span className="absolute bottom-3 right-3 rounded-full bg-neutral-950 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white">PDF</span>}
+      <span className="relative flex aspect-[16/8] items-center justify-center overflow-hidden rounded-2xl bg-neutral-100 dark:bg-surface">
+        {preview && (!isPdf || hasThumbnail) ? <img src={preview} alt={`${certificate.name} certificate image`} loading="lazy" decoding="async" className="h-full w-full object-contain p-3" /> : <DocumentIcon />}
+        {isPdf && <span className="absolute bottom-3 right-3 rounded-full bg-neutral-950 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-surface-inverse">PDF</span>}
       </span>
       <span className="relative mt-5 block text-left">
-        <span className="block text-lg font-bold leading-snug text-neutral-950 dark:text-white">{certificate.name}</span>
-        <span className="mt-2 block text-sm text-neutral-600 dark:text-neutral-400">{certificate.issuer}</span>
-        <span className="mt-1 block text-xs font-semibold uppercase tracking-[0.12em] text-neutral-500">{certificate.date || certificate.year || ''}</span>
-        {actionable && <span className="mt-4 inline-flex min-h-10 items-center gap-2 rounded-full border border-neutral-300 px-4 text-xs font-bold text-neutral-800 dark:border-white/15 dark:text-neutral-200">View credential <span aria-hidden="true">↗</span></span>}
+        <span className="block text-lg font-bold leading-snug text-foreground dark:text-foreground">{certificate.name}</span>
+        <span className="mt-2 block text-sm text-muted dark:text-muted">{certificate.issuer}</span>
+        <span className="mt-1 block text-xs font-semibold uppercase tracking-[0.12em] text-muted">{certificate.date || certificate.year || ''}</span>
+        {actionable && <span className="mt-4 inline-flex min-h-10 items-center gap-2 rounded-full border border-neutral-300 px-4 text-xs font-bold text-muted dark:border-border/15 dark:text-foreground">View credential <span aria-hidden="true">↗</span></span>}
       </span>
     </>
   )
@@ -433,6 +460,7 @@ function CertificateCard({ certificate, index, onOpen }: { certificate: Certific
     return (
       <motion.button
         type="button"
+        data-hover-list="certificates"
         onClick={onOpen}
         initial={reducedMotion ? false : { opacity: 0, y: 18 }}
         whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
@@ -450,6 +478,7 @@ function CertificateCard({ certificate, index, onOpen }: { certificate: Certific
 
   return (
     <motion.article
+      data-hover-list="certificates"
       initial={reducedMotion ? false : { opacity: 0, y: 18 }}
       whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
       whileHover={canHover ? { y: -3 } : undefined}
@@ -472,7 +501,7 @@ function AboutSkillChip({ skill, index }: { skill: Skill; index: number }) {
     borderColor: `${brandColor}55`,
     backgroundImage: `linear-gradient(135deg, ${brandColor}14, ${brandColor}08)`,
   }
-  const className = `skill-spotlight-chip group relative isolate inline-flex min-h-12 items-center gap-2.5 overflow-hidden rounded-full border px-5 py-3 text-sm font-semibold text-neutral-700 shadow-sm backdrop-blur-sm transition-[transform,border-color,box-shadow] focus-visible:border-orange-400/80 focus-visible:text-neutral-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 dark:text-neutral-200 dark:focus-visible:text-white motion-safe:focus-visible:-translate-y-1 ${canHover ? 'hover:border-orange-400/80 hover:text-neutral-950 dark:hover:text-white motion-safe:hover:-translate-y-1' : ''}`
+  const className = `skill-spotlight-chip group relative isolate inline-flex min-h-12 items-center gap-2.5 overflow-hidden rounded-full border px-5 py-3 text-sm font-semibold text-muted shadow-sm backdrop-blur-sm transition-[transform,border-color,box-shadow] focus-visible:border-orange-400/80 focus-visible:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 dark:text-foreground dark:focus-visible:text-foreground motion-safe:focus-visible:-translate-y-1 ${canHover ? 'hover:border-orange-400/80 hover:text-foreground dark:hover:text-foreground motion-safe:hover:-translate-y-1' : ''}`
   const contents = (
     <>
       <span aria-hidden="true" className={`pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-200 group-focus-visible:opacity-100 ${canHover ? 'group-hover:opacity-100' : ''}`} style={{ background: 'radial-gradient(circle 180px at var(--spot-x, -500px) var(--spot-y, -500px), rgba(249,115,22,.16), rgba(59,130,246,.05) 55%, transparent 100%)' }} />
@@ -543,7 +572,7 @@ function toLightboxCertificate(certificate: Certificate): CertItem {
 
 function DocumentIcon() {
   return (
-    <svg aria-hidden="true" className="h-12 w-12 text-neutral-400 dark:text-neutral-600" viewBox="0 0 48 48" fill="none">
+    <svg aria-hidden="true" className="h-12 w-12 text-muted dark:text-muted" viewBox="0 0 48 48" fill="none">
       <path d="M13 5h15l9 9v28H13z" stroke="currentColor" strokeWidth="2.5" strokeLinejoin="round" />
       <path d="M28 5v10h9M19 24h12M19 30h12M19 36h8" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
     </svg>

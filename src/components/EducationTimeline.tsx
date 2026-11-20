@@ -47,11 +47,11 @@ export function Timeline({ entries, mode }: { entries: TimelineEntry[]; mode: Ti
         @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
           .education-timeline-card:hover .education-timeline-spotlight { opacity: 1; }
           .education-timeline-card:hover { border-color: rgba(249,115,22,.65); box-shadow: 0 12px 32px rgba(249,115,22,.12); }
-          .education-timeline-row:hover .education-timeline-dot { box-shadow: 0 0 0 7px rgba(249,115,22,.09), 0 0 26px rgba(249,115,22,.5); border-color: #f97316; }
+          .education-timeline-row:hover .education-timeline-dot { box-shadow: 0 0 0 7px rgba(249,115,22,.09), 0 0 26px rgba(249,115,22,.5); border-color: var(--accent); }
         }
         .education-timeline-card:focus-within { border-color: rgba(249,115,22,.7); box-shadow: 0 0 0 2px rgba(249,115,22,.18); }
         .education-timeline-card:focus-within .education-timeline-spotlight { opacity: 1; }
-        .education-timeline-row:focus-within .education-timeline-dot { box-shadow: 0 0 0 7px rgba(249,115,22,.09), 0 0 26px rgba(249,115,22,.5); border-color: #f97316; }
+        .education-timeline-row:focus-within .education-timeline-dot { box-shadow: 0 0 0 7px rgba(249,115,22,.09), 0 0 26px rgba(249,115,22,.5); border-color: var(--accent); }
         @media (prefers-reduced-motion: reduce) {
           .education-timeline-spotlight { display: none !important; }
           .education-timeline-dot { transition-duration: .01ms !important; box-shadow: none !important; }
@@ -85,7 +85,7 @@ function TimelineRow({ entry, index, mode, isMobile, reducedMotion }: { entry: T
         whileInView={reducedMotion ? undefined : { scale: 1, opacity: 1 }}
         viewport={{ once: true, amount: 0.4 }}
         transition={{ type: 'spring', stiffness: 240, damping: 18, delay: reducedMotion ? 0 : index * 0.06 }}
-        className="education-timeline-dot absolute left-[26px] top-1/2 z-10 flex h-[52px] w-[52px] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border border-neutral-400 bg-white text-xs font-bold leading-tight text-neutral-900 transition-shadow dark:border-neutral-600 dark:bg-neutral-950 dark:text-white md:left-1/2"
+        className="education-timeline-dot absolute left-[26px] top-1/2 z-10 flex h-[52px] w-[52px] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border border-neutral-400 bg-surface text-xs font-bold leading-tight text-foreground transition-shadow dark:border-neutral-600 dark:bg-surface dark:text-foreground md:left-1/2"
       >
         {dateParts.map(part => <span key={part} className={mode === 'experience' ? 'max-w-[48px] truncate text-[9px] font-semibold' : ''}>{part}</span>)}
       </motion.span>
@@ -145,17 +145,18 @@ function EducationCard({ entry, index, isMobile, reducedMotion, offset, classNam
       transition={{ duration: 0.55, delay: reducedMotion ? 0 : index * 0.07, ease: [0.22, 1, 0.36, 1] }}
       onPointerMove={moveSpotlight}
       onPointerLeave={resetSpotlight}
-      className={`education-timeline-card group relative isolate w-full max-w-[460px] overflow-hidden rounded-3xl border border-neutral-200/80 bg-white/75 p-6 shadow-sm backdrop-blur-md focus-within:ring-2 focus-within:ring-orange-500/60 dark:border-neutral-800/80 dark:bg-neutral-900/65 sm:p-8 ${className}`}
+      data-hover-list="education-timeline"
+      className={`hover-card education-timeline-card group relative isolate w-full max-w-[460px] overflow-hidden rounded-3xl border border-neutral-200/80 bg-surface/75 p-6 shadow-sm backdrop-blur-md focus-within:ring-2 focus-within:ring-orange-500/60 dark:border-neutral-800/80 dark:bg-surface/65 sm:p-8 ${className}`}
     >
       <TimelineSpotlight />
       <div className="relative z-10 mb-4 flex flex-wrap items-start justify-between gap-3">
-        <h3 className="min-w-0 flex-1 text-2xl font-bold leading-tight text-neutral-900 dark:text-white">{entry.institution}</h3>
-        <span className="shrink-0 rounded-full bg-neutral-100 px-3 py-1.5 text-xs font-semibold text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">{entry.yearRange}</span>
+        <h3 className="min-w-0 flex-1 text-2xl font-bold leading-tight text-foreground dark:text-foreground">{entry.institution}</h3>
+        <span className="shrink-0 rounded-full bg-neutral-100 px-3 py-1.5 text-xs font-semibold text-muted dark:bg-neutral-800 dark:text-muted">{entry.yearRange}</span>
       </div>
-      <p className="relative z-10 text-sm font-semibold leading-relaxed text-neutral-500 dark:text-neutral-400">{entry.subtitle}</p>
-      <p className="relative z-10 mt-4 text-[16px] leading-[1.75] text-neutral-600 dark:text-neutral-400"><HighlightedText text={entry.description} /></p>
+      <p className="relative z-10 text-sm font-semibold leading-relaxed text-muted dark:text-muted">{entry.subtitle}</p>
+      <p className="relative z-10 mt-4 text-[16px] leading-[1.75] text-muted dark:text-muted"><HighlightedText text={entry.description} /></p>
       {safeDocumentUrl && (
-        <a href={safeDocumentUrl} target="_blank" rel="noopener noreferrer" className="relative z-10 mt-5 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-brand transition-colors hover:text-brand-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500">
+        <a href={safeDocumentUrl} target="_blank" rel="noopener noreferrer" className="relative z-10 mt-5 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-accent-foreground transition-colors hover:text-accent-foreground-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500">
           {entry.documentLabel || 'View document'}<span aria-hidden="true">↗</span>
         </a>
       )}
@@ -174,19 +175,20 @@ function ExperienceCard({ entry, index, offset, reducedMotion, className }: { en
       transition={reducedMotion ? { duration: 0 } : { duration: 0.55, delay: index * 0.07, ease: [0.22, 1, 0.36, 1] }}
       onPointerMove={moveSpotlight}
       onPointerLeave={resetSpotlight}
-      className={`education-timeline-card group relative isolate w-full max-w-[460px] overflow-hidden rounded-3xl border border-neutral-200/80 bg-white/75 p-6 shadow-sm backdrop-blur-md focus-within:ring-2 focus-within:ring-orange-500/60 dark:border-neutral-800/80 dark:bg-neutral-900/65 sm:p-8 ${className}`}
+      data-hover-list="experience-timeline"
+      className={`hover-card education-timeline-card group relative isolate w-full max-w-[460px] overflow-hidden rounded-3xl border border-neutral-200/80 bg-surface/75 p-6 shadow-sm backdrop-blur-md focus-within:ring-2 focus-within:ring-orange-500/60 dark:border-neutral-800/80 dark:bg-surface/65 sm:p-8 ${className}`}
     >
       <TimelineSpotlight />
       <div className="relative z-10 mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <h3 className="text-xl font-bold leading-tight text-neutral-900 dark:text-white sm:text-2xl">{entry.role}</h3>
-          <p className="mt-2 text-base font-semibold text-orange-600 dark:text-orange-400">{entry.company}</p>
+          <h3 className="text-xl font-bold leading-tight text-foreground dark:text-foreground sm:text-2xl">{entry.role}</h3>
+          <p className="mt-2 text-base font-semibold text-accent-foreground dark:text-orange-400">{entry.company}</p>
         </div>
-        <span className="w-fit shrink-0 rounded-full bg-neutral-100 px-3 py-1.5 text-xs font-semibold text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">{entry.period}</span>
+        <span className="w-fit shrink-0 rounded-full bg-neutral-100 px-3 py-1.5 text-xs font-semibold text-muted dark:bg-neutral-800 dark:text-muted">{entry.period}</span>
       </div>
       <ul className="relative z-10 space-y-2.5">
         {entry.bullets.map((bullet, bulletIndex) => (
-          <li key={`${index}-${bulletIndex}`} className="flex items-start gap-3 text-sm leading-6 text-neutral-600 dark:text-neutral-400">
+          <li key={`${index}-${bulletIndex}`} className="flex items-start gap-3 text-sm leading-6 text-muted dark:text-muted">
             <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-orange-500" />{bullet}
           </li>
         ))}
@@ -211,10 +213,10 @@ function TimelineLogoTile({ title, image, shortName, index, isMobile, reducedMot
       className={`${className} h-[128px] w-[128px] sm:h-[160px] sm:w-[160px] lg:h-[180px] lg:w-[180px]`}
       aria-label={`${title} logo`}
     >
-      <div className="flex h-full w-full items-center justify-center rounded-3xl bg-white shadow-sm">
+      <div className="flex h-full w-full items-center justify-center rounded-3xl bg-surface shadow-sm">
         {logo
-          ? <img src={logo} alt={`${title} logo`} loading="lazy" className="h-full w-full rounded-3xl object-contain p-6 grayscale sm:p-8" />
-          : <span className="flex h-16 w-16 items-center justify-center rounded-full bg-neutral-500 px-2 text-center text-xs font-bold uppercase tracking-wider text-white sm:h-20 sm:w-20 sm:text-sm">{shortName || title.trim().split(/\s+/).slice(0, 2).map(word => word[0]).join('').toUpperCase()}</span>}
+          ? <img src={logo} alt={`${title} logo`} loading="lazy" className="h-full w-full rounded-3xl object-contain p-6 sm:p-8" />
+          : <span className="flex h-16 w-16 items-center justify-center rounded-full bg-neutral-500 px-2 text-center text-xs font-bold uppercase tracking-wider text-foreground sm:h-20 sm:w-20 sm:text-sm">{shortName || title.trim().split(/\s+/).slice(0, 2).map(word => word[0]).join('').toUpperCase()}</span>}
       </div>
     </motion.div>
   )
@@ -238,7 +240,7 @@ function resetSpotlight(event: PointerEvent<HTMLElement>) {
 
 function HighlightedText({ text }: { text: string }) {
   return <>{text.split(/(\*\*[^*]+\*\*)/g).map((part, index) => part.startsWith('**') && part.endsWith('**')
-    ? <strong key={index} className="font-semibold text-neutral-900 dark:text-neutral-100">{part.slice(2, -2)}</strong>
+    ? <strong key={index} className="font-semibold text-foreground dark:text-foreground">{part.slice(2, -2)}</strong>
     : <span key={index}>{part}</span>)}</>
 }
 

@@ -15,9 +15,9 @@ export default function FAQs() {
         path="/faqs"
       />
       <ScrollReveal>
-        <p className="font-mono text-xs uppercase tracking-widest text-brand mb-3">Help</p>
-        <h1 className="text-4xl md:text-6xl font-bold text-neutral-900 dark:text-white mb-3">{faqs.title}</h1>
-        <p className="text-neutral-600 dark:text-neutral-400 mb-12">{faqs.lead}</p>
+        <p className="font-mono text-xs uppercase tracking-widest text-accent-foreground mb-3">Help</p>
+        <h1 className="text-4xl md:text-6xl font-bold text-foreground dark:text-foreground mb-3">{faqs.title}</h1>
+        <p className="text-muted dark:text-muted mb-12">{faqs.lead}</p>
       </ScrollReveal>
 
       <FaqAccordion items={faqs.items} />

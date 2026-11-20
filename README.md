@@ -9,6 +9,14 @@ The canonical application is this directory: React 18, TypeScript, Vite, Tailwin
 - `src/data/content.ts` provides safe default site content. `src/hooks/useSiteContent.tsx` overlays the Firestore `content/site` document when configured.
 - Firebase browser setup is in `src/lib/firebase.ts`. Callable backend handlers are in `functions/src/index.ts`; Firestore access is restricted by `firestore.rules`.
 
+## Theme rules
+
+- Use the semantic theme utilities `bg-background`, `bg-surface`, `text-foreground`, `text-muted`, `border-border`, `text-accent`, `text-on-accent`, `text-surface-inverse`, and `text-inverse-foreground` for interface colors.
+- Do not add fixed light/dark text, background, or border colors in pages and components. Put any intentional palette changes in `src/index.css` as theme variables.
+- The saved theme is applied in `index.html` before first paint and then synchronized by `ThemeProvider`; use `useTheme()` for theme-dependent canvas or other non-CSS rendering.
+- Keep body text at 4.5:1 contrast and large headings at 3:1 or better against their backgrounds. Muted copy must stay legible in both themes.
+- `npm run build` checks source colors for regressions before generating the sitemap and production bundle. The guard allows the fixed dark-pill navbar, bundled brand artwork, and official Google sign-in marks.
+
 ## Development
 
 Run commands from this directory, not the workspace parent:

@@ -203,15 +203,15 @@ function TechSkillsEditor({ value, onChange }: { value: unknown; onChange: (valu
     ;[updated[index], updated[destination]] = [updated[destination], updated[index]]
     onChange(updated)
   }
-  const inputClass = 'w-full rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-950 px-3 py-2 text-sm text-neutral-900 dark:text-white focus:border-brand focus:outline-none'
+  const inputClass = 'w-full rounded-md border border-neutral-300 dark:border-neutral-700 bg-surface dark:bg-surface px-3 py-2 text-sm text-foreground dark:text-foreground focus:border-brand focus:outline-none'
 
   return (
     <fieldset className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">Technology skills</p>
-        <button type="button" onClick={() => onChange([...skills, { name: 'New skill', category: '', visible: true, url: '', icon: '' }])} className="text-xs font-semibold text-brand hover:underline">Add skill</button>
+        <p className="text-sm font-semibold text-muted dark:text-foreground">Technology skills</p>
+        <button type="button" onClick={() => onChange([...skills, { name: 'New skill', category: '', visible: true, url: '', icon: '' }])} className="text-xs font-semibold text-accent-foreground hover:underline">Add skill</button>
       </div>
-      {skills.length === 0 && <p className="text-sm text-neutral-500">No custom skills. The default skill list appears on the website until you add and save skills here.</p>}
+      {skills.length === 0 && <p className="text-sm text-muted">No custom skills. The default skill list appears on the website until you add and save skills here.</p>}
       {skills.map((entry, index) => {
         const skill = entry && typeof entry === 'object' ? entry as EditableTechSkill : {}
         const name = typeof skill.name === 'string' ? skill.name : ''
@@ -221,9 +221,9 @@ function TechSkillsEditor({ value, onChange }: { value: unknown; onChange: (valu
           <div key={index} className="rounded-lg border border-neutral-200 p-4 dark:border-neutral-800">
             <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
               <div className="flex min-w-0 items-center gap-2">
-                <TechIcon name={iconName || 'Skill'} size={20} className="text-neutral-600 dark:text-neutral-300" />
-                <span className="truncate text-sm font-semibold text-neutral-800 dark:text-neutral-200">{name || `Skill ${index + 1}`}</span>
-                {skill.visible === false && <span className="rounded bg-neutral-100 px-2 py-0.5 text-[10px] uppercase tracking-wide text-neutral-500 dark:bg-neutral-800">Hidden</span>}
+                <TechIcon name={iconName || 'Skill'} size={20} className="text-muted dark:text-muted" />
+                <span className="truncate text-sm font-semibold text-muted dark:text-foreground">{name || `Skill ${index + 1}`}</span>
+                {skill.visible === false && <span className="rounded bg-neutral-100 px-2 py-0.5 text-[10px] uppercase tracking-wide text-muted dark:bg-neutral-800">Hidden</span>}
               </div>
               <div className="flex shrink-0 gap-1">
                 <button type="button" aria-label={`Move ${name || `skill ${index + 1}`} up`} disabled={index === 0} onClick={() => moveSkill(index, -1)} className="rounded border border-neutral-300 px-2 py-1 text-xs disabled:opacity-30 dark:border-neutral-700">Up</button>
@@ -234,24 +234,24 @@ function TechSkillsEditor({ value, onChange }: { value: unknown; onChange: (valu
 
             <div className="grid gap-3 sm:grid-cols-2">
               <label className="block space-y-1">
-                <span className="block text-xs font-medium text-neutral-500">Name</span>
+                <span className="block text-xs font-medium text-muted">Name</span>
                 <input className={inputClass} type="text" value={name} onChange={event => updateSkill(index, { name: event.target.value })} />
               </label>
               <label className="block space-y-1">
-                <span className="block text-xs font-medium text-neutral-500">Category</span>
+                <span className="block text-xs font-medium text-muted">Category</span>
                 <input className={inputClass} type="text" value={typeof skill.category === 'string' ? skill.category : ''} onChange={event => updateSkill(index, { category: event.target.value })} />
               </label>
               <label className="block space-y-1">
-                <span className="block text-xs font-medium text-neutral-500">Website URL (optional)</span>
+                <span className="block text-xs font-medium text-muted">Website URL (optional)</span>
                 <input className={inputClass} type="url" placeholder="https://example.com" value={typeof skill.url === 'string' ? skill.url : ''} onChange={event => updateSkill(index, { url: event.target.value })} />
               </label>
               <label className="block space-y-1">
-                <span className="block text-xs font-medium text-neutral-500">Icon override (optional)</span>
+                <span className="block text-xs font-medium text-muted">Icon override (optional)</span>
                 <input className={inputClass} type="text" placeholder="docker" value={typeof skill.icon === 'string' ? skill.icon : ''} onChange={event => updateSkill(index, { icon: event.target.value })} />
               </label>
             </div>
 
-            <label className="mt-3 inline-flex items-center gap-2 text-sm text-neutral-700 dark:text-neutral-300">
+            <label className="mt-3 inline-flex items-center gap-2 text-sm text-muted dark:text-muted">
               <input type="checkbox" checked={skill.visible !== false} onChange={event => updateSkill(index, { visible: event.target.checked })} className="h-4 w-4 accent-orange-500" />
               Show on Home page
             </label>
@@ -272,7 +272,7 @@ function MediaEditorField({ name, path, value, onChange }: {
   const asset = useMediaAsset(value)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
-  const inputClass = 'w-full rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-950 px-3 py-2 text-sm text-neutral-900 dark:text-white focus:border-brand focus:outline-none'
+  const inputClass = 'w-full rounded-md border border-neutral-300 dark:border-neutral-700 bg-surface dark:bg-surface px-3 py-2 text-sm text-foreground dark:text-foreground focus:border-brand focus:outline-none'
   const upload = async (file?: File) => {
     if (!file) return
     setError('')
@@ -314,24 +314,24 @@ function MediaEditorField({ name, path, value, onChange }: {
   return (
     <div className="space-y-2">
       <label className="block space-y-1">
-        <span className="block text-xs font-medium text-neutral-500">{labelFor(name)}{isCv ? ' path or upload' : ' path'}</span>
+        <span className="block text-xs font-medium text-muted">{labelFor(name)}{isCv ? ' path or upload' : ' path'}</span>
         <input className={inputClass} type="text" placeholder={isCv ? '/cv/waseem-cv.pdf' : '/images/example.jpg'} value={value} onChange={event => onChange(event.target.value)} />
       </label>
       {asset && (isCv
-        ? <a href={asset.data} target="_blank" rel="noreferrer" className="block text-sm text-brand underline">Preview {asset.name} · {formatSize(size)}</a>
-        : <div className="flex items-center gap-3"><img src={asset.data} alt={`${name} preview`} loading="lazy" className="max-h-32 max-w-48 rounded border border-neutral-200 object-contain" /><span className="text-xs text-neutral-500">{asset.name} · {formatSize(size)}</span></div>)}
+        ? <a href={asset.data} target="_blank" rel="noreferrer" className="block text-sm text-accent-foreground underline">Preview {asset.name} · {formatSize(size)}</a>
+        : <div className="flex items-center gap-3"><img src={asset.data} alt={`${name} preview`} loading="lazy" className="max-h-32 max-w-48 rounded border border-neutral-200 object-contain" /><span className="text-xs text-muted">{asset.name} · {formatSize(size)}</span></div>)}
       {!asset && value && !value.startsWith('media:') && (isCv
-        ? <a href={value} target="_blank" rel="noreferrer" className="block text-sm text-brand underline">Preview current PDF path</a>
+        ? <a href={value} target="_blank" rel="noreferrer" className="block text-sm text-accent-foreground underline">Preview current PDF path</a>
         : <img src={value} alt={`${name} preview`} loading="lazy" className="max-h-32 max-w-48 rounded border border-neutral-200 object-contain" />)}
       <div className="flex flex-wrap gap-2">
-        <label className="inline-flex cursor-pointer items-center rounded border border-neutral-300 px-3 py-1.5 text-xs font-semibold text-neutral-700 dark:border-neutral-700 dark:text-neutral-200">
+        <label className="inline-flex cursor-pointer items-center rounded border border-neutral-300 px-3 py-1.5 text-xs font-semibold text-muted dark:border-neutral-700 dark:text-foreground">
           {busy ? 'Uploading…' : value ? 'Replace upload' : isCv ? 'Upload PDF' : 'Upload image'}
           <input type="file" accept={isCv ? 'application/pdf,.pdf' : 'image/*'} disabled={busy} onChange={event => { void upload(event.target.files?.[0]); event.currentTarget.value = '' }} className="sr-only" />
         </label>
         {value && <button type="button" onClick={() => void remove()} disabled={busy} className="rounded border border-red-300 px-3 py-1.5 text-xs font-semibold text-red-600 disabled:opacity-50">Delete</button>}
       </div>
-      {!isCv && <p className="text-xs text-neutral-500">Images are resized to at most 1600 px and compressed to 250 KB or less.</p>}
-      {isCv && <p className="text-xs text-neutral-500">PDF files up to 700 KB.</p>}
+      {!isCv && <p className="text-xs text-muted">Images are resized to at most 1600 px and compressed to 250 KB or less.</p>}
+      {isCv && <p className="text-xs text-muted">PDF files up to 700 KB.</p>}
       {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
     </div>
   )
@@ -367,18 +367,18 @@ function LinksEditor({ value, onChange }: { value: unknown; onChange: (value: un
     ;[updated[index], updated[destination]] = [updated[destination], updated[index]]
     onChange(withOrder(updated))
   }
-  const inputClass = 'w-full rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-950 px-3 py-2 text-sm text-neutral-900 dark:text-white focus:border-brand focus:outline-none'
+  const inputClass = 'w-full rounded-md border border-neutral-300 dark:border-neutral-700 bg-surface dark:bg-surface px-3 py-2 text-sm text-foreground dark:text-foreground focus:border-brand focus:outline-none'
 
   return (
     <fieldset className="space-y-4">
       <div className="flex items-center justify-between gap-3">
-        <legend className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">Digital links</legend>
-        <button type="button" onClick={() => onChange(withOrder([...links, { n: links.length + 1, order: links.length + 1, label: '', url: '', desc: '', visible: true }]))} className="text-xs font-semibold text-brand hover:underline">Add link</button>
+        <legend className="text-sm font-semibold text-muted dark:text-foreground">Digital links</legend>
+        <button type="button" onClick={() => onChange(withOrder([...links, { n: links.length + 1, order: links.length + 1, label: '', url: '', desc: '', visible: true }]))} className="text-xs font-semibold text-accent-foreground hover:underline">Add link</button>
       </div>
       {links.map((link, index) => (
         <div key={`${link.n}-${index}`} className="rounded-lg border border-neutral-200 p-4 dark:border-neutral-800">
           <div className="mb-3 flex items-center justify-between gap-3">
-            <span className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">{link.label || `Link ${index + 1}`}</span>
+            <span className="text-sm font-semibold text-muted dark:text-foreground">{link.label || `Link ${index + 1}`}</span>
             <div className="flex gap-1">
               <button type="button" aria-label={`Move link ${index + 1} up`} disabled={index === 0} onClick={() => move(index, -1)} className="rounded border border-neutral-300 px-2 py-1 text-xs disabled:opacity-30 dark:border-neutral-700">Up</button>
               <button type="button" aria-label={`Move link ${index + 1} down`} disabled={index === links.length - 1} onClick={() => move(index, 1)} className="rounded border border-neutral-300 px-2 py-1 text-xs disabled:opacity-30 dark:border-neutral-700">Down</button>
@@ -386,23 +386,23 @@ function LinksEditor({ value, onChange }: { value: unknown; onChange: (value: un
             </div>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
-            <label className="space-y-1 text-xs font-medium text-neutral-500">Label
+            <label className="space-y-1 text-xs font-medium text-muted">Label
               <input className={inputClass} type="text" value={link.label} onChange={event => update(index, { label: event.target.value })} />
             </label>
-            <label className="space-y-1 text-xs font-medium text-neutral-500">URL
+            <label className="space-y-1 text-xs font-medium text-muted">URL
               <input className={inputClass} type="text" inputMode="url" placeholder="https://…" value={link.url} onChange={event => update(index, { url: event.target.value })} />
             </label>
-            <label className="space-y-1 text-xs font-medium text-neutral-500 sm:col-span-2">Description
+            <label className="space-y-1 text-xs font-medium text-muted sm:col-span-2">Description
               <textarea className={`${inputClass} min-h-20 resize-y`} rows={2} value={link.desc} onChange={event => update(index, { desc: event.target.value })} />
             </label>
           </div>
-          <label className="mt-3 inline-flex items-center gap-2 text-sm text-neutral-700 dark:text-neutral-300">
+          <label className="mt-3 inline-flex items-center gap-2 text-sm text-muted dark:text-muted">
             <input type="checkbox" checked={link.visible !== false} onChange={event => update(index, { visible: event.target.checked })} className="h-4 w-4 accent-orange-500" />
             Show on Links page and footer
           </label>
         </div>
       ))}
-      {links.length === 0 && <p className="text-sm text-neutral-500">The default links remain available on the site until you add and save links here.</p>}
+      {links.length === 0 && <p className="text-sm text-muted">The default links remain available on the site until you add and save links here.</p>}
     </fieldset>
   )
 }
@@ -411,7 +411,7 @@ function UniversityPhotosEditor({ value, onChange }: { value: unknown; onChange:
   const photos = Array.isArray(value) ? value as UniversityPhoto[] : []
   const [error, setError] = useState('')
   const [removing, setRemoving] = useState<number | null>(null)
-  const inputClass = 'w-full rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-950 px-3 py-2 text-sm text-neutral-900 dark:text-white focus:border-brand focus:outline-none'
+  const inputClass = 'w-full rounded-md border border-neutral-300 dark:border-neutral-700 bg-surface dark:bg-surface px-3 py-2 text-sm text-foreground dark:text-foreground focus:border-brand focus:outline-none'
 
   const update = (index: number, changes: Partial<UniversityPhoto>) => {
     onChange(photos.map((photo, photoIndex) => photoIndex === index ? { ...photo, ...changes } : photo))
@@ -446,14 +446,14 @@ function UniversityPhotosEditor({ value, onChange }: { value: unknown; onChange:
     <fieldset className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <legend className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">University photos</legend>
-          <p className="mt-1 text-xs text-neutral-500">Upload up to 8 photos. Images are compressed and stored in the existing media collection.</p>
+          <legend className="text-sm font-semibold text-muted dark:text-foreground">University photos</legend>
+          <p className="mt-1 text-xs text-muted">Upload up to 8 photos. Images are compressed and stored in the existing media collection.</p>
         </div>
         <button
           type="button"
           disabled={photos.length >= 8}
           onClick={() => onChange([...photos, { image: '', caption: '', visible: true }])}
-          className="rounded border border-neutral-300 px-3 py-1.5 text-xs font-semibold text-neutral-700 disabled:cursor-not-allowed disabled:opacity-40 dark:border-neutral-700 dark:text-neutral-200"
+          className="rounded border border-neutral-300 px-3 py-1.5 text-xs font-semibold text-muted disabled:cursor-not-allowed disabled:opacity-40 dark:border-neutral-700 dark:text-foreground"
         >
           Add photo
         </button>
@@ -461,7 +461,7 @@ function UniversityPhotosEditor({ value, onChange }: { value: unknown; onChange:
       {photos.map((photo, index) => (
         <div key={`${photo.image}-${index}`} className="rounded-lg border border-neutral-200 p-4 dark:border-neutral-800">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-            <span className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">Photo {index + 1}</span>
+            <span className="text-sm font-semibold text-muted dark:text-foreground">Photo {index + 1}</span>
             <div className="flex gap-1">
               <button type="button" aria-label={`Move university photo ${index + 1} up`} disabled={index === 0 || removing !== null} onClick={() => move(index, -1)} className="rounded border border-neutral-300 px-2 py-1 text-xs disabled:opacity-30 dark:border-neutral-700">Up</button>
               <button type="button" aria-label={`Move university photo ${index + 1} down`} disabled={index === photos.length - 1 || removing !== null} onClick={() => move(index, 1)} className="rounded border border-neutral-300 px-2 py-1 text-xs disabled:opacity-30 dark:border-neutral-700">Down</button>
@@ -470,16 +470,16 @@ function UniversityPhotosEditor({ value, onChange }: { value: unknown; onChange:
           </div>
           <MediaEditorField name="image" path={`about.photos.${index}.image`} value={photo.image ?? ''} onChange={image => update(index, { image })} />
           <label className="mt-4 block space-y-1">
-            <span className="block text-xs font-medium text-neutral-500">Caption (optional)</span>
+            <span className="block text-xs font-medium text-muted">Caption (optional)</span>
             <input className={inputClass} type="text" maxLength={120} value={photo.caption ?? ''} onChange={event => update(index, { caption: event.target.value })} />
           </label>
-          <label className="mt-3 inline-flex items-center gap-2 text-sm text-neutral-700 dark:text-neutral-300">
+          <label className="mt-3 inline-flex items-center gap-2 text-sm text-muted dark:text-muted">
             <input type="checkbox" checked={photo.visible !== false} onChange={event => update(index, { visible: event.target.checked })} className="h-4 w-4 accent-orange-500" />
             Show on About page
           </label>
         </div>
       ))}
-      {photos.length === 0 && <p className="rounded-lg border border-dashed border-neutral-300 px-4 py-6 text-sm text-neutral-500 dark:border-neutral-700">No university photos added yet.</p>}
+      {photos.length === 0 && <p className="rounded-lg border border-dashed border-neutral-300 px-4 py-6 text-sm text-muted dark:border-neutral-700">No university photos added yet.</p>}
       {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
     </fieldset>
   )
@@ -497,7 +497,7 @@ function EditorField({
   onChange: (value: unknown) => void
 }) {
   const label = path.startsWith('uses.sections.') && name === 'note' ? 'Description' : labelFor(name)
-  const inputClass = 'w-full rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-950 px-3 py-2 text-sm text-neutral-900 dark:text-white focus:border-brand focus:outline-none'
+  const inputClass = 'w-full rounded-md border border-neutral-300 dark:border-neutral-700 bg-surface dark:bg-surface px-3 py-2 text-sm text-foreground dark:text-foreground focus:border-brand focus:outline-none'
 
   if (path === 'home.techSkills') {
     return <TechSkillsEditor value={value} onChange={onChange} />
@@ -515,8 +515,8 @@ function EditorField({
     return (
       <fieldset className="space-y-3 border-l-2 border-neutral-200 dark:border-neutral-700 pl-4">
         <div className="flex items-center justify-between gap-3">
-          <legend className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">{label}</legend>
-          <button type="button" onClick={() => onChange([...value, path.endsWith('.screenshots') ? { id: `screenshot-${Date.now()}`, image: '', alt: '' } : path === 'home.gallery' ? { image: '', visible: true } : newArrayItem(value, path)])} className="text-xs font-semibold text-brand hover:underline">Add item</button>
+          <legend className="text-sm font-semibold text-muted dark:text-foreground">{label}</legend>
+          <button type="button" onClick={() => onChange([...value, path.endsWith('.screenshots') ? { id: `screenshot-${Date.now()}`, image: '', alt: '' } : path === 'home.gallery' ? { image: '', visible: true } : newArrayItem(value, path)])} className="text-xs font-semibold text-accent-foreground hover:underline">Add item</button>
         </div>
         {value.map((item, index) => {
           const resumeLink = item && typeof item === 'object' && (item as Record<string, unknown>).to === '/resume'
@@ -526,7 +526,7 @@ function EditorField({
           <div key={index} className="flex items-start gap-2">
             {item !== null && typeof item === 'object' ? (
               <details className="min-w-0 flex-1 rounded-md border border-neutral-200 dark:border-neutral-800 px-3 py-2">
-                <summary className="cursor-pointer text-sm font-medium text-neutral-700 dark:text-neutral-300">{label} {index + 1}</summary>
+                <summary className="cursor-pointer text-sm font-medium text-muted dark:text-muted">{label} {index + 1}</summary>
                 <div className="mt-3 space-y-3">
                   <EditorField
                     name={`${label} ${index + 1}`}
@@ -542,7 +542,7 @@ function EditorField({
               </details>
             ) : (
               <div className="min-w-0 flex-1">
-                <label className="mb-1 block text-xs text-neutral-500">{label} {index + 1}</label>
+                <label className="mb-1 block text-xs text-muted">{label} {index + 1}</label>
                 <input
                   className={inputClass}
                   type={typeof item === 'number' ? 'number' : 'text'}
@@ -578,7 +578,7 @@ function EditorField({
   if (value !== null && typeof value === 'object') {
     return (
       <fieldset className="space-y-3">
-        <legend className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">{label}</legend>
+        <legend className="text-sm font-semibold text-muted dark:text-foreground">{label}</legend>
         <div className="space-y-3">
           {Object.entries(value as Record<string, unknown>).filter(([key]) => {
             if (path === 'about' && ['photos', 'aboutFaqs', 'timeline', 'skills'].includes(key)) return false
@@ -601,7 +601,7 @@ function EditorField({
 
   if (typeof value === 'boolean') {
     return (
-      <label className="flex items-center gap-3 py-1 text-sm text-neutral-700 dark:text-neutral-300">
+      <label className="flex items-center gap-3 py-1 text-sm text-muted dark:text-muted">
         <input type="checkbox" checked={value} onChange={event => onChange(event.target.checked)} className="h-4 w-4 accent-orange-500" />
         <span>{label}</span>
       </label>
@@ -611,7 +611,7 @@ function EditorField({
   if (typeof value === 'number') {
     return (
       <label className="block space-y-1">
-        <span className="block text-xs font-medium text-neutral-500">{label}</span>
+        <span className="block text-xs font-medium text-muted">{label}</span>
         <input className={inputClass} type="number" value={value} onChange={event => onChange(Number(event.target.value))} />
       </label>
     )
@@ -623,7 +623,7 @@ function EditorField({
   }
   return (
     <label className="block space-y-1">
-      <span className="block text-xs font-medium text-neutral-500">{label}{isImageField(name) ? ' path' : ''}</span>
+      <span className="block text-xs font-medium text-muted">{label}{isImageField(name) ? ' path' : ''}</span>
       {isLongText(name, text) ? (
         <textarea className={`${inputClass} min-h-24 resize-y`} rows={4} value={text} onChange={event => onChange(event.target.value)} />
       ) : (
@@ -695,7 +695,7 @@ export default function AdminContentEditor() {
             type="button"
             onClick={() => selectSection(item)}
             aria-pressed={section.id === item.id}
-            className={`rounded px-3 py-2 text-sm font-semibold transition-colors ${section.id === item.id ? 'bg-brand text-white' : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700'}`}
+            className={`rounded px-3 py-2 text-sm font-semibold transition-colors ${section.id === item.id ? 'bg-brand text-on-accent' : 'bg-neutral-100 text-muted hover:bg-neutral-200 dark:bg-neutral-800 dark:text-muted dark:hover:bg-neutral-700'}`}
           >
             {item.label}
           </button>
@@ -705,14 +705,14 @@ export default function AdminContentEditor() {
       <div className="space-y-6">
         {section.paths.map(path => (
           <div key={path} className="space-y-4 border-b border-neutral-200 pb-6 last:border-0 dark:border-neutral-800">
-            <h2 className="text-lg font-bold text-neutral-900 dark:text-white">{labelFor(path.split('.').pop() ?? path)}</h2>
+            <h2 className="text-lg font-bold text-foreground dark:text-foreground">{labelFor(path.split('.').pop() ?? path)}</h2>
             <EditorField name={path.split('.').pop() ?? path} path={path} value={draft[path]} onChange={value => updateDraft(path, value)} />
           </div>
         ))}
       </div>
 
       <div className="flex flex-wrap items-center gap-4">
-        <button type="button" onClick={save} disabled={!db || saving} className="rounded bg-brand px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-dark disabled:cursor-not-allowed disabled:opacity-60">
+        <button type="button" onClick={save} disabled={!db || saving} className="rounded bg-brand px-5 py-2.5 text-sm font-semibold text-on-accent hover:bg-brand-dark disabled:cursor-not-allowed disabled:opacity-60">
           {saving ? 'Saving…' : 'Save changes'}
         </button>
         {toast && <p role="status" className={`text-sm ${toast.includes('failed') ? 'text-red-600' : 'text-green-600'}`}>{toast}</p>}

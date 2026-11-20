@@ -19,19 +19,19 @@ export default function NotFound() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <p className="font-mono text-xs uppercase tracking-widest text-brand mb-6">
+        <p className="font-mono text-xs uppercase tracking-widest text-accent-foreground mb-6">
           {content.siteName}
         </p>
-        <p className="font-mono text-7xl font-bold text-brand mb-4">404</p>
-        <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-3">
+        <p className="font-mono text-7xl font-bold text-accent-foreground mb-4">404</p>
+        <h1 className="text-2xl font-bold text-foreground dark:text-foreground mb-3">
           Page not found
         </h1>
-        <p className="text-neutral-600 dark:text-neutral-400 mb-8 max-w-sm">
+        <p className="text-muted dark:text-muted mb-8 max-w-sm">
           This page doesn't exist or was moved. Head back home and explore from there.
         </p>
         <Link
           to="/"
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-brand text-white font-semibold text-sm hover:bg-brand-dark transition-colors"
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-brand text-on-accent font-semibold text-sm hover:bg-brand-dark transition-colors"
         >
           ← Back to {content.siteName}
         </Link>

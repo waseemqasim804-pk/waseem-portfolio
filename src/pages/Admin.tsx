@@ -20,11 +20,11 @@ function SetupGuide() {
     <div className="max-w-2xl mx-auto px-6 py-16">
       <div className="p-8 rounded-2xl border border-dashed border-orange-400/40 bg-orange-400/5">
         <span className="text-5xl mb-4 block">🔧</span>
-        <h2 className="text-xl font-bold text-neutral-900 dark:text-white mb-2">Firebase not configured</h2>
-        <p className="text-neutral-600 dark:text-neutral-400 mb-6 text-sm">
+        <h2 className="text-xl font-bold text-foreground dark:text-foreground mb-2">Firebase not configured</h2>
+        <p className="text-muted dark:text-muted mb-6 text-sm">
           The admin panel needs Firebase credentials. Follow these steps:
         </p>
-        <ol className="flex flex-col gap-4 text-sm text-neutral-700 dark:text-neutral-300">
+        <ol className="flex flex-col gap-4 text-sm text-muted dark:text-muted">
           {[
             'Go to console.firebase.google.com and create a new project.',
             'Enable Authentication → Sign-in method → Email/Password.',
@@ -36,7 +36,7 @@ function SetupGuide() {
             'Restart the dev server: npm run dev',
           ].map((step, i) => (
             <li key={i} className="flex gap-3">
-              <span className="w-6 h-6 rounded-full bg-brand/20 text-brand text-xs flex items-center justify-center font-bold shrink-0 mt-0.5">
+              <span className="w-6 h-6 rounded-full bg-brand/20 text-accent-foreground text-xs flex items-center justify-center font-bold shrink-0 mt-0.5">
                 {i + 1}
               </span>
               <span>{step}</span>
@@ -80,10 +80,10 @@ function LoginForm({ onLogin }: { onLogin: (user: User) => void }) {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="p-8 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900"
+        className="p-8 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-surface dark:bg-surface"
       >
         <span className="text-4xl mb-4 block">🔒</span>
-        <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-6">Admin Login</h1>
+        <h1 data-admin-heading className="text-2xl font-bold text-foreground dark:text-foreground mb-6">Admin Login</h1>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
             type="email"
@@ -91,7 +91,7 @@ function LoginForm({ onLogin }: { onLogin: (user: User) => void }) {
             onChange={e => setEmail(e.target.value)}
             placeholder="Admin email"
             required
-            className="w-full px-4 py-3 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-white text-sm focus:outline-none focus:border-brand"
+            className="w-full px-4 py-3 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 text-foreground dark:text-foreground text-sm focus:outline-none focus:border-brand"
           />
           <input
             type="password"
@@ -99,13 +99,13 @@ function LoginForm({ onLogin }: { onLogin: (user: User) => void }) {
             onChange={e => setPassword(e.target.value)}
             placeholder="Password"
             required
-            className="w-full px-4 py-3 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-white text-sm focus:outline-none focus:border-brand"
+            className="w-full px-4 py-3 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 text-foreground dark:text-foreground text-sm focus:outline-none focus:border-brand"
           />
-          {error && <p className="text-sm text-red-500">{error}</p>}
+          {error && <p className="text-sm text-red-600">{error}</p>}
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 rounded-xl bg-brand text-white font-semibold text-sm hover:bg-brand-dark transition-colors disabled:opacity-60"
+            className="w-full py-3 rounded-xl bg-brand text-on-accent font-semibold text-sm hover:bg-brand-dark transition-colors disabled:opacity-60"
           >
             {loading ? 'Signing in…' : 'Sign in'}
           </button>
@@ -307,13 +307,13 @@ function AdminPanel({ user }: { user: User }) {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div>
-          <p className="font-mono text-xs uppercase tracking-widest text-brand mb-1">Admin</p>
-          <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">Control Panel</h1>
-          <p className="text-sm text-neutral-500 mt-1">{user.email}</p>
+          <p className="font-mono text-xs uppercase tracking-widest text-accent-foreground mb-1">Admin</p>
+          <h1 data-admin-heading className="text-3xl font-bold text-foreground dark:text-foreground">Control Panel</h1>
+          <p className="text-sm text-muted mt-1">{user.email}</p>
         </div>
         <button
           onClick={() => auth && signOut(auth)}
-          className="px-5 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 text-sm font-semibold text-neutral-700 dark:text-neutral-300 hover:border-red-400 hover:text-red-500 transition-colors"
+          className="px-5 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 text-sm font-semibold text-muted dark:text-muted hover:border-red-400 hover:text-red-600 transition-colors"
         >
           Sign out
         </button>
@@ -327,8 +327,8 @@ function AdminPanel({ user }: { user: User }) {
             onClick={() => setTab(t.id)}
             className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
               tab === t.id
-                ? 'bg-brand text-white shadow-lg shadow-brand/30'
-                : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700'
+                ? 'bg-brand text-on-accent shadow-lg shadow-brand/30'
+                : 'bg-neutral-100 dark:bg-neutral-800 text-muted dark:text-muted hover:bg-neutral-200 dark:hover:bg-neutral-700'
             }`}
           >
             <span>{t.icon}</span>
@@ -348,11 +348,11 @@ function AdminPanel({ user }: { user: User }) {
             { label: 'Links',    n: content.links.items.length,        icon: '🔗' },
             { label: 'Uses',     n: content.uses.sections.reduce((a, s) => a + s.items.length, 0), icon: '🛠️' },
           ].map(stat => (
-            <div key={stat.label} className="p-5 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 flex items-center gap-4">
+            <div key={stat.label} className="p-5 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-surface dark:bg-surface flex items-center gap-4">
               <span className="text-3xl">{stat.icon}</span>
               <div>
-                <p className="text-2xl font-bold text-neutral-900 dark:text-white">{stat.n}</p>
-                <p className="text-xs text-neutral-500">{stat.label}</p>
+                <p className="text-2xl font-bold text-foreground dark:text-foreground">{stat.n}</p>
+                <p className="text-xs text-muted">{stat.label}</p>
               </div>
             </div>
           ))}
@@ -370,10 +370,10 @@ function AdminPanel({ user }: { user: User }) {
           renderItem={(msg) => (
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-3">
-                <span className="font-semibold text-neutral-900 dark:text-white">{msg.name}</span>
-                <span className="text-xs text-neutral-500">{msg.email}</span>
+                <span className="font-semibold text-foreground dark:text-foreground">{msg.name}</span>
+                <span className="text-xs text-muted">{msg.email}</span>
               </div>
-              <p className="text-sm text-neutral-600 dark:text-neutral-400">{msg.message}</p>
+              <p className="text-sm text-muted dark:text-muted">{msg.message}</p>
             </div>
           )}
           onDelete={(id) => deleteItem('messages', id, setMessages, messages)}
@@ -384,8 +384,8 @@ function AdminPanel({ user }: { user: User }) {
         <div>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
             <div>
-              <h2 className="text-xl font-bold text-neutral-900 dark:text-white">Guestbook Signatures</h2>
-              <p className="text-xs text-neutral-500 mt-1">
+              <h2 className="text-xl font-bold text-foreground dark:text-foreground">Guestbook Signatures</h2>
+              <p className="text-xs text-muted mt-1">
                 Showing {guestEntries.length} total signatures ·{' '}
                 <span className="font-semibold text-emerald-600 dark:text-emerald-400">
                   {guestEntries.filter(e => e.approved).length} visible to public
@@ -404,32 +404,32 @@ function AdminPanel({ user }: { user: User }) {
           ) : (
             <div className="flex flex-col gap-4">
               {guestEntries.map(entry => (
-                <div key={entry.id} className="p-5 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-sm">
+                <div key={entry.id} className="p-5 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-surface dark:bg-surface shadow-sm">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
                     <div className="flex items-center gap-3 min-w-0">
                       {entry.avatar ? (
                         <img src={entry.avatar} alt="" className="h-9 w-9 rounded-full object-cover shrink-0 ring-1 ring-neutral-200 dark:ring-neutral-700" />
                       ) : (
-                        <div className="h-9 w-9 rounded-full bg-brand/20 text-brand font-bold text-xs flex items-center justify-center shrink-0">
+                        <div className="h-9 w-9 rounded-full bg-brand/20 text-accent-foreground font-bold text-xs flex items-center justify-center shrink-0">
                           {(entry.name || 'G').charAt(0).toUpperCase()}
                         </div>
                       )}
                       <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
-                          <span className="font-semibold text-sm text-neutral-900 dark:text-white truncate">{entry.name || 'Anonymous'}</span>
+                          <span className="font-semibold text-sm text-foreground dark:text-foreground truncate">{entry.name || 'Anonymous'}</span>
                           {entry.approved ? (
                             <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 font-semibold">Visible</span>
                           ) : (
                             <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400 font-semibold">Hidden</span>
                           )}
                           {entry.pinned && (
-                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 dark:bg-orange-950/60 dark:text-orange-400 font-semibold">📌 Pinned</span>
+                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-orange-100 text-accent-foreground dark:bg-orange-950/60 dark:text-orange-400 font-semibold">📌 Pinned</span>
                           )}
                           {entry.likedByAdmin && (
                             <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400 font-semibold">❤️ Liked</span>
                           )}
                         </div>
-                        <p className="text-[11px] font-mono text-neutral-400 mt-0.5">UID: {entry.uid || entry.id}</p>
+                        <p className="text-[11px] font-mono text-muted mt-0.5">UID: {entry.uid || entry.id}</p>
                       </div>
                     </div>
 
@@ -440,8 +440,8 @@ function AdminPanel({ user }: { user: User }) {
                         onClick={() => toggleGuestbookApproval(entry.id, entry.approved)}
                         className={`text-xs px-3 py-1.5 rounded-lg font-semibold transition-colors ${
                           entry.approved
-                            ? 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300'
-                            : 'bg-emerald-600 text-white hover:bg-emerald-700'
+                            ? 'bg-neutral-100 text-muted hover:bg-neutral-200 dark:bg-neutral-800 dark:text-muted'
+                            : 'bg-emerald-600 text-foreground hover:bg-emerald-700'
                         }`}
                       >
                         {entry.approved ? 'Hide' : 'Show'}
@@ -452,8 +452,8 @@ function AdminPanel({ user }: { user: User }) {
                         onClick={() => toggleGuestbookPinned(entry.id, entry.pinned)}
                         className={`text-xs px-3 py-1.5 rounded-lg font-semibold transition-colors ${
                           entry.pinned
-                            ? 'bg-orange-600 text-white hover:bg-orange-700'
-                            : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300'
+                            ? 'bg-orange-600 text-foreground hover:bg-orange-700'
+                            : 'bg-neutral-100 text-muted hover:bg-neutral-200 dark:bg-neutral-800 dark:text-muted'
                         }`}
                       >
                         {entry.pinned ? 'Unpin' : '📌 Pin'}
@@ -464,8 +464,8 @@ function AdminPanel({ user }: { user: User }) {
                         onClick={() => toggleGuestbookHeart(entry.id, entry.likedByAdmin)}
                         className={`text-xs px-3 py-1.5 rounded-lg font-semibold transition-colors ${
                           entry.likedByAdmin
-                            ? 'bg-rose-600 text-white hover:bg-rose-700'
-                            : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300'
+                            ? 'bg-rose-600 text-foreground hover:bg-rose-700'
+                            : 'bg-neutral-100 text-muted hover:bg-neutral-200 dark:bg-neutral-800 dark:text-muted'
                         }`}
                       >
                         {entry.likedByAdmin ? '💔 Unheart' : '❤️ Heart'}
@@ -481,7 +481,7 @@ function AdminPanel({ user }: { user: User }) {
                     </div>
                   </div>
 
-                  <p className="text-sm leading-relaxed text-neutral-700 dark:text-neutral-300 bg-neutral-50 dark:bg-neutral-800/40 p-3.5 rounded-xl break-words whitespace-pre-wrap">
+                  <p className="text-sm leading-relaxed text-muted dark:text-muted bg-neutral-50 dark:bg-neutral-800/40 p-3.5 rounded-xl break-words whitespace-pre-wrap">
                     {entry.message}
                   </p>
                 </div>
@@ -499,9 +499,9 @@ function AdminPanel({ user }: { user: User }) {
           emptyText="No bookings yet."
           renderItem={(b) => (
             <div>
-              <p className="font-semibold text-neutral-900 dark:text-white">{b.name} — {b.date} @ {b.time}</p>
-              <p className="text-xs text-neutral-500">{b.email}</p>
-              {b.message && <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">{b.message}</p>}
+              <p className="font-semibold text-foreground dark:text-foreground">{b.name} — {b.date} @ {b.time}</p>
+              <p className="text-xs text-muted">{b.email}</p>
+              {b.message && <p className="text-sm text-muted dark:text-muted mt-1">{b.message}</p>}
             </div>
           )}
           onDelete={(id) => deleteItem('bookings', id, setBookings, bookings)}
@@ -511,13 +511,13 @@ function AdminPanel({ user }: { user: User }) {
       {tab === 'posts' && (
         <div>
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-            <h2 className="text-lg font-bold text-neutral-900 dark:text-white">Blog Posts</h2>
+            <h2 className="text-lg font-bold text-foreground dark:text-foreground">Blog Posts</h2>
             <div className="flex flex-wrap items-center gap-2">
               <button
                 type="button"
                 onClick={() => void importStarterPosts()}
                 disabled={importingStarterPosts}
-                className="min-h-10 rounded-xl border border-brand/40 px-4 py-2 text-sm font-semibold text-brand transition-colors hover:bg-brand/10 disabled:cursor-wait disabled:opacity-60"
+                className="min-h-10 rounded-xl border border-brand/40 px-4 py-2 text-sm font-semibold text-accent-foreground transition-colors hover:bg-brand/10 disabled:cursor-wait disabled:opacity-60"
               >
                 {importingStarterPosts ? 'Importing...' : 'Import starter posts'}
               </button>
@@ -534,41 +534,41 @@ function AdminPanel({ user }: { user: User }) {
                 setPostToast('')
                 loadData('posts')
               }}
-                className="px-4 py-2 rounded-xl bg-brand text-white text-sm font-semibold hover:bg-brand-dark transition-colors"
+                className="px-4 py-2 rounded-xl bg-brand text-on-accent text-sm font-semibold hover:bg-brand-dark transition-colors"
               >
                 + New Post
               </button>
             </div>
           </div>
           {editingPost && (
-            <form onSubmit={savePost} className="mb-6 space-y-5 rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900 sm:p-6">
+            <form onSubmit={savePost} className="mb-6 space-y-5 rounded-2xl border border-neutral-200 bg-surface p-5 dark:border-neutral-800 dark:bg-surface sm:p-6">
               <div className="grid gap-4 sm:grid-cols-2">
-                <label className="space-y-1 text-xs font-medium text-neutral-500">Title
-                  <input required value={editingPost.title ?? ''} onChange={event => setEditingPost((post: any) => ({ ...post, title: event.target.value }))} className="w-full rounded-lg border border-neutral-300 bg-transparent px-3 py-2.5 text-sm text-neutral-900 dark:border-neutral-700 dark:text-white" />
+                <label className="space-y-1 text-xs font-medium text-muted">Title
+                  <input required value={editingPost.title ?? ''} onChange={event => setEditingPost((post: any) => ({ ...post, title: event.target.value }))} className="w-full rounded-lg border border-neutral-300 bg-transparent px-3 py-2.5 text-sm text-foreground dark:border-neutral-700 dark:text-foreground" />
                 </label>
-                <label className="space-y-1 text-xs font-medium text-neutral-500">Slug
-                  <input required value={editingPost.slug ?? ''} onChange={event => setEditingPost((post: any) => ({ ...post, slug: event.target.value }))} className="w-full rounded-lg border border-neutral-300 bg-transparent px-3 py-2.5 text-sm text-neutral-900 dark:border-neutral-700 dark:text-white" />
+                <label className="space-y-1 text-xs font-medium text-muted">Slug
+                  <input required value={editingPost.slug ?? ''} onChange={event => setEditingPost((post: any) => ({ ...post, slug: event.target.value }))} className="w-full rounded-lg border border-neutral-300 bg-transparent px-3 py-2.5 text-sm text-foreground dark:border-neutral-700 dark:text-foreground" />
                 </label>
-                <label className="space-y-1 text-xs font-medium text-neutral-500">Category
-                  <input value={editingPost.category ?? ''} onChange={event => setEditingPost((post: any) => ({ ...post, category: event.target.value }))} className="w-full rounded-lg border border-neutral-300 bg-transparent px-3 py-2.5 text-sm text-neutral-900 dark:border-neutral-700 dark:text-white" />
+                <label className="space-y-1 text-xs font-medium text-muted">Category
+                  <input value={editingPost.category ?? ''} onChange={event => setEditingPost((post: any) => ({ ...post, category: event.target.value }))} className="w-full rounded-lg border border-neutral-300 bg-transparent px-3 py-2.5 text-sm text-foreground dark:border-neutral-700 dark:text-foreground" />
                 </label>
-                <label className="space-y-1 text-xs font-medium text-neutral-500">Date
-                  <input type="date" value={editingPost.date ?? ''} onChange={event => setEditingPost((post: any) => ({ ...post, date: event.target.value }))} className="w-full rounded-lg border border-neutral-300 bg-transparent px-3 py-2.5 text-sm text-neutral-900 dark:border-neutral-700 dark:text-white" />
+                <label className="space-y-1 text-xs font-medium text-muted">Date
+                  <input type="date" value={editingPost.date ?? ''} onChange={event => setEditingPost((post: any) => ({ ...post, date: event.target.value }))} className="w-full rounded-lg border border-neutral-300 bg-transparent px-3 py-2.5 text-sm text-foreground dark:border-neutral-700 dark:text-foreground" />
                 </label>
-                <label className="space-y-1 text-xs font-medium text-neutral-500 sm:col-span-2">Excerpt
-                  <textarea value={editingPost.excerpt ?? ''} onChange={event => setEditingPost((post: any) => ({ ...post, excerpt: event.target.value }))} rows={2} className="w-full rounded-lg border border-neutral-300 bg-transparent px-3 py-2.5 text-sm text-neutral-900 dark:border-neutral-700 dark:text-white" />
+                <label className="space-y-1 text-xs font-medium text-muted sm:col-span-2">Excerpt
+                  <textarea value={editingPost.excerpt ?? ''} onChange={event => setEditingPost((post: any) => ({ ...post, excerpt: event.target.value }))} rows={2} className="w-full rounded-lg border border-neutral-300 bg-transparent px-3 py-2.5 text-sm text-foreground dark:border-neutral-700 dark:text-foreground" />
                 </label>
-                <label className="space-y-1 text-xs font-medium text-neutral-500 sm:col-span-2">Tags (comma separated)
-                  <input value={editingPost.tagsText ?? (Array.isArray(editingPost.tags) ? editingPost.tags.join(', ') : '')} onChange={event => setEditingPost((post: any) => ({ ...post, tagsText: event.target.value }))} placeholder="AI, React, Tutorials" className="w-full rounded-lg border border-neutral-300 bg-transparent px-3 py-2.5 text-sm text-neutral-900 dark:border-neutral-700 dark:text-white" />
+                <label className="space-y-1 text-xs font-medium text-muted sm:col-span-2">Tags (comma separated)
+                  <input value={editingPost.tagsText ?? (Array.isArray(editingPost.tags) ? editingPost.tags.join(', ') : '')} onChange={event => setEditingPost((post: any) => ({ ...post, tagsText: event.target.value }))} placeholder="AI, React, Tutorials" className="w-full rounded-lg border border-neutral-300 bg-transparent px-3 py-2.5 text-sm text-foreground dark:border-neutral-700 dark:text-foreground" />
                 </label>
               </div>
 
               <div className="rounded-xl border border-neutral-200 p-4 dark:border-neutral-800">
-                <label className="block space-y-1 text-xs font-medium text-neutral-500">Cover image path or URL
-                  <input value={editingPost.cover ?? ''} onChange={event => setEditingPost((post: any) => ({ ...post, cover: event.target.value }))} placeholder="/images/blog-cover.webp" className="w-full rounded-lg border border-neutral-300 bg-transparent px-3 py-2.5 text-sm text-neutral-900 dark:border-neutral-700 dark:text-white" />
+                <label className="block space-y-1 text-xs font-medium text-muted">Cover image path or URL
+                  <input value={editingPost.cover ?? ''} onChange={event => setEditingPost((post: any) => ({ ...post, cover: event.target.value }))} placeholder="/images/blog-cover.webp" className="w-full rounded-lg border border-neutral-300 bg-transparent px-3 py-2.5 text-sm text-foreground dark:border-neutral-700 dark:text-foreground" />
                 </label>
                 <div className="mt-3 flex flex-wrap items-center gap-3">
-                  <label className="inline-flex min-h-10 cursor-pointer items-center rounded-full border border-neutral-300 px-4 text-xs font-semibold text-neutral-700 hover:border-brand dark:border-neutral-700 dark:text-neutral-200">
+                  <label className="inline-flex min-h-10 cursor-pointer items-center rounded-full border border-neutral-300 px-4 text-xs font-semibold text-muted hover:border-brand dark:border-neutral-700 dark:text-foreground">
                     Upload cover
                     <input type="file" accept="image/*" className="sr-only" onChange={event => {
                       const file = event.currentTarget.files?.[0]
@@ -580,23 +580,23 @@ function AdminPanel({ user }: { user: User }) {
                       }).catch(error => setPostToast(error instanceof Error ? error.message : 'Image upload failed.'))
                     }} />
                   </label>
-                  <p className="text-xs text-neutral-500">Compressed and saved in Firestore media; no Storage bucket is used.</p>
+                  <p className="text-xs text-muted">Compressed and saved in Firestore media; no Storage bucket is used.</p>
                 </div>
                 {editingPost.cover && <BlogCoverPreview reference={editingPost.cover} />}
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2">
-                <label className="inline-flex min-h-10 items-center gap-2 text-sm text-neutral-700 dark:text-neutral-300">
+                <label className="inline-flex min-h-10 items-center gap-2 text-sm text-muted dark:text-muted">
                   <input type="checkbox" checked={Boolean(editingPost.published)} onChange={event => setEditingPost((post: any) => ({ ...post, published: event.target.checked }))} className="h-4 w-4 accent-orange-500" />
                   Published
                 </label>
-                <label className="inline-flex min-h-10 items-center gap-2 text-sm text-neutral-700 dark:text-neutral-300">
+                <label className="inline-flex min-h-10 items-center gap-2 text-sm text-muted dark:text-muted">
                   <input type="checkbox" checked={Boolean(editingPost.featured)} onChange={event => setEditingPost((post: any) => ({ ...post, featured: event.target.checked }))} className="h-4 w-4 accent-orange-500" />
                   Featured
                 </label>
               </div>
 
-              <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-neutral-100 px-4 py-3 text-xs text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-neutral-100 px-4 py-3 text-xs text-muted dark:bg-neutral-800 dark:text-muted">
                 <span>Estimated reading time: <strong>{estimateReadTime(editingPost.content ?? '')} min</strong> (computed from the Markdown content)</span>
                 <span>HTML is displayed as text, not executed.</span>
               </div>
@@ -604,8 +604,8 @@ function AdminPanel({ user }: { user: User }) {
               <div className="grid gap-5 lg:grid-cols-2">
                 <div>
                   <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
-                    <label htmlFor="blog-markdown-content" className="text-xs font-semibold text-neutral-600 dark:text-neutral-300">Post content (Markdown)</label>
-                    <label className="inline-flex min-h-10 cursor-pointer items-center rounded-full border border-neutral-300 px-4 text-xs font-semibold text-neutral-700 hover:border-brand dark:border-neutral-700 dark:text-neutral-200">
+                    <label htmlFor="blog-markdown-content" className="text-xs font-semibold text-muted dark:text-muted">Post content (Markdown)</label>
+                    <label className="inline-flex min-h-10 cursor-pointer items-center rounded-full border border-neutral-300 px-4 text-xs font-semibold text-muted hover:border-brand dark:border-neutral-700 dark:text-foreground">
                       Insert image
                       <input type="file" accept="image/*" className="sr-only" onChange={event => {
                         const file = event.currentTarget.files?.[0]
@@ -621,21 +621,21 @@ function AdminPanel({ user }: { user: User }) {
                     value={editingPost.content ?? ''}
                     onChange={event => setEditingPost((post: any) => ({ ...post, content: event.target.value }))}
                     rows={24}
-                    className="min-h-[460px] w-full resize-y rounded-xl border border-neutral-300 bg-neutral-50 px-4 py-3 font-mono text-sm leading-6 text-neutral-900 dark:border-neutral-700 dark:bg-neutral-950 dark:text-white"
+                    className="min-h-[460px] w-full resize-y rounded-xl border border-neutral-300 bg-neutral-50 px-4 py-3 font-mono text-sm leading-6 text-foreground dark:border-neutral-700 dark:bg-surface dark:text-foreground"
                   />
-                  <p className="mt-2 text-xs text-neutral-500">Supports headings, numbered and bulleted lists, quotes, fenced code, links, and images. Image syntax supports a caption: ![Alt](media:id "Caption").</p>
+                  <p className="mt-2 text-xs text-muted">Supports headings, numbered and bulleted lists, quotes, fenced code, links, and images. Image syntax supports a caption: ![Alt](media:id "Caption").</p>
                 </div>
                 <div>
-                  <p className="mb-2 text-xs font-semibold text-neutral-600 dark:text-neutral-300">Live preview</p>
-                  <div className="max-h-[540px] min-h-[460px] overflow-y-auto rounded-xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-950 sm:p-7">
-                    {editingPost.content ? <BlogMarkdown markdown={editingPost.content} /> : <p className="text-sm text-neutral-500">Markdown preview appears here as you write.</p>}
+                  <p className="mb-2 text-xs font-semibold text-muted dark:text-muted">Live preview</p>
+                  <div className="max-h-[540px] min-h-[460px] overflow-y-auto rounded-xl border border-neutral-200 bg-surface p-5 dark:border-neutral-800 dark:bg-surface sm:p-7">
+                    {editingPost.content ? <BlogMarkdown markdown={editingPost.content} /> : <p className="text-sm text-muted">Markdown preview appears here as you write.</p>}
                   </div>
                 </div>
               </div>
 
               <div className="flex flex-wrap items-center gap-3 border-t border-neutral-200 pt-4 dark:border-neutral-800">
-                <button type="submit" className="min-h-11 rounded-full bg-brand px-5 text-sm font-semibold text-white hover:bg-brand-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2">Save post</button>
-                <button type="button" onClick={() => setEditingPost(null)} className="min-h-11 rounded-full border border-neutral-300 px-5 text-sm font-semibold text-neutral-700 dark:border-neutral-700 dark:text-neutral-300">Cancel</button>
+                <button type="submit" className="min-h-11 rounded-full bg-brand px-5 text-sm font-semibold text-on-accent hover:bg-brand-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2">Save post</button>
+                <button type="button" onClick={() => setEditingPost(null)} className="min-h-11 rounded-full border border-neutral-300 px-5 text-sm font-semibold text-muted dark:border-neutral-700 dark:text-muted">Cancel</button>
               </div>
             </form>
           )}
@@ -645,10 +645,10 @@ function AdminPanel({ user }: { user: User }) {
           ) : (
             <div className="flex flex-col gap-3">
               {posts.map(post => (
-                <div key={post.id} className="p-5 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 flex items-center justify-between gap-3">
+                <div key={post.id} className="p-5 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-surface dark:bg-surface flex items-center justify-between gap-3">
                   <div>
-                    <p className="font-semibold text-neutral-900 dark:text-white">{post.title}</p>
-                    <p className="text-xs text-neutral-500">/blogs/{post.slug} · {post.published ? '✅ Published' : '📝 Draft'}</p>
+                    <p className="font-semibold text-foreground dark:text-foreground">{post.title}</p>
+                    <p className="text-xs text-muted">/blogs/{post.slug} · {post.published ? '✅ Published' : '📝 Draft'}</p>
                   </div>
                   <div className="flex gap-2">
                     <button onClick={() => {
@@ -659,14 +659,14 @@ function AdminPanel({ user }: { user: User }) {
                         featured: Boolean(post.featured),
                       })
                       setPostToast('')
-                    }} className="text-xs px-3 py-1 rounded-lg bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 font-semibold hover:bg-neutral-200 transition-colors">Edit</button>
+                    }} className="text-xs px-3 py-1 rounded-lg bg-neutral-100 dark:bg-neutral-700 text-muted dark:text-muted font-semibold hover:bg-neutral-200 transition-colors">Edit</button>
                     <button
                       onClick={async () => {
                         if (!db) return
                         await updateDoc(doc(db, 'posts', post.id), { published: !post.published })
                         setPosts(prev => prev.map(p => p.id === post.id ? { ...p, published: !p.published } : p))
                       }}
-                      className="text-xs px-3 py-1 rounded-lg bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 font-semibold hover:bg-neutral-200 transition-colors"
+                      className="text-xs px-3 py-1 rounded-lg bg-neutral-100 dark:bg-neutral-700 text-muted dark:text-muted font-semibold hover:bg-neutral-200 transition-colors"
                     >
                       {post.published ? 'Unpublish' : 'Publish'}
                     </button>
@@ -680,11 +680,11 @@ function AdminPanel({ user }: { user: User }) {
       )}
 
       {tab === 'export' && (
-        <div className="p-8 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-center">
+        <div className="p-8 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-surface dark:bg-surface text-center">
           <span className="text-5xl mb-4 block">💾</span>
-          <h2 className="text-xl font-bold text-neutral-900 dark:text-white mb-2">JSON Export</h2>
-          <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-6">Download all site content as a JSON backup.</p>
-          <button onClick={exportJson} className="px-6 py-3 rounded-xl bg-brand text-white font-semibold text-sm hover:bg-brand-dark transition-colors">
+          <h2 className="text-xl font-bold text-foreground dark:text-foreground mb-2">JSON Export</h2>
+          <p className="text-sm text-muted dark:text-muted mb-6">Download all site content as a JSON backup.</p>
+          <button onClick={exportJson} className="px-6 py-3 rounded-xl bg-brand text-on-accent font-semibold text-sm hover:bg-brand-dark transition-colors">
             Download content.json
           </button>
         </div>
@@ -763,7 +763,7 @@ function EmptyState({ text }: { text: string }) {
   return (
     <div className="flex flex-col items-center justify-center py-20 rounded-2xl border border-dashed border-neutral-300 dark:border-neutral-700">
       <span className="text-4xl mb-3">📭</span>
-      <p className="text-sm text-neutral-500">{text}</p>
+      <p className="text-sm text-muted">{text}</p>
     </div>
   )
 }
@@ -778,13 +778,13 @@ function DataList({ label, items, loading, emptyText, renderItem, onDelete }: {
 }) {
   return (
     <div>
-      <h2 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">{label}</h2>
+      <h2 className="text-lg font-bold text-foreground dark:text-foreground mb-4">{label}</h2>
       {loading ? <Spinner /> : items.length === 0 ? (
         <EmptyState text={emptyText} />
       ) : (
         <div className="flex flex-col gap-3">
           {items.map(item => (
-            <div key={item.id} className="p-5 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 flex items-start justify-between gap-3">
+            <div key={item.id} className="p-5 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-surface dark:bg-surface flex items-start justify-between gap-3">
               <div className="flex-1">{renderItem(item)}</div>
               <button onClick={() => onDelete(item.id)} className="text-xs px-3 py-1 rounded-lg bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 font-semibold hover:bg-red-200 transition-colors shrink-0">Delete</button>
             </div>

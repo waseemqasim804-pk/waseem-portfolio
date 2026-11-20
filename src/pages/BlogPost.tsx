@@ -176,27 +176,27 @@ export default function BlogPost() {
         {publishedIso && <meta property="article:published_time" content={publishedIso} />}
         <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       </Helmet>
-      <div aria-hidden="true" className="pointer-events-none fixed inset-x-0 top-0 z-[60] h-[3px] bg-neutral-200/70 dark:bg-white/10">
+      <div aria-hidden="true" className="pointer-events-none fixed inset-x-0 top-0 z-[60] h-[3px] bg-neutral-200/70 dark:bg-surface-inverse/10">
         <div className="h-full origin-left bg-gradient-to-r from-blue-500 via-orange-400 to-orange-200" style={{ transform: `scaleX(${progress})` }} />
       </div>
 
       <div className="mx-auto max-w-[1440px]">
-        <Link to="/blogs" className="group mb-6 inline-flex min-h-11 items-center gap-2 rounded-full border border-neutral-300/70 bg-white/50 px-4 text-sm font-medium text-neutral-600 transition-colors hover:border-orange-400/50 hover:text-orange-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 dark:border-white/10 dark:bg-white/[0.03] dark:text-neutral-300 dark:hover:text-orange-200">
+        <Link to="/blogs" className="group mb-6 inline-flex min-h-11 items-center gap-2 rounded-full border border-neutral-300/70 bg-surface/50 px-4 text-sm font-medium text-muted transition-colors hover:border-orange-400/50 hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 dark:border-border/10 dark:bg-surface-inverse/[0.03] dark:text-muted dark:hover:text-orange-200">
           <ArrowLeftIcon />{blog.backToBlogs}
         </Link>
 
-        <header className="relative isolate flex min-h-[420px] items-end overflow-hidden rounded-[30px] border border-neutral-300/60 bg-neutral-200 shadow-[0_30px_100px_-55px_rgba(0,0,0,.65)] dark:border-white/10 dark:bg-[#121416] sm:min-h-[500px] sm:rounded-[38px]">
-          {cover ? <img src={cover} alt={`${post.title} cover`} fetchPriority="high" className="absolute inset-0 h-full w-full object-cover" /> : <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_10%,rgba(37,99,235,.38),transparent_40%),radial-gradient(ellipse_at_80%_80%,rgba(249,115,22,.32),transparent_38%),linear-gradient(135deg,#111827,#111315_58%,#24150e)]" />}
+        <header className="relative isolate flex min-h-[420px] items-end overflow-hidden rounded-[30px] border border-neutral-300/60 bg-neutral-200 shadow-[0_30px_100px_-55px_rgba(0,0,0,.65)] dark:border-border/10 dark:bg-surface sm:min-h-[500px] sm:rounded-[38px]">
+          {cover ? <img src={cover} alt={`${post.title} cover`} fetchPriority="high" className="absolute inset-0 h-full w-full object-cover" /> : <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_10%,rgba(37,99,235,.38),transparent_40%),radial-gradient(ellipse_at_80%_80%,rgba(249,115,22,.32),transparent_38%),linear-gradient(135deg,rgb(17 24 39),rgb(17 19 21)_58%,rgb(36 21 14))]" />}
           <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/70 to-neutral-950/5" />
           <div className="relative z-10 max-w-5xl px-6 pb-8 pt-24 sm:px-10 sm:pb-12 lg:px-14 lg:pb-14">
             <div className="mb-5 flex flex-wrap items-center gap-2">
-              {(post.category || tags[0]) && <span className="rounded-full border border-white/20 bg-black/20 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-orange-100 backdrop-blur-md">{post.category || tags[0]}</span>}
-              {tags.filter(tag => tag !== post.category).slice(0, 2).map(tag => <span key={tag} className="rounded-full border border-white/20 bg-black/20 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-orange-100 backdrop-blur-md">{tag}</span>)}
-              <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/80 backdrop-blur-md">{readTime} {blog.readTimeLabel}</span>
+              {(post.category || tags[0]) && <span className="rounded-full border border-border/20 bg-overlay/20 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-orange-100 backdrop-blur-md">{post.category || tags[0]}</span>}
+              {tags.filter(tag => tag !== post.category).slice(0, 2).map(tag => <span key={tag} className="rounded-full border border-border/20 bg-overlay/20 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-orange-100 backdrop-blur-md">{tag}</span>)}
+              <span className="rounded-full border border-border/15 bg-surface/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-surface-inverse/80 backdrop-blur-md">{readTime} {blog.readTimeLabel}</span>
             </div>
-            <h1 className="max-w-5xl text-[clamp(2.6rem,7vw,6.5rem)] font-bold leading-[0.98] tracking-[-0.055em] text-white">{post.title}</h1>
-            {post.excerpt && <p className="mt-5 max-w-3xl text-base leading-7 text-neutral-200 sm:text-lg">{post.excerpt}</p>}
-            <div className="mt-7 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-medium text-neutral-300">
+            <h1 data-blog-heading className="max-w-5xl text-[clamp(2.6rem,7vw,6.5rem)] font-bold leading-[0.98] tracking-[-0.055em] text-surface-inverse">{post.title}</h1>
+            {post.excerpt && <p className="mt-5 max-w-3xl text-base leading-7 text-surface-inverse sm:text-lg">{post.excerpt}</p>}
+            <div className="mt-7 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-medium text-surface-inverse/80">
               {publishedDate && <time dateTime={publishedIso}>{publishedDate}</time>}
               <span aria-hidden="true" className="h-1 w-1 rounded-full bg-orange-400" />
               <span className="inline-flex items-center gap-2"><EyeIcon />{postViews.toLocaleString()} {blog.viewLabel}</span>
@@ -205,7 +205,7 @@ export default function BlogPost() {
         </header>
 
         <div className="mx-auto mt-10 grid max-w-[1320px] gap-10 lg:grid-cols-[minmax(0,1fr)_250px] lg:gap-14">
-          <article ref={articleRef} className="min-w-0">
+          <article data-blog-article ref={articleRef} className="min-w-0">
             <AuthorRow blog={blog} avatar={avatar} views={postViews} onShare={() => void sharePost()} />
             {headings.length > 0 && <MobileContents headings={headings} active={activeHeading} label={blog.onThisPage} onSelect={scrollToHeading} />}
             <div id="post-reading-content" className="pt-8">
@@ -218,37 +218,37 @@ export default function BlogPost() {
           </article>
 
           <aside className="hidden lg:block">
-            <div className="sticky top-28 rounded-2xl border border-neutral-200/70 bg-white/50 p-5 backdrop-blur-xl dark:border-white/10 dark:bg-white/[0.025]">
-              <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500">{blog.onThisPage}</p>
+            <div className="sticky top-28 rounded-2xl border border-neutral-200/70 bg-surface/50 p-5 backdrop-blur-xl dark:border-border/10 dark:bg-surface-inverse/[0.025]">
+              <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted">{blog.onThisPage}</p>
               {headings.length ? <nav aria-label={blog.onThisPage} className="flex flex-col gap-1.5">
-                {headings.map(heading => <button key={heading.id} type="button" onClick={() => scrollToHeading(heading)} className={`min-h-10 rounded-lg px-3 py-2 text-left text-xs leading-5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 ${activeHeading === heading.id ? 'bg-orange-400/10 font-semibold text-orange-700 dark:text-orange-200' : 'text-neutral-500 hover:bg-neutral-200/60 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-white/5 dark:hover:text-white'}`}>{heading.text}</button>)}
-              </nav> : <p className="text-xs leading-5 text-neutral-500">{blog.emptyTableOfContents}</p>}
-              <div className="mt-6 border-t border-neutral-200 pt-4 text-xs text-neutral-500 dark:border-white/10 dark:text-neutral-400">{readTime} {blog.readTimeLabel}</div>
+                {headings.map(heading => <button key={heading.id} type="button" onClick={() => scrollToHeading(heading)} className={`min-h-10 rounded-lg px-3 py-2 text-left text-xs leading-5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 ${activeHeading === heading.id ? 'bg-orange-400/10 font-semibold text-accent-foreground dark:text-orange-200' : 'text-muted hover:bg-neutral-200/60 hover:text-foreground dark:text-muted dark:hover:bg-surface/5 dark:hover:text-foreground'}`}>{heading.text}</button>)}
+              </nav> : <p className="text-xs leading-5 text-muted">{blog.emptyTableOfContents}</p>}
+              <div className="mt-6 border-t border-neutral-200 pt-4 text-xs text-muted dark:border-border/10 dark:text-muted">{readTime} {blog.readTimeLabel}</div>
             </div>
           </aside>
         </div>
       </div>
-      {toast && <div role="status" className="fixed bottom-5 left-1/2 z-[70] -translate-x-1/2 rounded-full border border-white/10 bg-neutral-900 px-5 py-3 text-sm font-medium text-white shadow-xl">{toast}</div>}
+      {toast && <div role="status" className="fixed bottom-5 left-1/2 z-[70] -translate-x-1/2 rounded-full border border-border/10 bg-neutral-900 px-5 py-3 text-sm font-medium text-surface-inverse shadow-xl">{toast}</div>}
     </main>
   )
 }
 
 function ReadingAuthor({ blog, avatar }: { blog: ReturnType<typeof useSiteContent>['blog']; avatar: string }) {
   return <div className="flex min-w-0 items-center gap-3">
-    {avatar ? <img src={avatar} alt="" className="h-11 w-11 rounded-full border border-neutral-200 object-cover dark:border-white/15" /> : <span aria-hidden="true" className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-orange-400/30 bg-orange-400/10 font-serif text-sm font-bold text-orange-700 dark:text-orange-200">WQ</span>}
+    {avatar ? <img src={avatar} alt="" className="h-11 w-11 rounded-full border border-neutral-200 object-cover dark:border-border/15" /> : <span aria-hidden="true" className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-orange-400/30 bg-orange-400/10 font-serif text-sm font-bold text-accent-foreground dark:text-orange-200">WQ</span>}
     <div className="min-w-0">
-      <p className="truncate text-sm font-semibold text-neutral-900 dark:text-white">{blog.authorName}</p>
-      <p className="mt-0.5 truncate text-xs text-neutral-500 dark:text-neutral-400">{blog.authorRole}</p>
+      <p className="truncate text-sm font-semibold text-foreground dark:text-foreground">{blog.authorName}</p>
+      <p className="mt-0.5 truncate text-xs text-muted dark:text-muted">{blog.authorRole}</p>
     </div>
   </div>
 }
 
 function AuthorRow({ blog, avatar, views, onShare }: { blog: ReturnType<typeof useSiteContent>['blog']; avatar: string; views: number; onShare: () => void }) {
-  return <div className="flex flex-wrap items-center justify-between gap-4 border-b border-neutral-200/70 pb-6 dark:border-white/10">
+  return <div className="flex flex-wrap items-center justify-between gap-4 border-b border-neutral-200/70 pb-6 dark:border-border/10">
     <ReadingAuthor blog={blog} avatar={avatar} />
     <div className="flex items-center gap-4">
-      <span className="inline-flex items-center gap-1.5 text-xs text-neutral-500"><EyeIcon />{views.toLocaleString()} {blog.viewLabel}</span>
-      <button type="button" aria-label={blog.shareTitle} onClick={onShare} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-neutral-300 px-4 text-sm font-semibold text-neutral-700 transition-colors hover:border-orange-400 hover:text-orange-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 dark:border-white/15 dark:text-neutral-200 dark:hover:text-orange-200">
+      <span className="inline-flex items-center gap-1.5 text-xs text-muted"><EyeIcon />{views.toLocaleString()} {blog.viewLabel}</span>
+      <button type="button" aria-label={blog.shareTitle} onClick={onShare} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-neutral-300 px-4 text-sm font-semibold text-muted transition-colors hover:border-orange-400 hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 dark:border-border/15 dark:text-foreground dark:hover:text-orange-200">
         <ShareIcon />{blog.shareLabel}
       </button>
     </div>
@@ -256,59 +256,59 @@ function AuthorRow({ blog, avatar, views, onShare }: { blog: ReturnType<typeof u
 }
 
 function AuthorCard({ blog, avatar }: { blog: ReturnType<typeof useSiteContent>['blog']; avatar: string }) {
-  return <section className="mt-16 flex flex-col gap-5 rounded-[26px] border border-neutral-200/70 bg-neutral-100/70 p-6 dark:border-white/10 dark:bg-white/[0.035] sm:flex-row sm:items-center sm:p-8">
-    {avatar ? <img src={avatar} alt="" loading="lazy" className="h-16 w-16 shrink-0 rounded-full border border-neutral-200 object-cover dark:border-white/15" /> : <span aria-hidden="true" className="grid h-16 w-16 shrink-0 place-items-center rounded-full border border-orange-400/30 bg-orange-400/10 font-serif text-xl font-bold text-orange-700 dark:text-orange-200">WQ</span>}
+  return <section className="mt-16 flex flex-col gap-5 rounded-[26px] border border-neutral-200/70 bg-neutral-100/70 p-6 dark:border-border/10 dark:bg-surface-inverse/[0.035] sm:flex-row sm:items-center sm:p-8">
+    {avatar ? <img src={avatar} alt="" loading="lazy" className="h-16 w-16 shrink-0 rounded-full border border-neutral-200 object-cover dark:border-border/15" /> : <span aria-hidden="true" className="grid h-16 w-16 shrink-0 place-items-center rounded-full border border-orange-400/30 bg-orange-400/10 font-serif text-xl font-bold text-accent-foreground dark:text-orange-200">WQ</span>}
     <div className="min-w-0 flex-1">
-      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-orange-700 dark:text-orange-300">{blog.authorCardTitle}</p>
-      <h2 className="mt-2 text-lg font-semibold text-neutral-900 dark:text-white">{blog.authorName}</h2>
-      <p className="mt-1 max-w-2xl text-sm leading-6 text-neutral-600 dark:text-neutral-400">{blog.authorBio}</p>
+      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-accent-foreground dark:text-orange-300">{blog.authorCardTitle}</p>
+      <h2 className="mt-2 text-lg font-semibold text-foreground dark:text-foreground">{blog.authorName}</h2>
+      <p className="mt-1 max-w-2xl text-sm leading-6 text-muted dark:text-muted">{blog.authorBio}</p>
     </div>
-    <Link to="/about" className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full bg-neutral-900 px-5 text-sm font-semibold text-white transition-colors hover:bg-orange-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2 dark:bg-white dark:text-neutral-950 dark:hover:bg-orange-300">{blog.moreAboutMe}<ArrowRightIcon /></Link>
+    <Link to="/about" className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full bg-neutral-900 px-5 text-sm font-semibold text-surface-inverse transition-colors hover:bg-orange-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2 dark:bg-surface-inverse dark:text-inverse-foreground dark:hover:bg-orange-300">{blog.moreAboutMe}<ArrowRightIcon /></Link>
   </section>
 }
 
 function MobileContents({ headings, active, label, onSelect }: { headings: BlogHeading[]; active: string; label: string; onSelect: (heading: BlogHeading) => void }) {
-  return <details className="mt-6 rounded-2xl border border-neutral-200 bg-white/50 p-4 dark:border-white/10 dark:bg-white/[0.025] lg:hidden">
-    <summary className="cursor-pointer text-xs font-bold uppercase tracking-[0.18em] text-neutral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 dark:text-neutral-300">{label}</summary>
+  return <details className="mt-6 rounded-2xl border border-neutral-200 bg-surface/50 p-4 dark:border-border/10 dark:bg-surface-inverse/[0.025] lg:hidden">
+    <summary className="cursor-pointer text-xs font-bold uppercase tracking-[0.18em] text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 dark:text-muted">{label}</summary>
     <nav aria-label={label} className="mt-3 flex flex-col gap-1">
-      {headings.map(heading => <button key={heading.id} type="button" onClick={() => onSelect(heading)} className={`min-h-10 rounded-lg px-3 py-2 text-left text-sm ${active === heading.id ? 'bg-orange-400/10 text-orange-700 dark:text-orange-200' : 'text-neutral-500 dark:text-neutral-400'}`}>{heading.text}</button>)}
+      {headings.map(heading => <button key={heading.id} type="button" onClick={() => onSelect(heading)} className={`min-h-10 rounded-lg px-3 py-2 text-left text-sm ${active === heading.id ? 'bg-orange-400/10 text-accent-foreground dark:text-orange-200' : 'text-muted dark:text-muted'}`}>{heading.text}</button>)}
     </nav>
   </details>
 }
 
 function RelatedPosts({ posts, title }: { posts: Post[]; title: string }) {
-  return <section className="mt-16 border-t border-neutral-200 pt-10 dark:border-white/10">
-    <h2 className="mb-6 text-xs font-bold uppercase tracking-[0.2em] text-neutral-500">{title}</h2>
-    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-      {posts.map(post => <Link key={post.id} to={`/blogs/${post.slug}`} className="group min-h-32 rounded-2xl border border-neutral-200/70 bg-white/40 p-5 transition-colors hover:border-orange-400/50 hover:bg-orange-400/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 dark:border-white/10 dark:bg-white/[0.025]">
-        <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-orange-700 dark:text-orange-300">{postTags(post).slice(0, 2).join(' · ')}</span>
-        <p className="mt-3 font-serif text-lg leading-snug text-neutral-900 transition-colors group-hover:text-orange-700 dark:text-white dark:group-hover:text-orange-200">{post.title}</p>
+  return <section className="mt-16 border-t border-neutral-200 pt-10 dark:border-border/10">
+    <h2 className="mb-6 text-xs font-bold uppercase tracking-[0.2em] text-muted">{title}</h2>
+    <div data-hover-list="related-blogs" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+      {posts.map(post => <Link key={post.id} to={`/blogs/${post.slug}`} className="hover-card group min-h-32 rounded-2xl border border-neutral-200/70 bg-surface/40 p-5 transition-colors hover:border-orange-400/50 hover:bg-orange-400/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 dark:border-border/10 dark:bg-surface-inverse/[0.025]">
+        <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-accent-foreground dark:text-orange-300">{postTags(post).slice(0, 2).join(' · ')}</span>
+        <p className="mt-3 font-serif text-lg leading-snug text-foreground transition-colors group-hover:text-accent-foreground dark:text-foreground dark:group-hover:text-orange-200">{post.title}</p>
       </Link>)}
     </div>
   </section>
 }
 
 function PostNavigation({ previous, next, blog }: { previous?: Post; next?: Post; blog: ReturnType<typeof useSiteContent>['blog'] }) {
-  return <nav aria-label={blog.postNavigation} className="mt-10 grid gap-3 sm:grid-cols-2">
-    {previous ? <Link to={`/blogs/${previous.slug}`} className="group flex min-h-24 flex-col justify-center rounded-2xl border border-neutral-200/70 p-5 transition-colors hover:border-orange-400/50 dark:border-white/10"><span className="text-[10px] font-bold uppercase tracking-[0.16em] text-neutral-500">← {blog.previousPost}</span><span className="mt-2 line-clamp-1 font-semibold text-neutral-800 group-hover:text-orange-700 dark:text-neutral-200 dark:group-hover:text-orange-200">{previous.title}</span></Link> : <span />}
-    {next && <Link to={`/blogs/${next.slug}`} className="group flex min-h-24 flex-col items-start justify-center rounded-2xl border border-neutral-200/70 p-5 transition-colors hover:border-orange-400/50 sm:items-end sm:text-right dark:border-white/10"><span className="text-[10px] font-bold uppercase tracking-[0.16em] text-neutral-500">{blog.nextPost} →</span><span className="mt-2 line-clamp-1 font-semibold text-neutral-800 group-hover:text-orange-700 dark:text-neutral-200 dark:group-hover:text-orange-200">{next.title}</span></Link>}
+  return <nav data-hover-list="post-navigation" aria-label={blog.postNavigation} className="mt-10 grid gap-3 sm:grid-cols-2">
+    {previous ? <Link to={`/blogs/${previous.slug}`} className="hover-card hover-white group flex min-h-24 flex-col justify-center rounded-2xl border border-neutral-200/70 p-5 transition-colors hover:border-orange-400/50 dark:border-border/10"><span className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted">← {blog.previousPost}</span><span className="mt-2 line-clamp-1 font-semibold text-muted group-hover:text-accent-foreground dark:text-foreground dark:group-hover:text-orange-200">{previous.title}</span></Link> : <span />}
+    {next && <Link to={`/blogs/${next.slug}`} className="hover-card hover-white group flex min-h-24 flex-col items-start justify-center rounded-2xl border border-neutral-200/70 p-5 transition-colors hover:border-orange-400/50 sm:items-end sm:text-right dark:border-border/10"><span className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted">{blog.nextPost} →</span><span className="mt-2 line-clamp-1 font-semibold text-muted group-hover:text-accent-foreground dark:text-foreground dark:group-hover:text-orange-200">{next.title}</span></Link>}
   </nav>
 }
 
 function MessageState({ title, message, backLabel }: { title: string; message: string; backLabel: string }) {
   return <main className="mx-auto flex min-h-[70vh] max-w-3xl flex-col items-center justify-center px-5 py-24 text-center">
-    <div aria-hidden="true" className="mb-6 grid h-16 w-16 place-items-center rounded-full border border-orange-400/30 bg-orange-400/10 text-orange-700 dark:text-orange-200"><BookIcon /></div>
-    <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">{title}</h1>
-    <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">{message}</p>
-    <Link to="/blogs" className="mt-7 inline-flex min-h-11 items-center gap-2 rounded-full bg-neutral-900 px-5 text-sm font-semibold text-white dark:bg-white dark:text-neutral-950"><ArrowLeftIcon />{backLabel}</Link>
+    <div aria-hidden="true" className="mb-6 grid h-16 w-16 place-items-center rounded-full border border-orange-400/30 bg-orange-400/10 text-accent-foreground dark:text-orange-200"><BookIcon /></div>
+    <h1 className="text-2xl font-bold text-foreground dark:text-foreground">{title}</h1>
+    <p className="mt-2 text-sm text-muted dark:text-muted">{message}</p>
+    <Link to="/blogs" className="mt-7 inline-flex min-h-11 items-center gap-2 rounded-full bg-neutral-900 px-5 text-sm font-semibold text-surface-inverse dark:bg-surface-inverse dark:text-inverse-foreground"><ArrowLeftIcon />{backLabel}</Link>
   </main>
 }
 
 function LoadingState({ label }: { label: string }) {
   return <main aria-label={label} className="mx-auto min-h-[70vh] max-w-5xl px-5 py-24">
-    <div className="h-10 w-36 animate-pulse rounded bg-neutral-200 motion-reduce:animate-none dark:bg-white/10" />
-    <div className="mt-8 h-96 animate-pulse rounded-[32px] bg-neutral-200 motion-reduce:animate-none dark:bg-white/[0.05]" />
-    <div className="mt-8 h-6 w-2/3 animate-pulse rounded bg-neutral-200 motion-reduce:animate-none dark:bg-white/10" />
+    <div className="h-10 w-36 animate-pulse rounded bg-neutral-200 motion-reduce:animate-none dark:bg-surface-inverse/10" />
+    <div className="mt-8 h-96 animate-pulse rounded-[32px] bg-neutral-200 motion-reduce:animate-none dark:bg-surface-inverse/[0.05]" />
+    <div className="mt-8 h-6 w-2/3 animate-pulse rounded bg-neutral-200 motion-reduce:animate-none dark:bg-surface-inverse/10" />
   </main>
 }
 

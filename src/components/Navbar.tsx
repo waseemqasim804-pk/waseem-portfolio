@@ -1,13 +1,14 @@
 // src/components/Navbar.tsx  — floating glass pill, More dropdown, Book a Call, paper-plane contact
-import { useState, useEffect, useRef, type KeyboardEvent as ReactKeyboardEvent } from 'react'
+import { useState, useEffect, useLayoutEffect, useRef, useCallback, type KeyboardEvent as ReactKeyboardEvent } from 'react'
 import { NavLink, Link, useLocation } from 'react-router-dom'
-import { motion, AnimatePresence, useMotionValue, useReducedMotion, useSpring } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { onAuthStateChanged, signOut, type User } from 'firebase/auth'
 import { auth, isFirebaseConfigured } from '../lib/firebase'
 import { useTheme } from '../context/ThemeContext'
 import { useSiteContent } from '../hooks/useSiteContent'
 import { useResolvedMedia } from '../hooks/useMedia'
 import { useCvAvailable } from '../hooks/useCvAvailable'
+import CvPreview, { DocumentPlaceholder } from './CvPreview'
 
 const PRIMARY_LINKS = [
   { label: 'Home', to: '/' },
@@ -24,21 +25,80 @@ export default function Navbar() {
   const moreContent = content.navbar.more
   const extraItems = moreContent.extraItems.filter(item => (item.to as string) !== '/resume')
   const { theme, toggle } = useTheme()
-  const [scrolled, setScrolled] = useState(false)
+  const [scrolled, setScrolled] = useState(() => typeof window !== 'undefined' && window.scrollY >= 20)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [moreOpen, setMoreOpen] = useState(false)
+  const [isResizing, setIsResizing] = useState(false)
+  const [pillReady, setPillReady] = useState(false)
   const [currentUser, setCurrentUser] = useState<User | null>(null)
   const [userDropdownOpen, setUserDropdownOpen] = useState(false)
   const userDropdownRef = useRef<HTMLDivElement>(null)
   const moreButtonRef = useRef<HTMLButtonElement>(null)
   const moreMenuRef = useRef<HTMLDivElement>(null)
+  const headerInnerRef = useRef<HTMLDivElement>(null)
+  const brandRef = useRef<HTMLAnchorElement>(null)
+  const desktopPillRef = useRef<HTMLDivElement>(null)
+  const rightControlsRef = useRef<HTMLDivElement>(null)
   const prefersReducedMotion = useReducedMotion() ?? false
-  const pointerTargetX = useMotionValue(0)
-  const pointerTargetY = useMotionValue(0)
-  const pointerX = useSpring(pointerTargetX, { stiffness: 120, damping: 24, mass: 0.6 })
-  const pointerY = useSpring(pointerTargetY, { stiffness: 120, damping: 24, mass: 0.6 })
   const moreRef = useRef<HTMLDivElement>(null)
   const location = useLocation()
+  const desktopNavRef = useRef<HTMLElement>(null)
+  const desktopNavItems = useRef(new Map<string, HTMLElement>())
+  const [hoveredNavKey, setHoveredNavKey] = useState<string | null>(null)
+  const [navIndicator, setNavIndicator] = useState({ left: 0, width: 0 })
+  const [pillLeft, setPillLeft] = useState(0)
+  const activeNavKey = PRIMARY_LINKS.find(({ to }) => to === '/'
+    ? location.pathname === '/'
+    : location.pathname === to || location.pathname.startsWith(to + '/'))?.to ?? 'more'
+  const navIndicatorKey = hoveredNavKey ?? activeNavKey
+
+  useLayoutEffect(() => {
+    const nav = desktopNavRef.current
+    const item = navIndicatorKey === 'more'
+      ? moreButtonRef.current
+      : desktopNavItems.current.get(navIndicatorKey)
+    const container = headerInnerRef.current
+    const pill = desktopPillRef.current
+    const brand = brandRef.current
+    const rightControls = rightControlsRef.current
+    if (!nav || !item || !container || !pill || !brand || !rightControls) return
+
+    const measure = () => {
+      if (window.innerWidth < 1024) return
+      const navRect = nav.getBoundingClientRect()
+      const itemRect = item.getBoundingClientRect()
+      const pillRect = pill.getBoundingClientRect()
+      const brandRect = brand.getBoundingClientRect()
+      const controlsRect = rightControls.getBoundingClientRect()
+      setNavIndicator({ left: itemRect.left - navRect.left, width: itemRect.width })
+      const pillWidth = pillRect.width
+      const minLeft = brandRect.right + 16
+      const maxLeft = controlsRect.left - pillWidth - 16
+      const requestedLeft = scrolled ? (window.innerWidth - pillWidth) / 2 : maxLeft
+      const targetLeft = Math.max(minLeft, Math.min(requestedLeft, Math.max(maxLeft, minLeft)))
+      setPillLeft(targetLeft)
+      setPillReady(true)
+    }
+    measure()
+    const observer = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : null
+    ;[container, pill, brand, rightControls, nav, item].forEach(element => observer?.observe(element))
+    let resizeFrame: number | null = null
+    const handleResize = () => {
+      setIsResizing(true)
+      measure()
+      if (resizeFrame !== null) window.cancelAnimationFrame(resizeFrame)
+      resizeFrame = window.requestAnimationFrame(() => {
+        resizeFrame = null
+        setIsResizing(false)
+      })
+    }
+    window.addEventListener('resize', handleResize)
+    return () => {
+      observer?.disconnect()
+      window.removeEventListener('resize', handleResize)
+      if (resizeFrame !== null) window.cancelAnimationFrame(resizeFrame)
+    }
+  }, [navIndicatorKey, location.pathname, scrolled, theme])
 
   useEffect(() => {
     const favicon = document.querySelector<HTMLLinkElement>('link[rel="icon"]')
@@ -74,59 +134,21 @@ export default function Navbar() {
   }, [brandLogoImage])
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20)
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
-  useEffect(() => {
-    if (prefersReducedMotion || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-      pointerTargetX.set(0)
-      pointerTargetY.set(0)
-      return
-    }
-
-    let clientX = window.innerWidth / 2
-    let clientY = window.innerHeight / 2
     let frame: number | null = null
-
-    const applyPointerPosition = () => {
+    const updateScrolled = () => {
       frame = null
-      pointerTargetX.set(((clientX / Math.max(window.innerWidth, 1)) * 2 - 1) * 3.5)
-      pointerTargetY.set(((clientY / Math.max(window.innerHeight, 1)) * 2 - 1) * 2.5)
+      setScrolled(window.scrollY >= 20)
     }
-
-    const handlePointerMove = (event: PointerEvent) => {
-      if (event.pointerType !== 'mouse') return
-      clientX = event.clientX
-      clientY = event.clientY
-      if (frame === null) frame = window.requestAnimationFrame(applyPointerPosition)
+    const handleScroll = () => {
+      if (frame === null) frame = window.requestAnimationFrame(updateScrolled)
     }
-
-    const resetPointerPosition = () => {
-      if (frame !== null) window.cancelAnimationFrame(frame)
-      frame = null
-      pointerTargetX.set(0)
-      pointerTargetY.set(0)
-    }
-
-    const handlePointerOut = (event: PointerEvent) => {
-      if (event.pointerType === 'mouse' && event.relatedTarget === null) resetPointerPosition()
-    }
-
-    window.addEventListener('pointermove', handlePointerMove, { passive: true })
-    window.addEventListener('pointerout', handlePointerOut, { passive: true })
-    window.addEventListener('blur', resetPointerPosition)
+    updateScrolled()
+    window.addEventListener('scroll', handleScroll, { passive: true })
     return () => {
-      window.removeEventListener('pointermove', handlePointerMove)
-      window.removeEventListener('pointerout', handlePointerOut)
-      window.removeEventListener('blur', resetPointerPosition)
       if (frame !== null) window.cancelAnimationFrame(frame)
-      pointerTargetX.set(0)
-      pointerTargetY.set(0)
+      window.removeEventListener('scroll', handleScroll)
     }
-  }, [prefersReducedMotion, pointerTargetX, pointerTargetY])
+  }, [])
 
   // Close more dropdown on outside click
   useEffect(() => {
@@ -219,22 +241,10 @@ export default function Navbar() {
   }, [location.pathname])
 
   return (
-    <motion.div
-      initial={prefersReducedMotion ? false : { y: -80, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: prefersReducedMotion ? 0 : 0.5, ease: 'easeOut' }}
-      className="fixed inset-x-0 top-4 z-50 mx-auto w-[calc(100%-2rem)] max-w-5xl"
-    >
-      <motion.header
-      style={{ x: pointerX, y: pointerY }}
-      className={`relative flex w-full items-center justify-between rounded-full px-4 py-2.5 transition-all duration-300 ${
-        scrolled
-          ? 'bg-white/85 dark:bg-neutral-900/85 backdrop-blur-xl shadow-xl shadow-black/10 border border-neutral-200/70 dark:border-neutral-700/70'
-          : 'bg-transparent shadow-none backdrop-blur-none border border-transparent'
-      }`}
-    >
+    <header data-portfolio-navbar className="pointer-events-none fixed inset-x-0 top-0 z-[1000]">
+      <div ref={headerInnerRef} className="pointer-events-none relative mx-auto flex h-20 w-full max-w-[1840px] items-center justify-between px-5 pt-4 lg:px-8">
       {/* ── Logo mark ── */}
-      <Link to="/" className="group flex flex-shrink-0 items-center gap-3">
+      <Link ref={brandRef} to="/" className="pointer-events-auto group flex flex-shrink-0 items-center gap-3">
         <div className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-neutral-950 text-white dark:bg-white dark:text-neutral-950">
           {brandLogoImage ? (
             <img src={brandLogoImage} alt="Waseem Qasim logo" className="h-full w-full rounded-full object-cover" />
@@ -252,17 +262,33 @@ export default function Navbar() {
       </Link>
 
       {/* ── Desktop nav ── */}
-      <nav className="hidden md:flex items-center gap-0.5">
+      <div
+        ref={desktopPillRef}
+        data-navbar-pill
+        className="pointer-events-auto fixed left-0 top-10 z-10 hidden items-center gap-2 rounded-full border border-border bg-background/90 px-2 py-2 shadow-lg shadow-overlay/10 backdrop-blur-xl dark:border-neutral-700/70 dark:bg-neutral-900/85 dark:shadow-xl dark:shadow-black/10 lg:flex"
+        style={{ transform: `translate(${pillLeft}px, -50%)`, transition: prefersReducedMotion || isResizing || !pillReady ? 'none' : 'transform 450ms ease-in-out' }}
+      >
+      <nav ref={desktopNavRef} onPointerLeave={() => { if (!moreOpen) setHoveredNavKey(null) }} className="relative flex items-center gap-0.5">
+        <span
+          aria-hidden="true"
+          className={`pointer-events-none absolute left-0 top-1/2 z-0 h-8 -translate-y-1/2 rounded-full bg-overlay dark:bg-white ${prefersReducedMotion ? '' : 'transition-[transform,width] duration-300 ease-out'}`}
+          style={{ width: navIndicator.width, transform: `translateX(${navIndicator.left}px)`, opacity: navIndicator.width ? 1 : 0 }}
+        />
         {PRIMARY_LINKS.map(({ label, to }) => (
           <NavLink
             key={to}
             to={to}
             end={to === '/'}
+            ref={element => { if (element) desktopNavItems.current.set(to, element); else desktopNavItems.current.delete(to) }}
+            onPointerEnter={event => { if (event.pointerType === 'mouse') setHoveredNavKey(to) }}
+            onFocus={() => setHoveredNavKey(to)}
+            onBlur={event => { if (!desktopNavRef.current?.contains(event.relatedTarget as Node | null)) setHoveredNavKey(null) }}
+            onClick={() => setHoveredNavKey(to)}
             className={({ isActive }) =>
-              `px-3.5 py-1.5 rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${
-                isActive
-                  ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900'
-                  : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800'
+              `relative z-10 px-3.5 py-1.5 rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${ 
+                (hoveredNavKey ? hoveredNavKey === to : activeNavKey === to) || (isActive && !hoveredNavKey)
+                  ? 'text-white dark:text-neutral-900'
+                  : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white'
               }`
             }
           >
@@ -276,13 +302,16 @@ export default function Navbar() {
             ref={moreButtonRef}
             type="button"
             onClick={() => setMoreOpen(o => !o)}
+            onPointerEnter={event => { if (event.pointerType === 'mouse') setHoveredNavKey('more') }}
+            onFocus={() => setHoveredNavKey('more')}
+            onBlur={event => { if (!desktopNavRef.current?.contains(event.relatedTarget as Node | null)) setHoveredNavKey(null) }}
             onKeyDown={handleMoreKeyDown}
             aria-expanded={moreOpen}
             aria-controls="navbar-more-menu"
-            className={`flex items-center gap-1 px-3.5 py-1.5 rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${
-              moreOpen
-                ? 'bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-white'
-                : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800'
+            className={`relative z-10 flex items-center gap-1 px-3.5 py-1.5 rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${ 
+              (hoveredNavKey ? hoveredNavKey === 'more' : activeNavKey === 'more')
+                ? 'text-white dark:text-neutral-900'
+                : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white'
             }`}
           >
             {moreContent.label}
@@ -301,6 +330,9 @@ export default function Navbar() {
             role="region"
             aria-label={moreContent.label}
             onKeyDown={handleMoreKeyDown}
+            onPointerEnter={() => setHoveredNavKey('more')}
+            onPointerLeave={() => setHoveredNavKey(null)}
+            onFocusCapture={() => setHoveredNavKey('more')}
             initial={prefersReducedMotion ? false : { opacity: 0, y: 8, scale: 0.985 }}
             animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
             exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 8, scale: 0.985 }}
@@ -310,7 +342,7 @@ export default function Navbar() {
             <MoreCvCard title={content.cv.downloadLabel} subtitle={moreContent.cvSubtitle} available={cvAvailable} href={cvUrl} />
             <div className="flex min-w-0 flex-col gap-2">
               {moreContent.featuredItems.map(item => (
-                <NavLink key={item.id} to={item.to} data-more-focusable="true" className={({ isActive }) => `group flex min-h-[66px] items-center gap-3 rounded-2xl px-3 py-2.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${isActive ? 'bg-orange-500/10' : 'hover:bg-neutral-100 dark:hover:bg-white/[0.06]'}`}>
+                <NavLink key={item.id} to={item.to} data-more-focusable="true" className={({ isActive }) => `group flex min-h-[66px] items-center gap-3 rounded-2xl px-3 py-2.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${isActive ? 'bg-orange-500/10' : 'hover:bg-neutral-100 dark:hover:bg-neutral-800'}`}>
                   <MoreItemIcon name={item.icon} />
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-sm font-bold text-neutral-950 dark:text-white">{item.title}</span>
@@ -321,7 +353,7 @@ export default function Navbar() {
               ))}
               <div className="flex flex-wrap gap-1 border-t border-neutral-200 pt-2 dark:border-white/10">
                 {extraItems.map(item => (
-                  <NavLink key={item.id} to={item.to} data-more-focusable="true" className={({ isActive }) => `rounded-full px-3 py-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${isActive ? 'bg-orange-500/10 text-orange-700 dark:text-orange-300' : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-950 dark:text-neutral-300 dark:hover:bg-white/[0.06] dark:hover:text-white'}`}>
+                  <NavLink key={item.id} to={item.to} data-more-focusable="true" className={({ isActive }) => `rounded-full px-3 py-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${isActive ? 'bg-orange-500/10 text-orange-700 dark:text-orange-300' : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-950 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-white'}`}>
                     {item.label}
                   </NavLink>
                 ))}
@@ -332,7 +364,25 @@ export default function Navbar() {
       </AnimatePresence>
 
       {/* ── Right controls ── */}
-      <div className="flex items-center gap-2">
+      <span aria-hidden="true" className="mx-1 hidden h-6 w-px bg-border dark:bg-neutral-700 lg:block" />
+      <button
+        onClick={toggle}
+        aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+        className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 dark:border-transparent dark:text-neutral-400 dark:hover:bg-neutral-800"
+      >
+        {theme === 'dark' ? (
+          <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.166 17.834a.75.75 0 00-1.06 1.06l1.59 1.591a.75.75 0 001.061-1.06l-1.59-1.591zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12z" /></svg>
+        ) : (
+          <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z" clipRule="evenodd" /></svg>
+        )}
+      </button>
+      <Link to="/book" className="hidden items-center gap-1.5 rounded-full border border-transparent bg-overlay px-4 py-2 text-sm font-semibold text-surface-inverse shadow-sm transition-colors hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 dark:border-neutral-600 dark:bg-neutral-900 dark:text-white dark:hover:bg-neutral-800 lg:inline-flex">
+        <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+        Book a Call
+      </Link>
+      </div>
+
+      <div ref={rightControlsRef} data-navbar-controls className="pointer-events-auto flex items-center gap-2">
         {/* User avatar + Sign out dropdown (show only when signed in) */}
         {currentUser && (
           <div ref={userDropdownRef} className="relative flex items-center">
@@ -391,39 +441,22 @@ export default function Navbar() {
           </div>
         )}
 
-        {/* Theme toggle */}
         <button
           onClick={toggle}
           aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-          className="p-2 rounded-full text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 dark:border-transparent dark:text-neutral-400 dark:hover:bg-neutral-800 lg:hidden"
         >
-          {theme === 'dark' ? (
-            <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.166 17.834a.75.75 0 00-1.06 1.06l1.59 1.591a.75.75 0 001.061-1.06l-1.59-1.591zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12z"/>
-            </svg>
-          ) : (
-            <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-              <path fillRule="evenodd" d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z" clipRule="evenodd"/>
-            </svg>
-          )}
+          {theme === 'dark'
+            ? <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.166 17.834a.75.75 0 00-1.06 1.06l1.59 1.591a.75.75 0 001.061-1.06l-1.59-1.591zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12z" /></svg>
+            : <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z" clipRule="evenodd" /></svg>}
         </button>
-
-        {/* Book a Call — white pill */}
-        <Link
-          to="/book"
-          className="hidden md:inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white dark:bg-neutral-900 text-neutral-900 dark:text-white text-sm font-semibold border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
-        >
-          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-          Book a Call
-        </Link>
 
         {/* Paper-plane contact button */}
         <Link
           to="/contact"
           aria-label="Contact"
-          className="hidden md:inline-flex p-2 rounded-full bg-brand text-white hover:bg-brand-dark transition-colors shadow-md shadow-brand/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+          data-navbar-contact
+          className="hidden h-10 w-10 items-center justify-center rounded-full border border-border bg-background text-foreground shadow-sm transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 dark:border-transparent dark:bg-brand dark:text-white dark:shadow-md dark:shadow-brand/30 dark:hover:bg-brand-dark lg:inline-flex"
         >
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
@@ -434,7 +467,7 @@ export default function Navbar() {
         <button
           onClick={() => setMobileOpen(o => !o)}
           aria-label="Toggle menu"
-          className="md:hidden p-2 rounded-full text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+          className="p-2 rounded-full text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 lg:hidden"
         >
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             {mobileOpen
@@ -453,7 +486,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
             transition={{ duration: prefersReducedMotion ? 0 : 0.2 }}
-            className="absolute top-full left-0 right-0 mt-2 max-h-[calc(100dvh-6rem)] overflow-y-auto bg-white/95 dark:bg-neutral-900/95 backdrop-blur-xl rounded-3xl border border-neutral-200 dark:border-neutral-700 p-4 flex flex-col gap-1 md:hidden shadow-2xl"
+            className="pointer-events-auto absolute top-full left-0 right-0 mt-2 max-h-[calc(100dvh-6rem)] overflow-y-auto bg-white/95 dark:bg-neutral-900/95 backdrop-blur-xl rounded-3xl border border-neutral-200 dark:border-neutral-700 p-4 flex flex-col gap-1 lg:hidden shadow-2xl"
           >
             {PRIMARY_LINKS.map(({ label, to }) => (
               <NavLink
@@ -475,7 +508,7 @@ export default function Navbar() {
               <MoreCvCard title={content.cv.downloadLabel} subtitle={moreContent.cvSubtitle} available={cvAvailable} href={cvUrl} compact />
               <div className="mt-3 flex flex-col gap-1">
                 {moreContent.featuredItems.map(item => (
-                  <NavLink key={item.id} to={item.to} className={({ isActive }) => `flex min-h-12 items-center gap-3 rounded-2xl px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${isActive ? 'bg-orange-500/10' : 'hover:bg-neutral-100 dark:hover:bg-white/[0.06]'}`}>
+                  <NavLink key={item.id} to={item.to} className={({ isActive }) => `flex min-h-12 items-center gap-3 rounded-2xl px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${isActive ? 'bg-orange-500/10' : 'hover:bg-neutral-100 dark:hover:bg-neutral-800'}`}>
                     <MoreItemIcon name={item.icon} />
                     <span className="min-w-0 flex-1">
                       <span className="block font-bold text-neutral-950 dark:text-white">{item.title}</span>
@@ -484,7 +517,7 @@ export default function Navbar() {
                   </NavLink>
                 ))}
                 {extraItems.map(item => (
-                  <NavLink key={item.id} to={item.to} className={({ isActive }) => `rounded-xl px-3 py-2 text-sm font-medium transition-colors ${isActive ? 'bg-orange-500/10 text-orange-700 dark:text-orange-300' : 'text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-white/[0.06]'}`}>
+                  <NavLink key={item.id} to={item.to} className={({ isActive }) => `rounded-xl px-3 py-2 text-sm font-medium transition-colors ${isActive ? 'bg-orange-500/10 text-orange-700 dark:text-orange-300' : 'text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800'}`}>
                     {item.label}
                   </NavLink>
                 ))}
@@ -501,29 +534,30 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
-      </motion.header>
-    </motion.div>
+      </div>
+    </header>
   )
 }
 
 function MoreCvCard({ title, subtitle, available, href, compact = false }: { title: string; subtitle: string; available: boolean | null; href: string; compact?: boolean }) {
-  const cardClass = `group relative flex ${compact ? 'min-h-[104px]' : 'min-h-[148px] hover:-translate-y-0.5 hover:shadow-lg'} w-full flex-col justify-end overflow-hidden rounded-2xl bg-white p-5 text-left text-neutral-950 shadow-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500`
+  const [previewStatus, setPreviewStatus] = useState<'loading' | 'ready' | 'failed'>('loading')
+  const updatePreviewStatus = useCallback((status: 'loading' | 'ready' | 'failed') => setPreviewStatus(status), [])
+  const cardClass = `hover-white group relative flex w-full flex-col overflow-hidden rounded-2xl bg-white p-4 text-left text-neutral-950 shadow-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${compact ? 'min-h-[104px]' : 'min-h-[148px] hover:-translate-y-0.5 hover:shadow-lg'}`
   const content = (
     <>
-      <svg aria-hidden="true" className="pointer-events-none absolute -right-2 top-1 h-28 w-28 text-neutral-900/[0.055] transition-transform group-hover:scale-105" viewBox="0 0 100 100" fill="none">
-        <path d="M28 12h29l20 20v55H28z" stroke="currentColor" strokeWidth="5" strokeLinejoin="round" />
-        <path d="M57 12v21h20M39 49h27M39 61h27M39 73h18" stroke="currentColor" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
+      <div className={`mb-3 w-full overflow-hidden rounded-xl ${compact ? 'max-h-36' : 'max-h-48'}`}>
+        {available === true && href ? <CvPreview url={href} onStatus={updatePreviewStatus} /> : <DocumentPlaceholder />}
+      </div>
       <span className="relative z-10 text-lg font-extrabold tracking-tight">{title}</span>
-      <span className="relative z-10 mt-1 text-xs text-neutral-600">{available === false ? 'CV not available yet' : available === null ? 'Checking for the latest CV...' : subtitle}</span>
-      {available === true && <span aria-hidden="true" className="relative z-10 mt-4 inline-flex items-center gap-2 text-xs font-bold">Download PDF <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 17v4h14v-4" strokeLinecap="round" strokeLinejoin="round" /></svg></span>}
+      <span className="relative z-10 mt-1 text-xs text-neutral-600">{subtitle}</span>
+      {available === true && href && <span aria-hidden="true" className="relative z-10 mt-4 inline-flex items-center gap-2 text-xs font-bold">Download PDF <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 17v4h14v-4" strokeLinecap="round" strokeLinejoin="round" /></svg></span>}
     </>
   )
 
-  if (available !== true) {
-    return <div aria-disabled="true" title="CV not available yet" className={`${cardClass} cursor-not-allowed opacity-90`}>{content}</div>
+  if (available !== true || !href) {
+    return <div aria-disabled="true" className={`${cardClass} cursor-default`}>{content}</div>
   }
-  return <a href={href} download="Waseem-CV.pdf" data-more-focusable={compact ? undefined : 'true'} className={cardClass}>{content}</a>
+  return <a href={href} download="Muhammad_Waseem_Qasim_CV.pdf" data-more-focusable={compact ? undefined : 'true'} className={cardClass}>{content}</a>
 }
 
 function MoreItemIcon({ name }: { name: string }) {

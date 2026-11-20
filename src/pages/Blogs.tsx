@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, useMotionValue, useReducedMotion, useSpring } from 'framer-motion'
-import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, type User } from 'firebase/auth'
+import { FacebookAuthProvider, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut, type User } from 'firebase/auth'
 import { collection, getDocs, orderBy, query, where } from 'firebase/firestore'
 import { auth, isFirebaseConfigured, db } from '../lib/firebase'
 import { blogDateIso, formatBlogDate, postReadTime, postTags } from '../lib/blog'
@@ -87,17 +87,27 @@ export default function Blogs() {
     return matchesTag && (!normalizedSearch || haystack.includes(normalizedSearch))
   })
 
-  const handleGoogleSignIn = async () => {
+  const handleSocialSignIn = async (providerName: 'google' | 'facebook') => {
     if (!auth) return
     setAuthBusy(true)
     setAuthStatus('')
     try {
-      await signInWithPopup(auth, new GoogleAuthProvider())
-    } catch {
-      setAuthStatus('Google sign-in was cancelled or could not be completed.')
+      const provider = providerName === 'facebook' ? new FacebookAuthProvider() : new GoogleAuthProvider()
+      if (providerName === 'facebook') provider.addScope('email')
+      await signInWithPopup(auth, provider)
+    } catch (cause: any) {
+      if (cause?.code === 'auth/popup-closed-by-user' || cause?.code === 'auth/cancelled-popup-request') return
+      if (cause?.code === 'auth/operation-not-allowed') setAuthStatus('This sign-in provider is not enabled in Firebase yet.')
+      else if (cause?.code === 'auth/unauthorized-domain') setAuthStatus('This website domain is not authorized for Firebase sign-in.')
+      else setAuthStatus(`${providerName === 'facebook' ? 'Facebook' : 'Google'} sign-in could not be completed.`)
     } finally {
       setAuthBusy(false)
     }
+  }
+
+  const handleSocialSignOut = async () => {
+    if (!auth) return
+    try { await signOut(auth) } catch { setAuthStatus('Sign-out could not be completed.') }
   }
 
   return (
@@ -128,13 +138,20 @@ export default function Blogs() {
             aria-label="Search and filter blog posts"
             className="mb-8 mt-6 sm:mt-8"
           >
-            {isFirebaseConfigured && auth && !blogUser && (
-              <div className="mb-6 flex justify-end">
-                <button
+            {isFirebaseConfigured && auth && (
+              <div className="mb-6 flex flex-col items-end gap-2">
+                {blogUser ? (
+                  <div className="flex items-center gap-3 text-sm text-muted dark:text-muted">
+                    <span>Signed in as {blogUser.displayName || blogUser.email || 'visitor'}</span>
+                    <button type="button" onClick={() => void handleSocialSignOut()} className="font-semibold text-accent-foreground hover:underline dark:text-orange-300">Sign out</button>
+                  </div>
+                ) : (
+                  <div className="grid w-full gap-3 sm:w-auto">
+                  <button
                   type="button"
-                  onClick={() => void handleGoogleSignIn()}
+                  onClick={() => void handleSocialSignIn('google')}
                   disabled={authBusy}
-                  className="inline-flex h-[52px] w-full items-center justify-center gap-3 rounded-full bg-neutral-950 px-7 text-base font-semibold text-white shadow-sm transition duration-200 hover:-translate-y-px hover:shadow-lg active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-50 disabled:opacity-60 dark:bg-white dark:text-neutral-950 dark:focus-visible:ring-offset-[#090a0c] sm:w-auto"
+                  className="inline-flex h-[52px] w-full items-center justify-center gap-3 rounded-full bg-neutral-950 px-7 text-base font-semibold text-surface-inverse shadow-sm transition duration-200 hover:-translate-y-px hover:shadow-lg active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-50 disabled:opacity-60 dark:bg-surface-inverse dark:text-inverse-foreground dark:focus-visible:ring-offset-[var(--bg)] sm:w-auto"
                 >
                   <svg aria-hidden="true" className="h-5 w-5 shrink-0" viewBox="0 0 48 48">
                     <path fill="#4285F4" d="M44.5 20H24v8.5h11.7C34.6 33.1 29.8 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.1 8 3l6-6C34.6 6.1 29.6 4 24 4c-7.7 0-14.3 4.2-17.7 10.7z" />
@@ -144,7 +161,14 @@ export default function Blogs() {
                   </svg>
                   <span>{authBusy ? 'Signing in...' : 'Sign in with Google'}</span>
                 </button>
-                <span role="status" aria-live="polite" className="sr-only">{authStatus}</span>
+                <button type="button" onClick={() => void handleSocialSignIn('facebook')} disabled={authBusy}
+                  className="inline-flex h-[52px] w-full items-center justify-center gap-3 rounded-full bg-blue-600 px-7 text-base font-semibold text-surface-inverse shadow-sm transition duration-200 hover:-translate-y-px hover:bg-blue-700 hover:shadow-lg active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-60 sm:w-auto">
+                  <svg aria-hidden="true" className="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073c0 6.02 4.388 11.018 10.125 11.927v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.313 0 2.686.236 2.686.236v2.973h-1.513c-1.49 0-1.956.93-1.956 1.885v2.266h3.328l-.532 3.49h-2.796V24C19.612 23.09 24 18.092 24 12.073z" /></svg>
+                  <span>{authBusy ? 'Signing in...' : 'Sign in with Facebook'}</span>
+                </button>
+                </div>
+                )}
+                {authStatus && <p role="alert" className="text-right text-xs font-medium text-rose-500">{authStatus}</p>}
               </div>
             )}
 
@@ -158,9 +182,9 @@ export default function Blogs() {
                   value={search}
                   onChange={event => setSearch(event.target.value)}
                   placeholder={blog.searchPlaceholder}
-                  className="h-full w-full rounded-full border border-neutral-300 bg-white/80 pl-12 pr-12 text-base text-neutral-900 outline-none transition placeholder:text-neutral-500 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 dark:border-white/10 dark:bg-[#111315] dark:text-white dark:placeholder:text-neutral-500 sm:pl-14 sm:pr-14 sm:text-lg"
+                  className="h-full w-full rounded-full border border-neutral-300 bg-surface/80 pl-12 pr-12 text-base text-foreground outline-none transition placeholder:text-muted focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 dark:border-border/10 dark:bg-[rgb(17 19 21)] dark:text-foreground dark:placeholder:text-muted sm:pl-14 sm:pr-14 sm:text-lg"
                 />
-                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" className="pointer-events-none absolute left-4 top-1/2 h-[22px] w-[22px] -translate-y-1/2 text-neutral-500 sm:left-5">
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" className="pointer-events-none absolute left-4 top-1/2 h-[22px] w-[22px] -translate-y-1/2 text-muted sm:left-5">
                   <circle cx="10.8" cy="10.8" r="6.8" stroke="currentColor" strokeWidth="1.5" />
                   <path d="m16 16 4.4 4.4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                 </svg>
@@ -169,7 +193,7 @@ export default function Blogs() {
                     type="button"
                     aria-label="Clear search"
                     onClick={() => setSearch('')}
-                    className="absolute right-3 top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full text-neutral-500 transition hover:bg-neutral-200 hover:text-neutral-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 dark:hover:bg-white/10 dark:hover:text-white sm:right-4"
+                    className="absolute right-3 top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full text-muted transition hover:bg-neutral-200 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 dark:hover:bg-surface/10 dark:hover:text-foreground sm:right-4"
                   >
                     <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" className="h-4 w-4">
                       <path d="m6 6 12 12M18 6 6 18" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
@@ -192,7 +216,7 @@ export default function Blogs() {
                 }}
               >
                 <style>{`.blog-tag-scroll::-webkit-scrollbar { display: none; } .blog-tag-scroll { scrollbar-width: none; }`}</style>
-                <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-gradient-to-l from-neutral-50 to-transparent dark:from-[#090a0c]" />
+                <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-gradient-to-l from-neutral-50 to-transparent dark:from-background" />
                 <div className="blog-tag-scroll flex h-12 items-center gap-2 overflow-x-auto whitespace-nowrap pr-10 sm:h-14" role="group" aria-label="Filter posts by tag">
                   {[{ label: blog.allPosts, value: '' }, ...visibleTags.map(tag => ({ label: tag, value: tag }))].map(tag => (
                     <button
@@ -200,9 +224,9 @@ export default function Blogs() {
                       type="button"
                       aria-pressed={selectedTag === tag.value}
                       onClick={() => setSelectedTag(tag.value)}
-                      className={`h-10 shrink-0 rounded-full border px-4 text-sm font-semibold lowercase transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-50 dark:focus-visible:ring-offset-[#090a0c] sm:h-12 sm:px-6 sm:text-base ${selectedTag === tag.value
-                        ? 'border-orange-500/30 bg-orange-500/10 text-orange-700 dark:text-orange-300'
-                        : 'border-transparent bg-neutral-100 text-neutral-700 hover:bg-neutral-200 hover:text-neutral-950 dark:bg-white/[0.06] dark:text-neutral-300 dark:hover:bg-white/[0.12] dark:hover:text-white'
+                      className={`h-10 shrink-0 rounded-full border px-4 text-sm font-semibold lowercase transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-50 dark:focus-visible:ring-offset-[var(--bg)] sm:h-12 sm:px-6 sm:text-base ${selectedTag === tag.value
+                        ? 'border-orange-500/30 bg-orange-500/10 text-accent-foreground dark:text-orange-300'
+                        : 'border-transparent bg-neutral-100 text-muted hover:bg-neutral-200 hover:text-foreground dark:bg-surface-inverse/[0.06] dark:text-muted dark:hover:bg-surface/[0.12] dark:hover:text-foreground'
                       }`}
                     >
                       {tag.label}
@@ -216,14 +240,14 @@ export default function Blogs() {
                       aria-expanded={moreTagsOpen}
                       aria-controls="blog-more-tags"
                       onClick={() => setMoreTagsOpen(open => !open)}
-                      className="h-10 shrink-0 rounded-full border border-transparent bg-neutral-100 px-4 text-sm font-semibold text-neutral-700 transition-colors hover:bg-neutral-200 hover:text-neutral-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 dark:bg-white/[0.06] dark:text-neutral-300 dark:hover:bg-white/[0.12] dark:hover:text-white sm:h-12 sm:px-6 sm:text-base"
+                      className="h-10 shrink-0 rounded-full border border-transparent bg-neutral-100 px-4 text-sm font-semibold text-muted transition-colors hover:bg-neutral-200 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 dark:bg-surface-inverse/[0.06] dark:text-muted dark:hover:bg-surface/[0.12] dark:hover:text-foreground sm:h-12 sm:px-6 sm:text-base"
                     >
                       +{hiddenTagCount} more
                     </button>
                   )}
                 </div>
                 {moreTagsOpen && hiddenTagCount > 0 && (
-                  <div id="blog-more-tags" role="group" aria-label="More blog tags" className="absolute right-0 top-full z-30 mt-3 grid max-h-64 w-[min(22rem,calc(100vw-2.5rem))] grid-cols-2 gap-2 overflow-y-auto rounded-2xl border border-neutral-200 bg-white p-3 shadow-2xl dark:border-white/10 dark:bg-[#151719]">
+                  <div id="blog-more-tags" role="group" aria-label="More blog tags" className="absolute right-0 top-full z-30 mt-3 grid max-h-64 w-[min(22rem,calc(100vw-2.5rem))] grid-cols-2 gap-2 overflow-y-auto rounded-2xl border border-neutral-200 bg-surface p-3 shadow-2xl dark:border-border/10 dark:bg-surface">
                     {remainingTags.map(tag => (
                       <button
                         key={tag}
@@ -231,8 +255,8 @@ export default function Blogs() {
                         aria-pressed={selectedTag === tag}
                         onClick={() => setSelectedTag(tag)}
                         className={`min-h-10 truncate rounded-full border px-4 text-left text-sm font-semibold lowercase transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${selectedTag === tag
-                          ? 'border-orange-500/30 bg-orange-500/10 text-orange-700 dark:text-orange-300'
-                          : 'border-transparent bg-neutral-100 text-neutral-700 hover:bg-neutral-200 hover:text-neutral-950 dark:bg-white/[0.06] dark:text-neutral-300 dark:hover:bg-white/[0.12] dark:hover:text-white'
+                          ? 'border-orange-500/30 bg-orange-500/10 text-accent-foreground dark:text-orange-300'
+                          : 'border-transparent bg-neutral-100 text-muted hover:bg-neutral-200 hover:text-foreground dark:bg-surface-inverse/[0.06] dark:text-muted dark:hover:bg-surface/[0.12] dark:hover:text-foreground'
                         }`}
                       >
                         {tag}
@@ -324,17 +348,18 @@ function PostCard({ post, index }: { post: Post; index: number }) {
         onPointerMove={onPointerMove}
         onPointerEnter={event => { if (event.pointerType === 'mouse' && !reduceMotion) setBadgeVisible(true) }}
         onPointerLeave={() => setBadgeVisible(false)}
-        className={`group relative flex h-full min-h-[390px] flex-col overflow-hidden rounded-[28px] border border-neutral-300/70 bg-white/60 shadow-[0_24px_70px_-48px_rgba(0,0,0,.65)] backdrop-blur-xl hover:border-orange-400/50 hover:shadow-[0_28px_80px_-45px_rgba(249,115,22,.22)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-4 focus-visible:ring-offset-neutral-950 dark:border-white/10 dark:bg-[#111315]/75 ${reduceMotion ? 'transition-colors' : 'transition-[border-color,transform,box-shadow] duration-300 hover:-translate-y-1'} ${finePointer ? 'cursor-none' : ''}`}
+        data-hover-list="blogs"
+        className={`hover-card blog-post-card group relative flex h-full min-h-[390px] flex-col overflow-hidden rounded-[28px] border border-neutral-300/70 bg-surface/60 shadow-[0_24px_70px_-48px_rgba(0,0,0,.65)] backdrop-blur-xl hover:border-orange-400/50 hover:shadow-[0_28px_80px_-45px_rgba(249,115,22,.22)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-4 focus-visible:ring-offset-neutral-950 dark:border-border/10 dark:bg-[rgb(17 19 21)]/75 ${reduceMotion ? 'transition-colors' : 'transition-[border-color,transform,box-shadow] duration-300 hover:-translate-y-1'} ${finePointer ? 'cursor-none' : ''}`}
       >
-        <div aria-hidden="true" className={`pointer-events-none absolute inset-0 z-10 rounded-[inherit] ${reduceMotion ? 'hidden' : 'opacity-0 transition-opacity duration-300 group-hover:opacity-100'}`} style={spotlightStyle} />
+        <div aria-hidden="true" className={`blog-card-spotlight pointer-events-none absolute inset-0 z-10 rounded-[inherit] ${reduceMotion ? 'hidden' : 'opacity-0 transition-opacity duration-300 group-hover:opacity-100'}`} style={spotlightStyle} />
         {cover && (
-          <div className="relative h-52 shrink-0 overflow-hidden border-b border-neutral-200/60 dark:border-white/10">
+          <div className="relative h-52 shrink-0 overflow-hidden border-b border-neutral-200/60 dark:border-border/10">
             <img src={cover} alt={`${post.title} cover image`} loading="lazy" decoding="async" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
-            <div className="absolute inset-0 bg-gradient-to-t from-white/40 via-transparent to-black/5 dark:from-[#111315]/80 dark:via-transparent dark:to-black/10" />
+            <div className="blog-post-cover-overlay absolute inset-0 bg-gradient-to-t from-white/40 via-transparent to-black/5 dark:from-[rgb(17 19 21)]/80 dark:via-transparent dark:to-black/10" />
           </div>
         )}
-        <div className="relative z-0 flex flex-1 flex-col p-6 sm:p-7">
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-[11px] font-medium uppercase tracking-[0.16em] text-neutral-500 dark:text-neutral-400">
+        <div className="blog-post-content relative z-0 flex flex-1 flex-col p-6 sm:p-7">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-[11px] font-medium uppercase tracking-[0.16em] text-muted dark:text-muted">
             {date && <time dateTime={dateIso}>{date}</time>}
             <span className="h-1 w-1 rounded-full bg-orange-500" />
             <span>{readTime} {blog.readTimeLabel}</span>
@@ -343,16 +368,16 @@ function PostCard({ post, index }: { post: Post; index: number }) {
             </span>
           </div>
           <div className="mt-6 flex min-h-0 flex-1 flex-col">
-            <h2 className="font-serif text-2xl font-medium leading-tight tracking-tight text-neutral-900 transition-colors duration-300 group-hover:text-orange-700 dark:text-white dark:group-hover:text-orange-200 sm:text-[1.7rem]">
+            <h2 className="font-serif text-2xl font-medium leading-tight tracking-tight text-foreground transition-colors duration-300 group-hover:text-accent-foreground dark:text-foreground dark:group-hover:text-orange-200 sm:text-[1.7rem]">
               {post.title}
             </h2>
-            {post.excerpt && <p className="mt-3 line-clamp-2 text-sm leading-6 text-neutral-600 dark:text-neutral-400">{post.excerpt}</p>}
+            {post.excerpt && <p className="mt-3 line-clamp-2 text-sm leading-6 text-muted dark:text-muted">{post.excerpt}</p>}
             <div className="mt-auto flex items-end justify-between gap-4 pt-7">
               <div className="flex min-w-0 flex-wrap gap-2" aria-label="Post tags">
-                {tags.slice(0, 3).map(tag => <span key={tag} className="rounded-full border border-orange-500/20 bg-orange-500/[0.07] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-orange-700 dark:text-orange-200">{tag}</span>)}
-                {tags.length > 3 && <span className="rounded-full border border-neutral-300/70 px-3 py-1.5 text-[10px] font-semibold text-neutral-500 dark:border-white/10 dark:text-neutral-400">+{tags.length - 3}</span>}
+                {tags.slice(0, 3).map(tag => <span key={tag} className="rounded-full border border-orange-500/20 bg-orange-500/[0.07] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-accent-foreground dark:text-orange-200">{tag}</span>)}
+                {tags.length > 3 && <span className="rounded-full border border-neutral-300/70 px-3 py-1.5 text-[10px] font-semibold text-muted dark:border-border/10 dark:text-muted">+{tags.length - 3}</span>}
               </div>
-              <span aria-hidden="true" className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-neutral-300 text-neutral-700 transition-all duration-300 group-hover:border-orange-400 group-hover:bg-orange-400 group-hover:text-neutral-950 dark:border-white/15 dark:text-white">
+              <span aria-hidden="true" className="blog-post-arrow hover-card-arrow grid h-11 w-11 shrink-0 place-items-center rounded-full border border-neutral-300 text-muted transition-all duration-300 group-hover:border-orange-400 group-hover:bg-orange-400 group-hover:text-foreground dark:border-border/15 dark:text-foreground">
                 <ArrowIcon />
               </span>
             </div>
@@ -360,7 +385,7 @@ function PostCard({ post, index }: { post: Post; index: number }) {
         </div>
         <motion.div
           aria-hidden="true"
-          className={`pointer-events-none absolute z-20 h-[90px] w-[90px] place-items-center rounded-full border border-orange-300/70 bg-neutral-950/90 text-white shadow-[0_0_32px_rgba(249,115,22,.35)] ${finePointer ? 'grid' : 'hidden'}`}
+          className={`pointer-events-none absolute z-20 h-[90px] w-[90px] place-items-center rounded-full border border-orange-300/70 bg-neutral-950/90 text-surface-inverse shadow-[0_0_32px_rgba(249,115,22,.35)] ${finePointer ? 'grid' : 'hidden'}`}
           style={{ left: 0, top: 0, x: badgeX, y: badgeY, opacity: badgeVisible ? 1 : 0 }}
           transition={{ opacity: { duration: 0.18 } }}
         >
@@ -376,20 +401,20 @@ function PostCard({ post, index }: { post: Post; index: number }) {
 }
 
 function PostSkeleton() {
-  return <div aria-hidden="true" className="min-h-[390px] animate-pulse rounded-[28px] border border-neutral-300/70 bg-white/50 p-7 motion-reduce:animate-none dark:border-white/10 dark:bg-white/[0.025]">
-    <div className="h-3 w-2/3 rounded bg-neutral-300/70 dark:bg-white/10" />
-    <div className="mt-10 h-7 w-4/5 rounded bg-neutral-300/70 dark:bg-white/10" />
-    <div className="mt-4 h-4 w-full rounded bg-neutral-300/50 dark:bg-white/[0.07]" />
-    <div className="mt-2 h-4 w-3/4 rounded bg-neutral-300/50 dark:bg-white/[0.07]" />
-    <div className="mt-20 flex gap-2"><div className="h-7 w-16 rounded-full bg-neutral-300/50 dark:bg-white/[0.07]" /><div className="h-7 w-20 rounded-full bg-neutral-300/50 dark:bg-white/[0.07]" /></div>
+  return <div aria-hidden="true" className="min-h-[390px] animate-pulse rounded-[28px] border border-neutral-300/70 bg-surface/50 p-7 motion-reduce:animate-none dark:border-border/10 dark:bg-surface-inverse/[0.025]">
+    <div className="h-3 w-2/3 rounded bg-neutral-300/70 dark:bg-surface-inverse/10" />
+    <div className="mt-10 h-7 w-4/5 rounded bg-neutral-300/70 dark:bg-surface-inverse/10" />
+    <div className="mt-4 h-4 w-full rounded bg-neutral-300/50 dark:bg-surface-inverse/[0.07]" />
+    <div className="mt-2 h-4 w-3/4 rounded bg-neutral-300/50 dark:bg-surface-inverse/[0.07]" />
+    <div className="mt-20 flex gap-2"><div className="h-7 w-16 rounded-full bg-neutral-300/50 dark:bg-surface-inverse/[0.07]" /><div className="h-7 w-20 rounded-full bg-neutral-300/50 dark:bg-surface-inverse/[0.07]" /></div>
   </div>
 }
 
 function EmptyState({ title, message }: { title: string; message: string }) {
-  return <div className="flex min-h-72 flex-col items-center justify-center rounded-[28px] border border-dashed border-neutral-300 bg-white/30 px-6 text-center dark:border-white/15 dark:bg-white/[0.02]">
-    <span aria-hidden="true" className="mb-6 grid h-14 w-14 place-items-center rounded-full border border-orange-400/20 bg-orange-400/10 text-orange-600 dark:text-orange-200"><BookIcon /></span>
-    <h2 className="text-xl font-semibold tracking-tight text-neutral-900 dark:text-white">{title}</h2>
-    <p className="mt-2 max-w-md text-sm leading-6 text-neutral-500 dark:text-neutral-400">{message}</p>
+  return <div className="flex min-h-72 flex-col items-center justify-center rounded-[28px] border border-dashed border-neutral-300 bg-surface/30 px-6 text-center dark:border-border/15 dark:bg-surface-inverse/[0.02]">
+    <span aria-hidden="true" className="mb-6 grid h-14 w-14 place-items-center rounded-full border border-orange-400/20 bg-orange-400/10 text-accent-foreground dark:text-orange-200"><BookIcon /></span>
+    <h2 className="text-xl font-semibold tracking-tight text-foreground dark:text-foreground">{title}</h2>
+    <p className="mt-2 max-w-md text-sm leading-6 text-muted dark:text-muted">{message}</p>
   </div>
 }
 

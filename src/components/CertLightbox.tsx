@@ -25,14 +25,14 @@ function CertMedia({ file, alt }: { file: string; alt: string }) {
   const src = useResolvedMedia(file, '')
   const isPdf = file.endsWith('.pdf') || src.startsWith('data:application/pdf')
 
-  if (!src) return <div className="flex items-center justify-center h-64 text-neutral-500 text-sm">Loading…</div>
+  if (!src) return <div className="flex items-center justify-center h-64 text-muted text-sm">Loading…</div>
 
   if (isPdf) {
     return (
       <div className="flex flex-col gap-3">
         <iframe src={`${src}#view=FitH`} title={alt} className="w-full h-[60vh] rounded-xl border border-neutral-700" />
         <a href={src} target="_blank" rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 text-sm font-semibold text-brand hover:text-brand-dark transition-colors self-center">
+          className="inline-flex items-center gap-1 text-sm font-semibold text-accent-foreground hover:text-accent-foreground-dark transition-colors self-center">
           Open in new tab ↗
         </a>
       </div>
@@ -108,11 +108,11 @@ export default function CertLightbox({ certs, index, onClose, onNav }: Props) {
       aria-modal="true"
       aria-label={`Certificate: ${cert.name}`}
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 outline-none"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-overlay/80 backdrop-blur-sm p-4 outline-none"
     >
       <div className="relative max-w-3xl w-full bg-neutral-900 rounded-2xl border border-neutral-700 p-6 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
         {/* Close */}
-        <button onClick={onClose} aria-label="Close" className="absolute top-3 right-3 p-2 rounded-full bg-neutral-800 text-neutral-400 hover:text-white hover:bg-neutral-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand z-10">
+        <button onClick={onClose} aria-label="Close" className="absolute top-3 right-3 p-2 rounded-full bg-neutral-800 text-muted hover:text-foreground hover:bg-neutral-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand z-10">
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
         </button>
 
@@ -120,15 +120,15 @@ export default function CertLightbox({ certs, index, onClose, onNav }: Props) {
         {cert.file && <div className="mb-6"><CertMedia file={cert.file} alt={cert.name} /></div>}
 
         {/* Info */}
-        <h2 className="text-xl font-bold text-white mb-1">{cert.name}</h2>
-        <p className="text-sm text-neutral-400">{cert.issuer} · {cert.date}</p>
-        {cert.description && <p className="text-sm text-neutral-400 mt-3 leading-relaxed">{cert.description}</p>}
+        <h2 className="text-xl font-bold text-foreground mb-1">{cert.name}</h2>
+        <p className="text-sm text-muted">{cert.issuer} · {cert.date}</p>
+        {cert.description && <p className="text-sm text-muted mt-3 leading-relaxed">{cert.description}</p>}
 
         {/* Actions */}
         <div className="flex flex-wrap gap-3 mt-5">
           {cert.credentialUrl && (
             <a href={cert.credentialUrl} target="_blank" rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand text-white text-sm font-semibold hover:bg-brand-dark transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand">
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand text-on-accent text-sm font-semibold hover:bg-brand-dark transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand">
               Verify ↗
             </a>
           )}
@@ -137,12 +137,12 @@ export default function CertLightbox({ certs, index, onClose, onNav }: Props) {
         {/* Nav arrows */}
         <div className="flex justify-between mt-6">
           <button disabled={!hasPrev} onClick={() => onNav(index - 1)} aria-label="Previous"
-            className="p-2 rounded-full bg-neutral-800 text-neutral-400 hover:text-white hover:bg-neutral-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand">
+            className="p-2 rounded-full bg-neutral-800 text-muted hover:text-foreground hover:bg-neutral-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand">
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
           </button>
-          <span className="text-xs text-neutral-500 self-center">{index + 1} / {certs.length}</span>
+          <span className="text-xs text-muted self-center">{index + 1} / {certs.length}</span>
           <button disabled={!hasNext} onClick={() => onNav(index + 1)} aria-label="Next"
-            className="p-2 rounded-full bg-neutral-800 text-neutral-400 hover:text-white hover:bg-neutral-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand">
+            className="p-2 rounded-full bg-neutral-800 text-muted hover:text-foreground hover:bg-neutral-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand">
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
           </button>
         </div>

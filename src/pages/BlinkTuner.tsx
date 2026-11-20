@@ -33,9 +33,9 @@ function Slider({
 }) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="flex justify-between text-xs text-neutral-600 dark:text-neutral-400">
+      <span className="flex justify-between text-xs text-muted dark:text-muted">
         <span>{label}</span>
-        <span className="font-mono text-brand">{value}</span>
+        <span className="font-mono text-accent-foreground">{value}</span>
       </span>
       <input
         type="range"
@@ -111,16 +111,16 @@ export default function BlinkTuner() {
   return (
     <div className="max-w-5xl mx-auto px-6 py-12">
       <div className="mb-8">
-        <p className="font-mono text-xs uppercase tracking-widest text-brand mb-2">
+        <p className="font-mono text-xs uppercase tracking-widest text-accent-foreground mb-2">
           Developer tool
         </p>
-        <h1 className="text-3xl font-bold text-neutral-900 dark:text-white mb-2">
+        <h1 className="text-3xl font-bold text-foreground dark:text-foreground mb-2">
           Blink Tuner
         </h1>
-        <p className="text-sm text-neutral-500 dark:text-neutral-400">
+        <p className="text-sm text-muted dark:text-muted">
           Adjust sliders until the eyelids sit perfectly over your eyes in the photo.
           Then click <strong>Copy config</strong> and paste into{' '}
-          <code className="text-brand text-xs">src/data/content.ts → blinkPhoto</code>.
+          <code className="text-accent-foreground text-xs">src/data/content.ts → blinkPhoto</code>.
           <br />
           <span className="text-xs opacity-60">
             Note: Mode B (SVG eyelids) only activates when <code>me-open.jpg</code>{' '}
@@ -133,13 +133,13 @@ export default function BlinkTuner() {
         {/* Live preview */}
         <div className="flex flex-col items-center gap-6">
           <BlinkingPhoto size="w-64 h-64" alt="Blink preview" />
-          <p className="text-xs text-neutral-500">Live preview — blinks automatically</p>
+          <p className="text-xs text-muted">Live preview — blinks automatically</p>
         </div>
 
         {/* Controls */}
         <div className="flex flex-col gap-5">
           <section>
-            <p className="text-xs font-semibold uppercase tracking-widest text-neutral-500 mb-3">Left eye position (%)</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-muted mb-3">Left eye position (%)</p>
             <div className="flex flex-col gap-3">
               <Slider label="X (left→right)" value={cfg.leftEye.x} min={0} max={100} onChange={v => setEye('leftEye', 'x', v)} />
               <Slider label="Y (top→bottom)" value={cfg.leftEye.y} min={0} max={100} onChange={v => setEye('leftEye', 'y', v)} />
@@ -147,7 +147,7 @@ export default function BlinkTuner() {
           </section>
 
           <section>
-            <p className="text-xs font-semibold uppercase tracking-widest text-neutral-500 mb-3">Right eye position (%)</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-muted mb-3">Right eye position (%)</p>
             <div className="flex flex-col gap-3">
               <Slider label="X (left→right)" value={cfg.rightEye.x} min={0} max={100} onChange={v => setEye('rightEye', 'x', v)} />
               <Slider label="Y (top→bottom)" value={cfg.rightEye.y} min={0} max={100} onChange={v => setEye('rightEye', 'y', v)} />
@@ -155,7 +155,7 @@ export default function BlinkTuner() {
           </section>
 
           <section>
-            <p className="text-xs font-semibold uppercase tracking-widest text-neutral-500 mb-3">Eyelid size (%)</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-muted mb-3">Eyelid size (%)</p>
             <div className="flex flex-col gap-3">
               <Slider label="Width"  value={cfg.eyeWidth}  min={2} max={30} onChange={v => set('eyeWidth', v)} />
               <Slider label="Height" value={cfg.eyeHeight} min={1} max={20} onChange={v => set('eyeHeight', v)} />
@@ -163,7 +163,7 @@ export default function BlinkTuner() {
           </section>
 
           <section>
-            <p className="text-xs font-semibold uppercase tracking-widest text-neutral-500 mb-3">Skin color</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-muted mb-3">Skin color</p>
             <div className="flex items-center gap-3">
               <input
                 type="color"
@@ -171,12 +171,12 @@ export default function BlinkTuner() {
                 onChange={e => set('skinColor', e.target.value)}
                 className="h-9 w-16 rounded cursor-pointer border border-neutral-300 dark:border-neutral-700"
               />
-              <span className="font-mono text-sm text-neutral-600 dark:text-neutral-400">{cfg.skinColor}</span>
+              <span className="font-mono text-sm text-muted dark:text-muted">{cfg.skinColor}</span>
             </div>
           </section>
 
           <section>
-            <p className="text-xs font-semibold uppercase tracking-widest text-neutral-500 mb-3">Timing</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-muted mb-3">Timing</p>
             <div className="flex flex-col gap-3">
               <Slider label="Min delay (ms)" value={cfg.minDelay} min={500}  max={8000} step={100} onChange={v => set('minDelay', v)} />
               <Slider label="Max delay (ms)" value={cfg.maxDelay} min={1000} max={12000} step={100} onChange={v => set('maxDelay', v)} />
@@ -191,18 +191,18 @@ export default function BlinkTuner() {
               onChange={e => set('doubleBlink', e.target.checked)}
               className="accent-orange-500 w-4 h-4"
             />
-            <span className="text-sm text-neutral-700 dark:text-neutral-300">Double blink (~25 % chance)</span>
+            <span className="text-sm text-muted dark:text-muted">Double blink (~25 % chance)</span>
           </label>
 
           {/* Config output */}
           <div className="mt-2">
-            <p className="text-xs font-semibold uppercase tracking-widest text-neutral-500 mb-2">Generated config</p>
-            <pre className="text-xs font-mono bg-neutral-100 dark:bg-neutral-800 rounded-xl p-4 overflow-x-auto text-neutral-700 dark:text-neutral-300 leading-relaxed">
+            <p className="text-xs font-semibold uppercase tracking-widest text-muted mb-2">Generated config</p>
+            <pre className="text-xs font-mono bg-neutral-100 dark:bg-neutral-800 rounded-xl p-4 overflow-x-auto text-muted dark:text-muted leading-relaxed">
               {configSnippet}
             </pre>
             <button
               onClick={copyConfig}
-              className="mt-3 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand text-white text-sm font-semibold hover:bg-brand-dark transition-colors"
+              className="mt-3 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand text-on-accent text-sm font-semibold hover:bg-brand-dark transition-colors"
             >
               {copied ? '✓ Copied!' : 'Copy config'}
             </button>

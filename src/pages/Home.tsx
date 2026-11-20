@@ -1,5 +1,5 @@
 // src/pages/Home.tsx
-import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState, type CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { onAuthStateChanged, type User } from 'firebase/auth'
@@ -42,7 +42,7 @@ const ICON_MAP: Record<string, JSX.Element> = {
   ),
 }
 
-const glass = 'rounded-2xl border border-neutral-200/60 dark:border-neutral-800/60 bg-white/60 dark:bg-neutral-900/40 backdrop-blur-md'
+const glass = 'rounded-2xl border border-neutral-200/60 dark:border-neutral-800/60 bg-surface/60 dark:bg-surface/40 backdrop-blur-md'
 
 type HomeEducationEntry = { institution: string; subtitle: string; yearRange: string; description: string; visible?: boolean }
 
@@ -70,12 +70,12 @@ function PakistanClock({ compact = false }: { compact?: boolean }) {
     const id = setInterval(tick, 1000)
     return () => clearInterval(id)
   }, [])
-  if (compact) return <span className="font-mono tabular-nums text-neutral-700 dark:text-neutral-200">{time || '--:--:--'}</span>
+  if (compact) return <span className="font-mono tabular-nums text-muted dark:text-foreground">{time || '--:--:--'}</span>
   return (
     <div className={`${glass} p-5 flex flex-col items-center justify-center gap-1`}>
-      <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-500">Lahore, Pakistan</span>
-      <span className="text-2xl font-bold font-mono text-neutral-900 dark:text-white tabular-nums">{time || '--:--:--'}</span>
-      <span className="text-[10px] text-neutral-400">PKT (UTC+5)</span>
+      <span className="text-[10px] font-mono uppercase tracking-widest text-muted">Lahore, Pakistan</span>
+      <span className="text-2xl font-bold font-mono text-foreground dark:text-foreground tabular-nums">{time || '--:--:--'}</span>
+      <span className="text-[10px] text-muted">PKT (UTC+5)</span>
     </div>
   )
 }
@@ -87,19 +87,19 @@ function CopyEmailCard({ email, copyLabel, copiedLabel }: { email: string; copyL
   }
   return (
     <button onClick={copy} className={`${glass} p-5 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-brand/40 transition-colors w-full text-center`}>
-      <svg className="h-5 w-5 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <svg className="h-5 w-5 text-accent-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
       </svg>
-      <span className="text-xs font-mono text-neutral-500 truncate max-w-full">{email}</span>
-      <span className={`text-[10px] font-semibold uppercase tracking-wider ${copied ? 'text-green-500' : 'text-brand'}`}>{copied ? copiedLabel : copyLabel}</span>
+      <span className="text-xs font-mono text-muted truncate max-w-full">{email}</span>
+      <span className={`text-[10px] font-semibold uppercase tracking-wider ${copied ? 'text-green-700' : 'text-accent-foreground'}`}>{copied ? copiedLabel : copyLabel}</span>
     </button>
   )
 }
 
 function SocialPill({ href, label }: { href: string; label: string }) {
   return (
-    <a href={href} target="_blank" rel="me noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-neutral-200 dark:border-neutral-700 text-xs font-semibold text-neutral-700 dark:text-neutral-300 hover:border-brand hover:text-brand transition-colors">
-      {label} <span className="text-brand">â†—</span>
+    <a href={href} target="_blank" rel="me noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-neutral-200 dark:border-neutral-700 text-xs font-semibold text-muted dark:text-muted hover:border-brand hover:text-accent-foreground transition-colors">
+      {label} <span className="text-accent-foreground">â†—</span>
     </a>
   )
 }
@@ -119,7 +119,8 @@ function HomeBentoCard({ children, className = '', delay = 0, reducedMotion }: {
       viewport={{ once: true, amount: 0.16 }}
       transition={reducedMotion ? { duration: 0 } : { duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] }}
       whileHover={reducedMotion ? undefined : { y: -3 }}
-      className={`rounded-3xl border border-neutral-200/70 bg-white/65 p-6 shadow-sm backdrop-blur-xl dark:border-neutral-800/70 dark:bg-neutral-900/50 ${className}`}
+      data-hover-list="home-bento"
+      className={`hover-card rounded-3xl border border-neutral-200/70 bg-surface/65 p-6 shadow-sm backdrop-blur-xl dark:border-neutral-800/70 dark:bg-surface/50 ${className}`}
     >
       {children}
     </motion.div>
@@ -142,7 +143,7 @@ function HomePhotoStack({ photos, name }: { photos: string[]; name: string }) {
         return (
           <div
             key={`${src}-${index}`}
-            className="absolute left-1/2 top-2 h-[196px] w-[148px] overflow-hidden rounded-2xl border-[5px] border-white bg-white shadow-xl dark:border-neutral-100"
+            className="absolute left-1/2 top-2 h-[196px] w-[148px] overflow-hidden rounded-2xl border-[5px] border-border bg-surface shadow-xl dark:border-neutral-100"
             style={{ zIndex: visiblePhotos.length - index, transform: `translateX(calc(-50% + ${offsets[index]}px)) rotate(${angles[index]}deg)` }}
           >
             <HomeMedia src={src} alt={`${name} portrait`} className="h-full w-full rounded-xl object-cover object-top" />
@@ -211,14 +212,14 @@ function PakistanAnalogClock({ label }: { label: string }) {
   const secondAngle = time.second * 6
   return (
     <div className="flex items-center justify-between gap-4 border-t border-neutral-200/70 pt-5 dark:border-neutral-800/70">
-      <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500">{label}</span>
-      <svg viewBox="0 0 100 100" className="h-20 w-20 text-neutral-600 dark:text-neutral-300" role="img" aria-label={`Pakistan time ${String(time.hour).padStart(2, '0')}:${String(time.minute).padStart(2, '0')}`}>
+      <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">{label}</span>
+      <svg viewBox="0 0 100 100" className="h-20 w-20 text-muted dark:text-muted" role="img" aria-label={`Pakistan time ${String(time.hour).padStart(2, '0')}:${String(time.minute).padStart(2, '0')}`}>
         <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeOpacity=".28" strokeWidth="1.5" />
         {Array.from({ length: 12 }, (_, index) => <line key={index} x1="50" y1="9" x2="50" y2={index % 3 === 0 ? '15' : '12'} stroke="currentColor" strokeOpacity=".65" strokeWidth={index % 3 === 0 ? '2' : '1'} transform={`rotate(${index * 30} 50 50)`} />)}
         <line x1="50" y1="50" x2="50" y2="29" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" transform={`rotate(${hourAngle} 50 50)`} />
         <line x1="50" y1="50" x2="50" y2="19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" transform={`rotate(${minuteAngle} 50 50)`} />
-        <line x1="50" y1="54" x2="50" y2="14" stroke="#f97316" strokeWidth="1" strokeLinecap="round" transform={`rotate(${secondAngle} 50 50)`} />
-        <circle cx="50" cy="50" r="3" fill="#f97316" />
+        <line x1="50" y1="54" x2="50" y2="14" stroke="var(--accent)" strokeWidth="1" strokeLinecap="round" transform={`rotate(${secondAngle} 50 50)`} />
+        <circle cx="50" cy="50" r="3" fill="var(--accent)" />
       </svg>
     </div>
   )
@@ -232,14 +233,14 @@ function SelectedWorkRow({ project, index, viewLabel, reducedMotion }: { project
       viewport={{ once: true, amount: 0.2 }}
       transition={reducedMotion ? { duration: 0 } : { duration: 0.45, delay: Math.min(index * 0.06, 0.24), ease: [0.22, 1, 0.36, 1] }}
     >
-      <Link to="/work" className="group flex min-h-28 items-center gap-4 rounded-3xl border border-transparent px-4 py-5 transition-colors duration-[250ms] hover:bg-neutral-900 dark:hover:bg-white sm:px-7 md:min-h-36 md:gap-8">
-        <span className="w-8 shrink-0 font-mono text-xs text-neutral-500 md:text-sm">{String(index + 1).padStart(2, '0')}</span>
+      <Link to="/work" data-hover-list="home-selected-projects" className="hover-card hover-white group flex min-h-28 items-center gap-4 rounded-3xl border border-transparent px-4 py-5 transition-colors duration-[250ms] hover:bg-neutral-900 dark:hover:bg-surface sm:px-7 md:min-h-36 md:gap-8">
+        <span className="w-8 shrink-0 font-mono text-xs text-muted md:text-sm">{String(index + 1).padStart(2, '0')}</span>
         <div className="min-w-0 flex-1">
-          <h3 className="truncate font-instrument-serif text-3xl italic leading-tight text-neutral-900 transition-colors duration-[250ms] group-hover:text-white dark:text-neutral-100 dark:group-hover:text-neutral-600 sm:text-4xl md:text-6xl">{project.title}</h3>
-          <p className="mt-1 truncate text-sm text-neutral-600 transition-colors duration-[250ms] group-hover:text-neutral-300 dark:text-neutral-400 dark:group-hover:text-neutral-500">{project.desc}</p>
+          <h3 className="truncate font-instrument-serif text-3xl italic leading-tight text-foreground transition-colors duration-[250ms] group-hover:text-foreground dark:text-foreground dark:group-hover:text-muted sm:text-4xl md:text-6xl">{project.title}</h3>
+          <p className="mt-1 truncate text-sm text-muted transition-colors duration-[250ms] group-hover:text-muted dark:text-muted dark:group-hover:text-muted">{project.desc}</p>
         </div>
-        <span className="hidden shrink-0 text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500 transition-opacity duration-[250ms] group-hover:opacity-100 sm:block sm:opacity-0">{viewLabel}</span>
-        <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-neutral-900 text-white transition-colors duration-[250ms] group-hover:bg-neutral-200 group-hover:text-neutral-900 dark:bg-neutral-800 dark:text-neutral-200 dark:group-hover:bg-neutral-200 dark:group-hover:text-neutral-900 md:h-[68px] md:w-[68px]">
+        <span className="work-project-view hidden shrink-0 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted transition-opacity duration-[250ms] group-hover:opacity-100 sm:block sm:opacity-0">{viewLabel}</span>
+        <span aria-hidden="true" className="hover-card-arrow flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-neutral-900 text-surface-inverse transition-colors duration-[250ms] group-hover:bg-neutral-200 group-hover:text-inverse-foreground dark:bg-neutral-800 dark:text-surface-inverse dark:group-hover:bg-neutral-800 dark:group-hover:text-inverse-foreground md:h-[68px] md:w-[68px]">
           <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17 17 7M8 7h9v9" /></svg>
         </span>
       </Link>
@@ -251,7 +252,7 @@ function SelectedWorkRow({ project, index, viewLabel, reducedMotion }: { project
 function Section({ show = true, children, className = '', bg }: { show?: boolean; children: React.ReactNode; className?: string; bg?: boolean }) {
   if (!show) return null
   return (
-    <section className={bg ? `bg-neutral-50 dark:bg-neutral-900/50 border-y border-neutral-200 dark:border-neutral-800` : ''}>
+    <section className={bg ? `bg-neutral-50 dark:bg-surface/50 border-y border-neutral-200 dark:border-neutral-800` : ''}>
       <div className={`w-full px-5 md:px-10 ${className}`}>{children}</div>
     </section>
   )
@@ -262,13 +263,13 @@ function SectionHead({ tag, title, lead, accent }: { tag: string; title: string;
   let titleNode: React.ReactNode = title
   if (accent && title.includes(accent)) {
     const parts = title.split(accent)
-    titleNode = <>{parts[0]}<span className="italic font-serif text-brand">{accent}</span>{parts.slice(1).join(accent)}</>
+    titleNode = <>{parts[0]}<span className="italic font-serif text-accent-foreground">{accent}</span>{parts.slice(1).join(accent)}</>
   }
   return (
     <ScrollReveal className="text-center mb-12">
-      <p className="font-mono text-xs uppercase tracking-widest text-brand mb-2">{tag}</p>
-      <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white">{titleNode}</h2>
-      {lead && <p className="mt-2 text-neutral-600 dark:text-neutral-400">{lead}</p>}
+      <p className="font-mono text-xs uppercase tracking-widest text-accent-foreground mb-2">{tag}</p>
+      <h2 className="text-3xl md:text-4xl font-bold text-foreground dark:text-foreground">{titleNode}</h2>
+      {lead && <p className="mt-2 text-muted dark:text-muted">{lead}</p>}
     </ScrollReveal>
   )
 }
@@ -296,11 +297,11 @@ function TechSkillCloud({ heading, accent, skills }: { heading: string; accent: 
   const accentWord = accent.trim() || 'Behind'
   const accentIndex = title.indexOf(accentWord)
   const titleNode = accentIndex >= 0
-    ? <>{title.slice(0, accentIndex)}<span className="bg-gradient-to-r from-orange-400 via-pink-400 to-purple-400 bg-clip-text font-instrument-serif text-[1.18em] font-normal italic text-transparent">{accentWord}</span>{title.slice(accentIndex + accentWord.length)}</>
+    ? <>{title.slice(0, accentIndex)}<span className="font-instrument-serif text-[1.18em] font-normal italic text-accent-foreground dark:bg-gradient-to-r dark:from-orange-400 dark:via-pink-400 dark:to-purple-400 dark:bg-clip-text dark:text-transparent">{accentWord}</span>{title.slice(accentIndex + accentWord.length)}</>
     : title
 
   return (
-    <section aria-labelledby="home-skills-heading" className="relative isolate w-full overflow-hidden bg-neutral-950 py-20 md:py-24">
+    <section aria-labelledby="home-skills-heading" className="relative isolate w-full overflow-hidden bg-background py-20 md:py-24">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
         <span
           className="absolute left-1/2 top-[2%] h-[240px] w-[240px] -translate-x-1/2 rounded-full blur-[80px] md:h-[420px] md:w-[420px] md:-translate-x-[75%]"
@@ -313,8 +314,8 @@ function TechSkillCloud({ heading, accent, skills }: { heading: string; accent: 
       </div>
       <div className="relative z-10 mx-auto w-full px-5 md:px-10">
         <ScrollReveal className="mb-9 text-center md:mb-10">
-          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.28em] text-neutral-400">MY SKILLSET</p>
-          <h2 id="home-skills-heading" className="text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl">{titleNode}</h2>
+          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.28em] text-muted">MY SKILLSET</p>
+          <h2 id="home-skills-heading" className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl">{titleNode}</h2>
         </ScrollReveal>
 
         <div className="mb-8 flex flex-wrap justify-center gap-2.5" role="group" aria-label="Filter skills by category">
@@ -324,7 +325,7 @@ function TechSkillCloud({ heading, accent, skills }: { heading: string; accent: 
               type="button"
               aria-pressed={activeCategory === category}
               onClick={() => setActiveCategory(category)}
-              className={`rounded-full border px-4 py-2 text-xs font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-400 ${activeCategory === category ? 'border-transparent bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 text-white' : 'border-white/15 bg-white/[0.04] text-neutral-300 hover:border-white/30 hover:text-white'}`}
+              className={`rounded-full border px-4 py-2 text-xs font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-400 ${activeCategory === category ? 'border-transparent bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 text-foreground' : 'border-border/15 bg-surface/[0.04] text-muted hover:border-border/30 hover:text-foreground'}`}
             >
               {category}
             </button>
@@ -359,10 +360,10 @@ function TechSkillCloud({ heading, accent, skills }: { heading: string; accent: 
               const chipContents = (
                 <>
                   <TechIcon name={iconName} size={22} responsive colorful className="shrink-0" />
-                  <span className="text-sm font-semibold text-neutral-200 transition-colors group-hover:text-white group-focus-visible:text-white">{name}</span>
+                  <span className="text-sm font-semibold text-foreground transition-colors group-hover:text-foreground group-focus-visible:text-foreground">{name}</span>
                 </>
               )
-              const chipClass = 'group inline-flex items-center gap-[10px] rounded-full border px-5 py-3 shadow-sm backdrop-blur-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand focus-visible:ring-2 focus-visible:ring-brand/60'
+              const chipClass = 'skill-chip group inline-flex items-center gap-[10px] rounded-full border px-5 py-3 shadow-sm backdrop-blur-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand focus-visible:ring-2 focus-visible:ring-brand/60'
               const key = `${name}-${index}`
 
               return externalUrl ? (
@@ -373,7 +374,7 @@ function TechSkillCloud({ heading, accent, skills }: { heading: string; accent: 
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`${name}, opens the official website in a new tab`}
-                  className={`${chipClass} cursor-pointer`}
+                  data-skill-chip style={{ ...chipStyle, '--skill-color': chipColor } as CSSProperties} className={`${chipClass} cursor-pointer`}
                 >
                   {chipContents}
                 </motion.a>
@@ -381,7 +382,7 @@ function TechSkillCloud({ heading, accent, skills }: { heading: string; accent: 
                 <motion.div
                   {...motionProps}
                   key={key}
-                  className={`${chipClass} cursor-default`}
+                  data-skill-chip style={{ ...chipStyle, '--skill-color': chipColor } as CSSProperties} className={`${chipClass} cursor-default`}
                 >
                   {chipContents}
                 </motion.div>
@@ -469,25 +470,25 @@ export default function Home() {
         path="/"
       />
 
-      <section className="relative flex min-h-screen w-full flex-col justify-center overflow-hidden px-5 pb-12 pt-24 md:px-10 md:pt-28">
+      <section data-home-hero className="relative flex min-h-screen w-full flex-col justify-center overflow-hidden px-5 pb-12 pt-24 md:px-10 md:pt-28">
         {home.heroImage && (
           <div className="pointer-events-none absolute right-[6%] top-[22%] z-0 h-36 w-28 opacity-90 sm:h-48 sm:w-36 md:h-64 md:w-48">
             <HomeMedia src={home.heroImage} alt={home.heroHeading} className="h-full w-full rounded-3xl object-cover object-top shadow-2xl" />
           </div>
         )}
         <div className="relative z-10 mx-auto flex w-full flex-col items-center text-center">
-          <h1 className="w-full font-sans text-[clamp(80px,15vw,260px)] font-black uppercase leading-[0.85] tracking-[-0.08em] text-neutral-900 dark:text-white">
+          <h1 className="w-full font-sans text-[clamp(80px,15vw,260px)] font-black uppercase leading-[0.85] tracking-[-0.08em] text-foreground dark:text-foreground">
             {home.heroHeading}
           </h1>
-          <p className="mt-8 text-xs font-semibold uppercase tracking-[0.3em] text-neutral-500 dark:text-neutral-400 sm:text-sm">{home.heroTag}</p>
-          <p className="mt-2 font-instrument-serif text-[clamp(34px,6vw,76px)] italic leading-tight text-neutral-500 dark:text-neutral-400">{heroTagline}</p>
+          <p className="mt-8 text-xs font-semibold uppercase tracking-[0.3em] text-muted dark:text-muted sm:text-sm">{home.heroTag}</p>
+          <p className="mt-2 font-instrument-serif text-[clamp(34px,6vw,76px)] italic leading-tight text-muted dark:text-muted">{heroTagline}</p>
           <div className="mt-12 flex w-full flex-col items-start justify-between gap-5 text-left sm:flex-row sm:items-center">
-            <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-neutral-600 dark:text-neutral-400">
-              <svg className="h-4 w-4 shrink-0 text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z" /><circle cx="12" cy="10" r="2.5" /></svg>
+            <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-muted dark:text-muted">
+              <svg className="h-4 w-4 shrink-0 text-accent-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z" /><circle cx="12" cy="10" r="2.5" /></svg>
               {home.location}
             </span>
-            <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-neutral-600 dark:text-neutral-400 sm:text-right">
-              <svg className="h-4 w-4 shrink-0 text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z" /><path d="m4.4 7.5 7.6 4.4 7.6-4.4M12 12v9" /></svg>
+            <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-muted dark:text-muted sm:text-right">
+              <svg className="h-4 w-4 shrink-0 text-accent-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z" /><path d="m4.4 7.5 7.6 4.4 7.6-4.4M12 12v9" /></svg>
               {heroRole}
             </span>
           </div>
@@ -498,8 +499,8 @@ export default function Home() {
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_1.6fr_1fr]">
           <HomeBentoCard reducedMotion={prefersReducedMotion} className="flex flex-col justify-between">
             <div>
-              <h2 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-white">{home.bentoName}</h2>
-              <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-neutral-500 dark:text-neutral-400">
+              <h2 className="text-3xl font-bold tracking-tight text-foreground dark:text-foreground">{home.bentoName}</h2>
+              <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted dark:text-muted">
                 {home.bentoLocation} Â· {home.liveClockLabel} <PakistanClock compact />
               </p>
             </div>
@@ -507,7 +508,7 @@ export default function Home() {
             <div className="flex flex-wrap items-center gap-2">
               {socialLinks.map(item => (
                 <a key={`${item.label}-${item.url}`} href={item.url} target={item.url.startsWith('http') ? '_blank' : undefined} rel={item.url.startsWith('http') ? 'me noopener noreferrer' : undefined} aria-label={item.label} title={item.label}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 text-neutral-600 transition-colors hover:border-brand hover:text-brand dark:border-neutral-700 dark:text-neutral-300">
+                  className="home-social-button inline-flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 text-muted transition-colors hover:border-brand hover:text-accent-foreground dark:border-neutral-700 dark:text-muted">
                   <HomeSocialIcon label={item.label} />
                 </a>
               ))}
@@ -516,13 +517,13 @@ export default function Home() {
 
           <HomeBentoCard reducedMotion={prefersReducedMotion} delay={0.06} className="flex flex-col">
             <div>
-              <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.24em] text-neutral-500 dark:text-neutral-400">{home.buildEyebrow}</p>
-              <h2 className="text-4xl font-bold tracking-tight text-neutral-900 dark:text-white sm:text-5xl">{home.buildTitle}</h2>
-              <p className="font-instrument-serif text-4xl italic text-neutral-500 dark:text-neutral-400 sm:text-5xl">{home.buildAccent}</p>
+              <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.24em] text-muted dark:text-muted">{home.buildEyebrow}</p>
+              <h2 className="text-4xl font-bold tracking-tight text-foreground dark:text-foreground sm:text-5xl">{home.buildTitle}</h2>
+              <p className="font-instrument-serif text-4xl italic text-muted dark:text-muted sm:text-5xl">{home.buildAccent}</p>
               <div className="mt-5 flex flex-wrap gap-2">
-                {home.buildChips.map((chip, index) => <span key={`${chip}-${index}`} className="rounded-full border border-neutral-200 px-3 py-1.5 text-[10px] font-semibold tracking-[0.12em] text-neutral-700 dark:border-neutral-700 dark:text-neutral-300">{chip}</span>)}
+                {home.buildChips.map((chip, index) => <span key={`${chip}-${index}`} className="home-tag-pill rounded-full border border-neutral-200 px-3 py-1.5 text-[10px] font-semibold tracking-[0.12em] text-muted dark:border-neutral-700 dark:text-muted">{chip}</span>)}
               </div>
-              <p className="mt-5 max-w-[70ch] leading-[1.8] text-neutral-600 dark:text-neutral-400">{home.introText}</p>
+              <p className="mt-5 max-w-[70ch] leading-[1.8] text-muted dark:text-muted">{home.introText}</p>
             </div>
             <div className="mt-auto pt-6">
               <PakistanAnalogClock label={home.analogClockLabel} />
@@ -531,17 +532,17 @@ export default function Home() {
 
           <HomeBentoCard reducedMotion={prefersReducedMotion} delay={0.12} className="flex flex-col justify-between">
             <div>
-              <p className="mb-5 inline-flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-500 dark:text-neutral-400">
+              <p className="mb-5 inline-flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted dark:text-muted">
                 {home.available && <span className="h-2 w-2 rounded-full bg-emerald-500" />}
                 {home.availabilityLabel}
               </p>
-              <h2 className="text-3xl font-black uppercase leading-[0.95] tracking-[-0.04em] text-neutral-900 dark:text-white">{home.workTogetherTitle}</h2>
-              <p className="mt-1 font-instrument-serif text-3xl italic text-neutral-500 dark:text-neutral-400">{home.workTogetherAccent}</p>
+              <h2 className="text-3xl font-black uppercase leading-[0.95] tracking-[-0.04em] text-foreground dark:text-foreground">{home.workTogetherTitle}</h2>
+              <p className="mt-1 font-instrument-serif text-3xl italic text-muted dark:text-muted">{home.workTogetherAccent}</p>
             </div>
             <div className="my-6">
               <CopyEmailCard email={email} copyLabel={home.copyEmailLabel} copiedLabel={home.copyEmailCopiedLabel} />
             </div>
-            <Link to="/contact" className="inline-flex min-h-12 items-center justify-center rounded-full bg-neutral-900 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-neutral-700 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200">
+            <Link to="/contact" data-hover-keep="true" className="inline-flex min-h-12 items-center justify-center rounded-full bg-neutral-900 px-6 py-3 text-sm font-semibold text-surface-inverse transition-colors hover:bg-neutral-700 dark:bg-surface-inverse dark:text-inverse-foreground">
               {home.connectNowLabel}
             </Link>
           </HomeBentoCard>
@@ -552,25 +553,25 @@ export default function Home() {
             <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_left,rgba(249,115,22,0.2),transparent_60%),radial-gradient(ellipse_at_bottom_right,rgba(234,88,12,0.12),transparent_55%)]" />
             <div className="flex h-full flex-col justify-between gap-8 sm:flex-row sm:items-center">
               <div className="flex items-center gap-5">
-                {home.photo && <HomeMedia src={home.photo} alt={home.name} className="h-28 w-28 shrink-0 rounded-full border-4 border-white object-cover object-top shadow-xl dark:border-neutral-700 sm:h-36 sm:w-36" />}
+                {home.photo && <HomeMedia src={home.photo} alt={home.name} className="h-28 w-28 shrink-0 rounded-full border-4 border-border object-cover object-top shadow-xl dark:border-neutral-700 sm:h-36 sm:w-36" />}
                 <div>
-                  <h2 className="text-3xl font-black tracking-tight text-neutral-900 dark:text-white sm:text-5xl">{home.builderTitle}</h2>
-                  <p className="font-instrument-serif text-3xl italic text-brand sm:text-5xl">{home.builderAccent}</p>
-                  <p className="mt-3 font-mono text-[10px] font-semibold tracking-[0.12em] text-neutral-600 dark:text-neutral-400 sm:text-xs">&lt; {brandLine2} /&gt;</p>
+                  <h2 className="text-3xl font-black tracking-tight text-foreground dark:text-foreground sm:text-5xl">{home.builderTitle}</h2>
+                  <p className="font-instrument-serif text-3xl italic text-accent-foreground sm:text-5xl">{home.builderAccent}</p>
+                  <p className="mt-3 font-mono text-[10px] font-semibold tracking-[0.12em] text-muted dark:text-muted sm:text-xs">&lt; {brandLine2} /&gt;</p>
                 </div>
               </div>
               <div className="flex shrink-0 flex-wrap gap-3">
-                <Link to="/work" className="inline-flex min-h-11 items-center justify-center rounded-full border border-neutral-300 px-5 py-2 text-xs font-semibold tracking-[0.1em] text-neutral-800 transition-colors hover:bg-neutral-900 hover:text-white dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-white dark:hover:text-neutral-900">{home.builderWorkLabel}</Link>
-                <Link to="/book" className="inline-flex min-h-11 items-center justify-center rounded-full border border-brand px-5 py-2 text-xs font-semibold tracking-[0.1em] text-brand transition-colors hover:bg-brand hover:text-white">{home.builderCallLabel}</Link>
+                <Link to="/work" className="inline-flex min-h-11 items-center justify-center rounded-full border border-neutral-300 px-5 py-2 text-xs font-semibold tracking-[0.1em] text-muted transition-colors hover:bg-neutral-900 hover:text-surface-inverse dark:border-neutral-700 dark:text-foreground dark:hover:bg-surface dark:hover:text-foreground">{home.builderWorkLabel}</Link>
+                <Link to="/book" className="inline-flex min-h-11 items-center justify-center rounded-full border border-brand px-5 py-2 text-xs font-semibold tracking-[0.1em] text-accent-foreground transition-colors hover:bg-brand hover:text-on-accent">{home.builderCallLabel}</Link>
               </div>
             </div>
           </HomeBentoCard>
 
           <HomeBentoCard reducedMotion={prefersReducedMotion} delay={0.06} className="relative isolate min-h-[300px] overflow-hidden">
             <div className="relative z-10 max-w-[55%]">
-              <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500 dark:text-neutral-400">{home.remoteTag}</p>
-              <h2 className="text-2xl font-bold leading-tight text-neutral-900 dark:text-white sm:text-3xl">{home.remoteTitle}</h2>
-              <span className="mt-5 inline-flex rounded-full border border-neutral-300 px-3 py-1.5 text-[10px] font-semibold tracking-[0.14em] text-neutral-700 dark:border-neutral-700 dark:text-neutral-300">{home.remoteChip}</span>
+              <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted dark:text-muted">{home.remoteTag}</p>
+              <h2 className="text-2xl font-bold leading-tight text-foreground dark:text-foreground sm:text-3xl">{home.remoteTitle}</h2>
+              <span className="mt-5 inline-flex rounded-full border border-neutral-300 px-3 py-1.5 text-[10px] font-semibold tracking-[0.14em] text-muted dark:border-neutral-700 dark:text-muted">{home.remoteChip}</span>
             </div>
             <div className="absolute bottom-0 right-0 top-0 w-[58%]" aria-label={home.remoteTitle}>
               <LazyGlobe className="h-full min-h-[300px] w-full" />
@@ -580,16 +581,16 @@ export default function Home() {
       </Section>
 
       <Section show={selectedProjects.length > 0} className="py-20 md:py-28">
-        <p className="mb-4 text-xs font-semibold uppercase tracking-[0.3em] text-neutral-500 dark:text-neutral-400">{home.selectedWorkTag}</p>
-        <h2 className="mb-10 flex flex-col font-sans text-[clamp(62px,12vw,190px)] font-black uppercase leading-[0.82] tracking-[-0.07em] text-neutral-900 dark:text-white sm:flex-row sm:items-baseline sm:gap-8">
+        <p className="mb-4 text-xs font-semibold uppercase tracking-[0.3em] text-muted dark:text-muted">{home.selectedWorkTag}</p>
+        <h2 className="mb-10 flex flex-col font-sans text-[clamp(62px,12vw,190px)] font-black uppercase leading-[0.82] tracking-[-0.07em] text-foreground dark:text-foreground sm:flex-row sm:items-baseline sm:gap-8">
           <span>{home.selectedWorkHeading}</span>
-          <span className="font-instrument-serif font-normal italic tracking-tight text-neutral-500 dark:text-neutral-400">{home.selectedWorkAccent}</span>
+          <span className="font-instrument-serif font-normal italic tracking-tight text-muted dark:text-muted">{home.selectedWorkAccent}</span>
         </h2>
         <div className="divide-y divide-neutral-200/80 dark:divide-neutral-800/80">
           {selectedProjects.map((project, index) => <SelectedWorkRow key={project.id} project={project} index={index} viewLabel={home.selectedWorkViewLabel} reducedMotion={prefersReducedMotion} />)}
         </div>
         <div className="mt-8 flex justify-center">
-          <Link to="/work" className="inline-flex min-h-12 items-center justify-center rounded-full bg-neutral-900 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-neutral-700 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200">{home.selectedWorkBtn}</Link>
+          <Link to="/work" className="inline-flex min-h-12 items-center justify-center rounded-full bg-neutral-900 px-6 py-3 text-sm font-semibold text-surface-inverse transition-colors hover:bg-neutral-700 dark:bg-surface-inverse dark:text-inverse-foreground">{home.selectedWorkBtn}</Link>
         </div>
       </Section>
 
@@ -597,9 +598,9 @@ export default function Home() {
       <Section show={home.showStats && home.stats.length > 0} className="py-12" bg>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {home.stats.map((stat, i) => (
-            <ScrollReveal key={i} delay={i * 0.08} className="text-center">
-              <p className="text-4xl font-bold text-brand">{stat.n}{stat.s}</p>
-              <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1 leading-snug">{stat.t}</p>
+            <ScrollReveal key={i} delay={i * 0.08} className="hover-card home-stat-tile rounded-2xl p-4 text-center transition-colors">
+              <p className="text-4xl font-bold text-accent-foreground">{stat.n}{stat.s}</p>
+              <p className="text-xs text-muted dark:text-muted mt-1 leading-snug">{stat.t}</p>
             </ScrollReveal>
           ))}
         </div>
@@ -607,10 +608,10 @@ export default function Home() {
 
       {/* â•â•â• Marquee â•â•â• */}
       {home.showMarquee && home.marquee.length > 0 && (
-        <div className="overflow-hidden border-b border-neutral-200 dark:border-neutral-800 py-4 bg-white dark:bg-neutral-950">
+        <div className="overflow-hidden border-b border-neutral-200 dark:border-neutral-800 py-4 bg-surface dark:bg-surface">
           <div className="animate-marquee flex gap-10 w-max">
             {[...home.marquee, ...home.marquee].map((item, i) => (
-              <span key={i} className="text-sm font-mono text-neutral-500 dark:text-neutral-500 whitespace-nowrap">{item}</span>
+              <span key={i} className="text-sm font-mono text-muted dark:text-muted whitespace-nowrap">{item}</span>
             ))}
           </div>
         </div>
@@ -620,20 +621,20 @@ export default function Home() {
         <SectionHead tag="Work" title={home.featuredTitle} lead={home.featuredLead} accent="work" />
         <div className="grid gap-6">
           {portfolio.projects.filter(project => project.featured).map((project, index) => (
-            <ScrollReveal key={project.id} delay={index * 0.08}>
-              <div className={`${glass} p-6 md:flex md:items-center md:gap-8 hover:border-brand/40 transition-all`}>
+            <ScrollReveal key={project.id} delay={index * 0.08} data-hover-list="home-featured-projects">
+              <div className={`hover-card ${glass} p-6 md:flex md:items-center md:gap-8 hover:border-brand/40 transition-all`}>
                 {project.image && <img src={project.image} alt={project.title} loading="lazy" className="mb-4 h-32 w-full flex-shrink-0 rounded-xl object-cover md:mb-0 md:w-48" />}
                 <div className="min-w-0 flex-1">
                   <div className="mb-2 flex flex-wrap gap-1">
-                    {project.tags.split(', ').slice(0, 4).map(tag => <span key={tag} className="rounded bg-brand/10 px-2 py-0.5 text-[10px] font-mono text-brand">{tag}</span>)}
+                    {project.tags.split(', ').slice(0, 4).map(tag => <span key={tag} className="rounded bg-brand/10 px-2 py-0.5 text-[10px] font-mono text-accent-foreground">{tag}</span>)}
                   </div>
-                  <h3 className="mb-1 font-semibold text-neutral-900 dark:text-white">{project.title}</h3>
-                  <p className="line-clamp-2 text-sm text-neutral-600 dark:text-neutral-400">{project.desc}</p>
+                  <h3 className="mb-1 font-semibold text-foreground dark:text-foreground">{project.title}</h3>
+                  <p className="line-clamp-2 text-sm text-muted dark:text-muted">{project.desc}</p>
                 </div>
                 {(project.link || project.github) && (
                   <div className="mt-3 flex flex-shrink-0 gap-2 md:mt-0">
-                    {project.link && <a href={project.link} target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-brand hover:underline">Live â†—</a>}
-                    {project.github && <a href={project.github} target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-neutral-500 hover:text-brand">Code â†—</a>}
+                    {project.link && <a href={project.link} target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-accent-foreground hover:underline">Live â†—</a>}
+                    {project.github && <a href={project.github} target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-muted hover:text-accent-foreground">Code â†—</a>}
                   </div>
                 )}
               </div>
@@ -641,7 +642,7 @@ export default function Home() {
           ))}
         </div>
         <div className="mt-8 text-center">
-          <Link to="/work" className="inline-flex items-center gap-2 rounded-xl bg-brand px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-dark">{home.featuredBtn.replace(/\bportfolio\b/gi, 'work')}</Link>
+          <Link to="/work" className="inline-flex items-center gap-2 rounded-xl bg-brand px-6 py-3 text-sm font-semibold text-on-accent transition-colors hover:bg-brand-dark">{home.featuredBtn.replace(/\bportfolio\b/gi, 'work')}</Link>
         </div>
       </Section>
 
@@ -652,10 +653,10 @@ export default function Home() {
           {experienceEntries.map((exp, i) => (
             <ScrollReveal key={i} delay={i * 0.08} className="relative">
               <div className="absolute -left-[25px] top-1 w-3 h-3 rounded-full bg-brand ring-4 ring-white dark:ring-neutral-950" />
-              <p className="text-xs font-mono text-brand mb-1">{exp.period}</p>
-              <h3 className="font-semibold text-neutral-900 dark:text-white">{exp.role}</h3>
-              <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">{exp.company}</p>
-              <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">{exp.bullets[0]}</p>
+              <p className="text-xs font-mono text-accent-foreground mb-1">{exp.period}</p>
+              <h3 className="font-semibold text-foreground dark:text-foreground">{exp.role}</h3>
+              <p className="text-sm font-medium text-muted dark:text-muted">{exp.company}</p>
+              <p className="text-sm text-muted dark:text-muted mt-1">{exp.bullets[0]}</p>
             </ScrollReveal>
           ))}
         </div>
@@ -670,17 +671,17 @@ export default function Home() {
             <ScrollReveal>
               <div className={`${glass} p-6`}>
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="p-2 rounded-xl bg-brand/10 text-brand">
+                  <div className="p-2 rounded-xl bg-brand/10 text-accent-foreground">
                     <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.438 60.438 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342" /></svg>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-neutral-900 dark:text-white">{latestEducation?.institution}</h3>
-                    <p className="text-sm text-neutral-500">{latestEducation?.subtitle}</p>
+                    <h3 className="font-semibold text-foreground dark:text-foreground">{latestEducation?.institution}</h3>
+                    <p className="text-sm text-muted">{latestEducation?.subtitle}</p>
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-2 text-xs">
-                  <span className="px-2 py-1 rounded-full bg-brand/10 text-brand font-semibold">{latestEducation?.yearRange}</span>
-                  <span className="text-neutral-600 dark:text-neutral-400">{latestEducation?.description}</span>
+                  <span className="px-2 py-1 rounded-full bg-brand/10 text-accent-foreground font-semibold">{latestEducation?.yearRange}</span>
+                  <span className="text-muted dark:text-muted">{latestEducation?.description}</span>
                 </div>
               </div>
             </ScrollReveal>
@@ -689,14 +690,14 @@ export default function Home() {
           {showCertifications && (
             <ScrollReveal delay={0.08}>
               <div className={`${glass} p-6`}>
-                <h3 className="font-semibold text-neutral-900 dark:text-white mb-4">Certifications</h3>
+                <h3 className="font-semibold text-foreground dark:text-foreground mb-4">Certifications</h3>
                 <ul className="space-y-3">
                   {certificateEntries.map((cert, i) => (
                     <li key={i} className="flex items-start gap-2 text-sm">
-                      <span className="text-brand mt-0.5 flex-shrink-0">âœ¦</span>
+                      <span className="text-accent-foreground mt-0.5 flex-shrink-0">âœ¦</span>
                       <div>
-                        <span className="font-medium text-neutral-800 dark:text-neutral-200">{cert.name}</span>
-                        <span className="text-neutral-500"> Â· {cert.issuer}, {cert.date}</span>
+                        <span className="font-medium text-muted dark:text-foreground">{cert.name}</span>
+                        <span className="text-muted"> Â· {cert.issuer}, {cert.date}</span>
                       </div>
                     </li>
                   ))}
@@ -713,27 +714,27 @@ export default function Home() {
         <SectionHead tag="What I do" title={home.servicesTitle} lead={home.servicesLead} accent="build" />
         <div className="grid sm:grid-cols-2 gap-6">
           {services.items.map((svc, i) => (
-            <ScrollReveal key={i} delay={i * 0.08}>
-              <div className={`${glass} group p-6 hover:border-brand/40 hover:bg-brand/5 transition-all`}>
-                <div className="inline-flex p-2 rounded-xl bg-brand/10 text-brand mb-4">{ICON_MAP[svc.icon]}</div>
-                <h3 className="font-semibold text-neutral-900 dark:text-white mb-2">{svc.title}</h3>
-                <p className="text-sm text-neutral-600 dark:text-neutral-400">{svc.desc}</p>
+            <ScrollReveal key={i} delay={i * 0.08} data-hover-list="home-services">
+              <div className={`hover-card ${glass} group p-6 hover:border-brand/40 hover:bg-brand/5 transition-all`}>
+                <div className="inline-flex p-2 rounded-xl bg-brand/10 text-accent-foreground mb-4">{ICON_MAP[svc.icon]}</div>
+                <h3 className="font-semibold text-foreground dark:text-foreground mb-2">{svc.title}</h3>
+                <p className="text-sm text-muted dark:text-muted">{svc.desc}</p>
               </div>
             </ScrollReveal>
           ))}
         </div>
         <div className="text-center mt-8">
-          <Link to="/services" className="inline-flex items-center gap-1 text-sm font-semibold text-brand hover:text-brand-dark transition-colors">View all services â†’</Link>
+          <Link to="/services" className="inline-flex items-center gap-1 text-sm font-semibold text-accent-foreground hover:text-accent-foreground-dark transition-colors">View all services â†’</Link>
         </div>
       </Section>
 
       {/* â•â•â• 7. Plan cards â•â•â• */}
       <Section show={home.plans.length > 0} className="py-20" bg>
         <ScrollReveal className="mb-12 text-center">
-          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.28em] text-brand">{home.plansTag}</p>
-          <h2 className="text-4xl font-bold tracking-tight text-neutral-900 dark:text-white sm:text-5xl">
+          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.28em] text-accent-foreground">{home.plansTag}</p>
+          <h2 className="text-4xl font-bold tracking-tight text-foreground dark:text-foreground sm:text-5xl">
             {home.plansHeading}{' '}
-            <span className="font-instrument-serif font-normal italic text-neutral-500 dark:text-neutral-400">{home.plansAccent}</span>
+            <span className="font-instrument-serif font-normal italic text-muted dark:text-muted">{home.plansAccent}</span>
           </h2>
         </ScrollReveal>
         <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-3">
@@ -741,11 +742,11 @@ export default function Home() {
             <HomeBentoCard key={plan.title + i} reducedMotion={prefersReducedMotion} delay={i * 0.08} className="flex min-h-[340px] flex-col">
               <div className="mb-8 flex items-center gap-3">
                 <span className={'h-2.5 w-2.5 rounded-full ' + ['bg-brand', 'bg-sky-500', 'bg-emerald-500'][i % 3]} aria-hidden="true" />
-                <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-neutral-700 dark:text-neutral-300">{plan.title}</h3>
+                <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-muted dark:text-muted">{plan.title}</h3>
               </div>
-              <p className="mb-5 text-4xl font-black tracking-tight text-neutral-900 dark:text-white sm:text-5xl">{plan.price}</p>
-              <p className="mb-8 flex-1 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">{plan.desc}</p>
-              <Link to={plan.ctaLink} className="inline-flex min-h-12 items-center justify-center rounded-full border border-brand/60 px-5 py-3 text-sm font-semibold text-brand transition-colors hover:bg-brand hover:text-white">
+              <p className="mb-5 text-4xl font-black tracking-tight text-foreground dark:text-foreground sm:text-5xl">{plan.price}</p>
+              <p className="mb-8 flex-1 text-sm leading-relaxed text-muted dark:text-muted">{plan.desc}</p>
+                <Link to={plan.ctaLink} className="inline-flex min-h-12 items-center justify-center rounded-full border border-brand/60 px-5 py-3 text-sm font-semibold text-accent-foreground transition-colors hover:bg-brand hover:text-on-accent">
                 {plan.cta}
               </Link>
             </HomeBentoCard>
@@ -760,8 +761,8 @@ export default function Home() {
           {home.testimonials.map((t, i) => (
             <ScrollReveal key={i} delay={i * 0.08}>
               <div className={`${glass} p-6`}>
-                <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-4 leading-relaxed">"{t.q}"</p>
-                <p className="text-xs font-semibold text-neutral-500">â€” {t.c}</p>
+                <p className="text-sm text-muted dark:text-muted mb-4 leading-relaxed">"{t.q}"</p>
+                <p className="text-xs font-semibold text-muted">â€” {t.c}</p>
               </div>
             </ScrollReveal>
           ))}
@@ -775,24 +776,24 @@ export default function Home() {
           {faqSlice.length > 0 && (
             <div>
               <ScrollReveal>
-                <p className="font-mono text-xs uppercase tracking-widest text-brand mb-2">FAQ</p>
-                <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-6">Common <span className="italic font-serif text-brand">questions</span></h2>
+                <p className="font-mono text-xs uppercase tracking-widest text-accent-foreground mb-2">FAQ</p>
+                <h2 className="text-2xl font-bold text-foreground dark:text-foreground mb-6">Common <span className="italic font-serif text-accent-foreground">questions</span></h2>
               </ScrollReveal>
               <div className="space-y-4">
                 {faqSlice.map((faq, i) => (
                   <ScrollReveal key={i} delay={i * 0.06}>
                     <details className={`${glass} p-4 group`}>
-                      <summary className="cursor-pointer text-sm font-semibold text-neutral-800 dark:text-neutral-200 list-none flex items-center justify-between">
+                      <summary className="cursor-pointer text-sm font-semibold text-muted dark:text-foreground list-none flex items-center justify-between">
                         {faq.q}
-                        <span className="text-brand transition-transform group-open:rotate-45 ml-2">+</span>
+                        <span className="text-accent-foreground transition-transform group-open:rotate-45 ml-2">+</span>
                       </summary>
-                      <p className="mt-3 text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">{faq.a}</p>
+                      <p className="mt-3 text-sm text-muted dark:text-muted leading-relaxed">{faq.a}</p>
                     </details>
                   </ScrollReveal>
                 ))}
               </div>
               <div className="mt-4">
-                <Link to="/faqs" className="text-sm font-semibold text-brand hover:text-brand-dark">View all FAQs â†’</Link>
+                <Link to="/faqs" className="text-sm font-semibold text-accent-foreground hover:text-accent-foreground-dark">View all FAQs â†’</Link>
               </div>
             </div>
           )}
@@ -805,12 +806,12 @@ export default function Home() {
               transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
               className="min-w-0"
             >
-              <p className="mb-5 text-xs font-semibold uppercase tracking-[0.4em] text-neutral-500 dark:text-neutral-400">{home.guestbookTag}</p>
-              <h2 className="mb-7 flex flex-col font-sans text-[clamp(64px,9vw,130px)] font-black uppercase leading-[0.85] tracking-[-0.065em] text-neutral-900 dark:text-white">
+              <p className="mb-5 text-xs font-semibold uppercase tracking-[0.4em] text-muted dark:text-muted">{home.guestbookTag}</p>
+              <h2 className="mb-7 flex flex-col font-sans text-[clamp(64px,9vw,130px)] font-black uppercase leading-[0.85] tracking-[-0.065em] text-foreground dark:text-foreground">
                 <span>{guestbookHeading}</span>
-                <span className="font-instrument-serif text-neutral-500 normal-case font-normal italic tracking-tight dark:text-neutral-400">{home.guestbookAccent}</span>
+                <span className="font-instrument-serif text-muted normal-case font-normal italic tracking-tight dark:text-muted">{home.guestbookAccent}</span>
               </h2>
-              <p className="mb-8 max-w-[52ch] text-lg leading-[1.7] text-neutral-600 dark:text-neutral-400 sm:text-xl">{home.guestbookLead}</p>
+              <p className="mb-8 max-w-[52ch] text-lg leading-[1.7] text-muted dark:text-muted sm:text-xl">{home.guestbookLead}</p>
 
               {guestbookPreviews.length > 0 ? (
                 <div className="mb-6 flex flex-col gap-4">
@@ -825,12 +826,12 @@ export default function Home() {
                   ))}
                 </div>
               ) : (
-                <div className="mb-6 flex min-h-36 items-center justify-center rounded-3xl border border-dashed border-neutral-300 bg-white/35 px-6 py-8 text-center text-sm font-medium text-neutral-500 dark:border-neutral-700 dark:bg-neutral-900/20 dark:text-neutral-400">
+                <div className="mb-6 flex min-h-36 items-center justify-center rounded-3xl border border-dashed border-neutral-300 bg-surface/35 px-6 py-8 text-center text-sm font-medium text-muted dark:border-neutral-700 dark:bg-surface/20 dark:text-muted">
                   {home.guestbookEmptyText}
                 </div>
               )}
 
-              <Link to="/guestbook" className="inline-flex min-h-12 items-center justify-center rounded-full bg-neutral-900 px-6 py-3 text-sm font-semibold text-white transition-transform hover:-translate-y-0.5 dark:bg-white dark:text-neutral-900">
+              <Link to="/guestbook" className="inline-flex min-h-12 items-center justify-center rounded-full bg-neutral-900 px-6 py-3 text-sm font-semibold text-surface-inverse transition-transform hover:-translate-y-0.5 dark:bg-surface-inverse dark:text-inverse-foreground">
                 {home.guestbookBtn}
               </Link>
             </motion.div>
@@ -840,29 +841,29 @@ export default function Home() {
               whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-60px' }}
              transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.55, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-              className={`${glass} flex h-full min-h-[420px] flex-col rounded-[48px] border-neutral-200/70 bg-white/75 p-8 dark:border-neutral-800/70 dark:bg-neutral-950/55 sm:p-10`}
+              className={`hover-card ${glass} flex h-full min-h-[420px] flex-col rounded-[48px] border-neutral-200/70 bg-surface/75 p-8 dark:border-neutral-800/70 dark:bg-surface/55 sm:p-10`}
             >
-              <h3 className="text-4xl font-bold tracking-tight text-neutral-900 dark:text-white">{home.guestbookCtaHeading}</h3>
-              <p className="mt-1 font-instrument-serif text-4xl italic text-neutral-500 dark:text-neutral-400 sm:text-5xl">{home.guestbookCtaAccent}</p>
-              <p className="mt-5 leading-[1.7] text-neutral-600 dark:text-neutral-400">{home.guestbookCtaLead}</p>
+              <h3 className="text-4xl font-bold tracking-tight text-foreground dark:text-foreground">{home.guestbookCtaHeading}</h3>
+              <p className="mt-1 font-instrument-serif text-4xl italic text-muted dark:text-muted sm:text-5xl">{home.guestbookCtaAccent}</p>
+              <p className="mt-5 leading-[1.7] text-muted dark:text-muted">{home.guestbookCtaLead}</p>
 
               {guestbookUser ? (
                 <div className="mt-8 space-y-4">
-                  <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                    {home.guestbookSignedInLabel} <span className="font-semibold text-neutral-900 dark:text-white">{guestbookUser.displayName || guestbookUser.email || ''}</span>
+                  <p className="text-sm text-muted dark:text-muted">
+                    {home.guestbookSignedInLabel} <span className="font-semibold text-foreground dark:text-foreground">{guestbookUser.displayName || guestbookUser.email || ''}</span>
                   </p>
-                  <Link to="/guestbook" className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-neutral-900 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-neutral-700 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200">
+                  <Link to="/guestbook" className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-neutral-900 px-5 py-3 text-sm font-semibold text-surface-inverse transition-colors hover:bg-neutral-700 dark:bg-surface-inverse dark:text-inverse-foreground">
                     {home.guestbookWriteBtn}
                   </Link>
                 </div>
               ) : (
-                <Link to="/guestbook" className="mt-8 flex min-h-12 w-full items-center justify-center gap-3 rounded-full border border-neutral-300 px-5 py-3 text-sm font-semibold text-neutral-800 transition-colors hover:border-neutral-500 hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-200 dark:hover:border-neutral-500 dark:hover:bg-neutral-900">
-                    <svg className="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                <Link to="/guestbook" className="mt-8 flex min-h-12 w-full items-center justify-center gap-3 rounded-full border border-neutral-300 px-5 py-3 text-sm font-semibold text-muted transition-colors hover:border-neutral-500 hover:bg-neutral-100 dark:border-neutral-700 dark:text-foreground dark:hover:border-neutral-500 dark:hover:bg-neutral-900">
+                    <svg className="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" d="M4 5.5h16a2 2 0 012 2v9a2 2 0 01-2 2H9l-5 3v-3.5a2 2 0 01-2-2v-8.5a2 2 0 012-2z"/><path strokeLinecap="round" d="M7 10h10M7 14h7"/></svg>
                     <span>{home.guestbookSignInLabel}</span>
                 </Link>
               )}
-              <p className="mt-auto pt-8 text-center text-xs leading-relaxed text-neutral-500">
-                {home.guestbookTermsLead} <Link to="/terms" className="font-semibold underline underline-offset-2 transition-colors hover:text-brand">{home.guestbookTermsLabel}</Link>
+              <p className="mt-auto pt-8 text-center text-xs leading-relaxed text-muted">
+                {home.guestbookTermsLead} <Link to="/terms" className="font-semibold underline underline-offset-2 transition-colors hover:text-accent-foreground">{home.guestbookTermsLabel}</Link>
               </p>
             </motion.div>
           </div>

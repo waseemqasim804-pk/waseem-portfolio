@@ -69,12 +69,13 @@ function UseCard({ item, index, reducedMotion }: { item: UsesItem; index: number
     <motion.article
       onPointerMove={trackPointer}
       onPointerLeave={clearPointer}
+      data-hover-list="uses"
       initial={reducedMotion ? false : { opacity: 0, y: 22 }}
       whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.48, delay: reducedMotion ? 0 : Math.min(index * 0.045, 0.27), ease: [0.22, 1, 0.36, 1] }}
       whileHover={reducedMotion ? undefined : { y: -4 }}
-      className="group relative min-h-[220px] overflow-hidden rounded-[1.6rem] border border-neutral-200/80 bg-white/75 p-6 shadow-[0_12px_42px_rgba(15,23,42,0.035)] transition-[border-color,box-shadow] duration-300 hover:border-orange-400/60 hover:shadow-[0_18px_48px_rgba(249,115,22,0.10)] dark:border-white/10 dark:bg-neutral-900/65 dark:shadow-[0_18px_54px_rgba(0,0,0,0.12)] dark:hover:border-orange-400/50"
+      className="hover-card uses-tool-card group relative min-h-[220px] overflow-hidden rounded-[1.6rem] border border-neutral-200/80 bg-surface/75 p-6 shadow-[0_12px_42px_rgba(15,23,42,0.035)] transition-[border-color,box-shadow] duration-300 hover:border-orange-400/60 hover:shadow-[0_18px_48px_rgba(249,115,22,0.10)] dark:border-border/10 dark:bg-surface/65 dark:shadow-[0_18px_54px_rgba(0,0,0,0.12)] dark:hover:border-orange-400/50"
     >
       <motion.div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0" style={{ background: spotlight, opacity: spotOpacity }} />
       {href ? (
@@ -87,29 +88,29 @@ function UseCard({ item, index, reducedMotion }: { item: UsesItem; index: number
         >
           <div className="uses-card-main flex h-full flex-1 flex-col transition-[opacity,transform] duration-200">
             <div className="mb-7 flex items-center justify-between gap-4">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-neutral-200 bg-white/90 dark:border-white/10 dark:bg-neutral-800/90">
-                <TechIcon name={iconName} size={26} colorful className="text-neutral-800 dark:text-neutral-100" />
+              <span className="uses-icon-tile flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-neutral-200 bg-surface/90 dark:border-border/10 dark:bg-neutral-800/90">
+                <TechIcon name={iconName} size={26} colorful className="uses-icon-glyph text-muted dark:text-foreground" />
               </span>
-              <span aria-hidden="true" className="uses-card-touch-arrow inline-flex h-11 w-11 items-center justify-center rounded-full border border-neutral-300 text-neutral-700 dark:border-white/15 dark:text-neutral-200">
+              <span aria-hidden="true" className="uses-card-touch-arrow hover-card-arrow inline-flex h-11 w-11 items-center justify-center rounded-full border border-neutral-300 text-muted dark:border-border/15 dark:text-foreground">
                 <ArrowIcon />
               </span>
             </div>
-            <h3 className="text-lg font-bold tracking-tight text-neutral-950 dark:text-white">{item.name}</h3>
-            <p className="mt-2 line-clamp-2 text-sm leading-6 text-neutral-600 dark:text-neutral-400">{displayDescription}</p>
+            <h3 className="text-lg font-bold tracking-tight text-foreground dark:text-foreground">{item.name}</h3>
+            <p className="mt-2 line-clamp-2 text-sm leading-6 text-muted dark:text-muted">{displayDescription}</p>
           </div>
           <span className="uses-card-visit pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 transition-[opacity,transform] duration-200" aria-hidden="true">
-            <span className="inline-flex min-h-12 items-center gap-2 rounded-full bg-white px-6 text-sm font-bold text-neutral-950 shadow-lg shadow-black/10">
+            <span className="inline-flex min-h-12 items-center gap-2 rounded-full bg-surface px-6 text-sm font-bold text-foreground shadow-lg shadow-black/10">
               Visit <span aria-hidden="true">⚡</span>
             </span>
           </span>
         </a>
       ) : (
         <div className="relative z-10 flex min-h-[172px] h-full flex-col">
-          <div className="mb-7 flex h-12 w-12 items-center justify-center rounded-2xl border border-neutral-200 bg-white/90 dark:border-white/10 dark:bg-neutral-800/90">
-            <TechIcon name={iconName} size={26} colorful className="text-neutral-800 dark:text-neutral-100" />
+          <div className="uses-icon-tile mb-7 flex h-12 w-12 items-center justify-center rounded-2xl border border-neutral-200 bg-surface/90 dark:border-border/10 dark:bg-neutral-800/90">
+            <TechIcon name={iconName} size={26} colorful className="uses-icon-glyph text-muted dark:text-foreground" />
           </div>
-          <h3 className="text-lg font-bold tracking-tight text-neutral-950 dark:text-white">{item.name}</h3>
-          <p className="mt-2 line-clamp-2 text-sm leading-6 text-neutral-600 dark:text-neutral-400">{displayDescription}</p>
+          <h3 className="text-lg font-bold tracking-tight text-foreground dark:text-foreground">{item.name}</h3>
+          <p className="mt-2 line-clamp-2 text-sm leading-6 text-muted dark:text-muted">{displayDescription}</p>
         </div>
       )}
     </motion.article>
@@ -130,9 +131,9 @@ function CategoryTitle({ title }: { title: string }) {
   const lead = words.join(' ')
 
   return (
-    <h2 className="text-center text-2xl font-semibold uppercase tracking-[0.18em] text-neutral-500 sm:text-left sm:text-3xl dark:text-neutral-400">
+    <h2 className="text-center text-2xl font-semibold uppercase tracking-[0.18em] text-muted sm:text-left sm:text-3xl dark:text-muted">
       {lead && <>{lead} </>}
-      <span className="font-instrument-serif text-4xl font-normal normal-case italic tracking-normal text-orange-600 sm:text-5xl dark:text-orange-300">{accent}</span>
+      <span className="font-instrument-serif text-4xl font-normal normal-case italic tracking-normal text-accent-foreground sm:text-5xl dark:text-orange-300">{accent}</span>
     </h2>
   )
 }
@@ -148,14 +149,14 @@ export default function Uses() {
   const visibleCategories = categories.filter(section => section.visible !== false && section.items.length > 0)
 
   return (
-    <div className="w-full overflow-x-clip bg-white text-neutral-950 dark:bg-[#0a0a0a] dark:text-white">
+    <div className="w-full overflow-x-clip bg-surface text-foreground dark:bg-background dark:text-foreground">
       <PageMeta
         title="Uses"
         description="Tools, technologies, and gear I use day to day for AI/ML and web development work."
         path="/uses"
       />
 
-      <header className="relative isolate flex min-h-[max(60vh,380px)] w-full items-center justify-center overflow-hidden border-b border-neutral-200 px-5 py-20 text-center dark:border-white/10 sm:px-8">
+      <header className="relative isolate flex min-h-[max(60vh,380px)] w-full items-center justify-center overflow-hidden border-b border-neutral-200 px-5 py-20 text-center dark:border-border/10 sm:px-8">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 -z-10"
@@ -164,19 +165,19 @@ export default function Uses() {
           }}
         />
         <div className="mx-auto w-full max-w-7xl">
-          <p className="mb-5 text-xs font-semibold uppercase tracking-[0.34em] text-orange-600 dark:text-orange-400 sm:text-sm">{uses.eyebrow || 'SETUP'}</p>
-          <h1 className="bg-gradient-to-b from-neutral-950 via-neutral-700 to-neutral-400 bg-clip-text text-[clamp(5rem,18vw,10rem)] font-black uppercase leading-[0.78] tracking-[-0.085em] text-transparent dark:from-white dark:via-neutral-200 dark:to-neutral-600">
+          <p className="mb-5 text-xs font-semibold uppercase tracking-[0.34em] text-accent-foreground dark:text-orange-400 sm:text-sm">{uses.eyebrow || 'SETUP'}</p>
+          <h1 className="text-foreground text-[clamp(5rem,18vw,10rem)] font-black uppercase leading-[0.78] tracking-[-0.085em] dark:bg-gradient-to-b dark:from-white dark:via-neutral-200 dark:to-neutral-600 dark:bg-clip-text dark:text-transparent">
             {uses.title || 'Uses'}
           </h1>
-          <p className="mt-7 font-instrument-serif text-[clamp(2rem,5vw,3.7rem)] italic leading-tight text-neutral-700 dark:text-neutral-300">{uses.accent || 'what I build with.'}</p>
-          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-neutral-600 dark:text-neutral-400 sm:text-lg">{uses.lead}</p>
+          <p className="mt-7 font-instrument-serif text-[clamp(2rem,5vw,3.7rem)] italic leading-tight text-muted dark:text-muted">{uses.accent || 'what I build with.'}</p>
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-muted dark:text-muted sm:text-lg">{uses.lead}</p>
         </div>
       </header>
 
       {visibleCategories.map((section, sectionIndex) => (
         <section
           key={`${section.title}-${sectionIndex}`}
-          className={`w-full border-b border-neutral-200/90 py-16 sm:py-20 lg:py-24 dark:border-white/10 ${sectionIndex % 2 === 0 ? 'bg-white dark:bg-[#0a0a0a]' : 'bg-neutral-50/80 dark:bg-neutral-900/25'}`}
+          className={`w-full border-b border-neutral-200/90 py-16 sm:py-20 lg:py-24 dark:border-border/10 ${sectionIndex % 2 === 0 ? 'bg-surface dark:bg-background' : 'bg-neutral-50/80 dark:bg-surface/25'}`}
         >
           <div className="mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-10 xl:px-12">
             <div className="mb-9 sm:mb-12">

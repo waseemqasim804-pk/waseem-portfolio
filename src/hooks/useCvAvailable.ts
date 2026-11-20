@@ -11,7 +11,7 @@ export function useCvAvailable(): boolean | null {
   useEffect(() => {
     if (!resolvedUrl) { setAvailable(false); return }
     setAvailable(null)
-    if (resolvedUrl.startsWith('data:')) { setAvailable(true); return }
+    if (/^(data:application\/pdf|blob:)/i.test(resolvedUrl)) { setAvailable(true); return }
     fetch(resolvedUrl, { method: 'HEAD' })
       .then(r => setAvailable(r.ok))
       .catch(() => setAvailable(false))
