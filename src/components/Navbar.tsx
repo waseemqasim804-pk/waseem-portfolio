@@ -13,6 +13,7 @@ import CvPreview, { DocumentPlaceholder } from './CvPreview'
 const PRIMARY_LINKS = [
   { label: 'Home', to: '/' },
   { label: 'About', to: '/about' },
+  { label: 'Projects', to: '/projects' },
   { label: 'Work', to: '/work' },
   { label: 'Blogs', to: '/blogs' },
 ]
