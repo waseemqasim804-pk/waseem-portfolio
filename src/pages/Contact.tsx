@@ -91,7 +91,7 @@ export default function Contact() {
             <BlinkingPhoto
               size="h-[140px] w-[140px] md:h-[220px] md:w-[220px]"
               src={home.photo}
-              alt={siteName}
+              alt="Muhammad Waseem Qasim, AI/ML Engineer in Lahore"
               round
               objectPosition="center top"
             />
@@ -118,7 +118,7 @@ export default function Contact() {
       ) : (
         <section className="relative w-full border-b border-neutral-200 px-5 pb-10 pt-[120px] dark:border-neutral-800 md:pb-14">
           <div className="relative z-0 mb-8 ml-auto h-[140px] w-[140px] overflow-hidden rounded-full border-[3px] border-neutral-300 md:absolute md:right-[45px] md:top-0 md:mb-0 md:h-[260px] md:w-[260px] lg:h-[360px] lg:w-[360px] dark:border-neutral-800">
-            {photo && <img src={photo} alt={siteName} className="h-full w-full rounded-full object-cover object-top" style={{ objectPosition: 'center top' }} />}
+            {photo && <img src={photo} alt="Muhammad Waseem Qasim, AI/ML Engineer in Lahore" className="h-full w-full rounded-full object-cover object-top" style={{ objectPosition: 'center top' }} />}
           </div>
           <div className="relative z-10">
             <motion.p

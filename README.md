@@ -87,7 +87,7 @@ git push -u origin main
 
 1. Add the deployed site to [Google Search Console](https://search.google.com/search-console/). Verify the domain (DNS verification is recommended for a custom domain).
 2. In Search Console, open **Sitemaps** and submit `https://waseemqasim.vercel.app/sitemap.xml`.
-3. Use **URL Inspection** for `https://waseemqasim.vercel.app/`, `/about`, and `/projects`, then select **Request indexing**.
+3. Use **URL Inspection** for `https://waseemqasim.vercel.app/` and `/about`, then select **Request indexing**.
 4. Validate the homepage with Google's [Rich Results Test](https://search.google.com/test/rich-results).
 
 Search indexing is controlled by Google and is not guaranteed by metadata alone. Keep the site publicly accessible and replace the domain placeholder before submitting.

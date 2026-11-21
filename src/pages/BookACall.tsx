@@ -290,7 +290,7 @@ export function BookingPanel() {
         <section className="border-b border-neutral-200/80 p-5 dark:border-neutral-800/80 sm:p-6 md:border-b-0 md:border-r">
           <div className="mb-6 flex items-center gap-3">
             {photo ? (
-              <img src={photo} alt={contact.meetingName} className="h-14 w-14 rounded-full object-cover" />
+              <img src={photo} alt="Muhammad Waseem Qasim, AI/ML Engineer in Lahore" className="h-14 w-14 rounded-full object-cover" />
             ) : (
               <span aria-hidden="true" className="flex h-14 w-14 items-center justify-center rounded-full bg-brand/10 font-semibold text-accent-foreground">WQ</span>
             )}

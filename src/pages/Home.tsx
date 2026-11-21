@@ -146,7 +146,7 @@ function HomePhotoStack({ photos, name }: { photos: string[]; name: string }) {
             className="absolute left-1/2 top-2 h-[196px] w-[148px] overflow-hidden rounded-2xl border-[5px] border-border bg-surface shadow-xl dark:border-neutral-100"
             style={{ zIndex: visiblePhotos.length - index, transform: `translateX(calc(-50% + ${offsets[index]}px)) rotate(${angles[index]}deg)` }}
           >
-            <HomeMedia src={src} alt={`${name} portrait`} className="h-full w-full rounded-xl object-cover object-top" />
+            <HomeMedia src={src} alt={index === 0 ? 'Muhammad Waseem Qasim, AI/ML Engineer in Lahore' : `${name} portrait`} className="h-full w-full rounded-xl object-cover object-top" />
           </div>
         )
       }) : (
@@ -480,6 +480,7 @@ export default function Home() {
             <span className="sr-only">{home.name}</span>
             <span aria-hidden="true">{home.heroHeading}</span>
           </h1>
+          <p className="mt-5 text-sm font-medium text-muted dark:text-muted">Muhammad Waseem Qasim — AI/ML Engineer &amp; React Developer based in Lahore, Pakistan.</p>
           <p className="mt-8 text-xs font-semibold uppercase tracking-[0.3em] text-muted dark:text-muted sm:text-sm">{home.heroTag}</p>
           <p className="mt-2 font-instrument-serif text-[clamp(34px,6vw,76px)] italic leading-tight text-muted dark:text-muted">{heroTagline}</p>
           <div className="mt-12 flex w-full flex-col items-start justify-between gap-5 text-left sm:flex-row sm:items-center">
@@ -553,7 +554,7 @@ export default function Home() {
             <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_left,rgba(249,115,22,0.2),transparent_60%),radial-gradient(ellipse_at_bottom_right,rgba(234,88,12,0.12),transparent_55%)]" />
             <div className="flex h-full flex-col justify-between gap-8 sm:flex-row sm:items-center">
               <div className="flex items-center gap-5">
-                {home.photo && <HomeMedia src={home.photo} alt="Muhammad Waseem Qasim" width={1066} height={1599} className="h-28 w-28 shrink-0 rounded-full border-4 border-border object-cover object-top shadow-xl dark:border-neutral-700 sm:h-36 sm:w-36" />}
+                {home.photo && <HomeMedia src={home.photo} alt="Muhammad Waseem Qasim, AI/ML Engineer in Lahore" width={1066} height={1599} className="h-28 w-28 shrink-0 rounded-full border-4 border-border object-cover object-top shadow-xl dark:border-neutral-700 sm:h-36 sm:w-36" />}
                 <div>
                   <h2 className="text-3xl font-black tracking-tight text-foreground dark:text-foreground sm:text-5xl">{home.builderTitle}</h2>
                   <p className="font-instrument-serif text-3xl italic text-accent-foreground sm:text-5xl">{home.builderAccent}</p>

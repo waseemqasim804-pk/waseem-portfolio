@@ -16,7 +16,7 @@ import TechIcon, { getTechBrandTint } from '../components/TechIcon'
 import { useTheme } from '../context/ThemeContext'
 import siteConfig from '../config/siteConfig.json'
 
-type AboutPhoto = SiteContent['about']['photos'][number]
+type AboutPhoto = SiteContent['about']['photos'][number] & { alt?: string }
 type Certificate = {
   id?: string
   name: string
@@ -146,7 +146,7 @@ export default function About() {
                 photos={about.photos?.some(photo => photo.visible !== false && photo.image?.trim())
                   ? about.photos
                   : theme === 'light' && home.photo
-                    ? [{ image: home.photo, caption: about.heroName || home.name, visible: true }]
+                    ? [{ image: home.photo, caption: about.heroName || home.name, alt: 'Muhammad Waseem Qasim, AI/ML Engineer in Lahore', visible: true }]
                     : []}
                 title={about.galleryTitle}
                 emptyText={about.galleryEmptyText}
@@ -358,7 +358,7 @@ function UniversityMemoryCard({
         className="h-[300px] w-[92%] cursor-grab touch-pan-y rounded-3xl border-[6px] border-border bg-surface p-1 text-left shadow-xl outline-none focus-visible:ring-2 focus-visible:ring-brand active:cursor-grabbing dark:border-neutral-100 dark:bg-neutral-100 sm:h-[380px] lg:h-full lg:w-[min(92%,540px)]"
       >
         {image ? (
-          <img src={image} alt={photo.caption?.trim() || `${title} photo ${index + 1}`} className="h-full w-full rounded-2xl object-cover object-top" draggable={false} />
+          <img src={image} alt={photo.alt || photo.caption?.trim() || `${title} photo ${index + 1}`} className="h-full w-full rounded-2xl object-cover object-top" draggable={false} />
         ) : (
           <div className="h-full w-full animate-pulse rounded-2xl bg-neutral-100 dark:bg-neutral-800" aria-hidden="true" />
         )}
