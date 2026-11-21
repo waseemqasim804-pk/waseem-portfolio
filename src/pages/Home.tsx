@@ -190,7 +190,6 @@ function HomeSocialIcon({ label }: { label: string }) {
     case 'linkedin': return <svg {...props}><path d="M5.2 7.8a1.9 1.9 0 1 0 0-3.8 1.9 1.9 0 0 0 0 3.8ZM3.6 9.3h3.2v10.9H3.6zM9 9.3h3.1v1.5h.05a3.4 3.4 0 0 1 3.06-1.68c3.27 0 3.88 2.15 3.88 4.95v6.13h-3.22v-5.43c0-1.3-.02-2.96-1.8-2.96-1.8 0-2.08 1.4-2.08 2.86v5.53H9z" /></svg>
     case 'x': return <svg {...props}><path d="M18.9 2.25h2.9l-6.34 7.25L22.9 21.75h-5.8l-4.55-6.4-5.6 6.4h-2.9l6.78-7.75L3.8 2.25h5.95l4.11 5.78zm-1.02 17.1h1.6L8.88 4.5H7.16z" /></svg>
     case 'facebook': return <svg {...props}><path d="M13.5 21v-8.2h2.75l.41-3.2H13.5V7.56c0-.93.26-1.56 1.6-1.56h1.7V3.14c-.3-.04-1.33-.14-2.53-.14-2.5 0-4.22 1.52-4.22 4.32V9.6H7.2v3.2h2.85V21z" /></svg>
-    case 'instagram': return <svg {...props} fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.8" r=".8" fill="currentColor" stroke="none" /></svg>
     case 'whatsapp': return <svg {...props}><path d="M20.5 3.5A11.8 11.8 0 0 0 1.9 17.7L.5 23.5l5.9-1.5A11.8 11.8 0 0 0 20.5 3.5ZM12 21a9.5 9.5 0 0 1-4.8-1.3l-.3-.2-3.5.9.9-3.4-.2-.4A9.5 9.5 0 1 1 12 21Zm5.2-7.1c-.3-.2-1.7-.9-2-.9s-.5-.2-.7.2-.8.9-.9 1.1-.3.2-.6.1a7.8 7.8 0 0 1-2.3-1.4 8.6 8.6 0 0 1-1.6-2c-.2-.3 0-.5.1-.6l.5-.6.2-.5c.1-.2 0-.4 0-.6s-.7-1.7-1-2.3c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.2-1.2 2.8s1.2 3.2 1.4 3.4a14.5 14.5 0 0 0 5.6 4.9c.8.3 1.4.5 1.9.6.8.1 1.6.1 2.1-.1.7-.2 1.7-.7 1.9-1.4s.2-1.3.2-1.4-.3-.3-.6-.5Z" /></svg>
     default: return <svg {...props}><path d="M10.6 13.4a1 1 0 0 0 1.4 0l4.7-4.7a3 3 0 0 0-4.2-4.2l-2.7 2.7-1.4-1.4 2.7-2.7a5 5 0 0 1 7.1 7.1l-4.7 4.7a3 3 0 0 1-4.2 0zM13.4 10.6a1 1 0 0 0-1.4 0l-4.7 4.7a3 3 0 0 0 4.2 4.2l2.7-2.7 1.4 1.4-2.7 2.7a5 5 0 0 1-7.1-7.1l4.7-4.7a3 3 0 0 1 4.2 0z" /></svg>
   }
@@ -409,7 +408,7 @@ export default function Home() {
     ? home.gallery.filter(photo => photo.visible !== false && typeof photo.image === 'string' && photo.image.trim()).map(photo => photo.image)
     : []
   const photoStack = [home.photo, ...galleryPhotos].filter((photo): photo is string => typeof photo === 'string' && photo.trim().length > 0).slice(0, 3)
-  const socialLinks = links.items.filter(item => Boolean(item.visible) && item.url && item.label.toLowerCase() !== 'email').slice(0, 6)
+  const socialLinks = links.items.filter(item => Boolean(item.visible) && item.url && !['email', 'instagram'].includes(item.label.toLowerCase())).slice(0, 6)
   const emailLink = links.items.find(item => item.label.toLowerCase() === 'email' && Boolean(item.visible))
   const email = (emailLink?.url || `mailto:${content.settings.email}`).replace(/^mailto:/i, '')
   const selectedProjects = [...portfolio.projects]

@@ -35,7 +35,7 @@ export const DEFAULT_TECH_SKILLS: TechSkill[] = [
   { name: 'Azure', category: 'Databases & Cloud', url: 'https://azure.microsoft.com/', visible: true },
 ]
 
-export const DEFAULT_LINK_ORDER = ['GitHub', 'X', 'LinkedIn', 'Facebook', 'Instagram', 'Email', 'WhatsApp'] as const
+export const DEFAULT_LINK_ORDER = ['GitHub', 'X', 'LinkedIn', 'Facebook', 'Email', 'WhatsApp'] as const
 
 export const content = {
   // ─── Brand ───────────────────────────────────────────────────────────────
@@ -52,7 +52,6 @@ export const content = {
     phone: '+92 313 8612641',
     whatsapp: '+923138612641',
     linkedin: 'https://www.linkedin.com/in/waseem-qasim',
-    instagram: 'https://www.instagram.com/waseemkhan4623',
     x: 'https://x.com/Waseemkhan068',
     facebook: 'https://www.facebook.com/share/1DuD3cEpY2/',
     youtube: '',
@@ -664,7 +663,6 @@ export const content = {
       { n: 2, order: 2, label: 'X', url: 'https://x.com/Waseemkhan068', desc: 'Thoughts on AI, tech and building', visible: true },
       { n: 3, order: 3, label: 'LinkedIn', url: 'https://www.linkedin.com/in/waseem-qasim', desc: 'Professional profile and networking', visible: true },
       { n: 4, order: 4, label: 'Facebook', url: 'https://www.facebook.com/share/1DuD3cEpY2/', desc: 'Personal updates and community', visible: true },
-      { n: 5, order: 5, label: 'Instagram', url: 'https://www.instagram.com/waseemkhan4623', desc: 'Behind the scenes and daily life', visible: true },
       { n: 6, order: 6, label: 'Email', url: 'mailto:waseemqasim804@gmail.com', desc: 'Get in touch directly', visible: true },
       { n: 7, order: 7, label: 'WhatsApp', url: 'https://wa.me/923138612641', desc: 'Quick messages and calls', visible: true },
     ],

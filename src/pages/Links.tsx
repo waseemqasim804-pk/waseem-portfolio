@@ -21,7 +21,7 @@ export default function Links() {
   const middleWordRef = useRef<HTMLSpanElement>(null)
   const [finePointer, setFinePointer] = useState(false)
   const visibleLinks = (links.items as unknown as LinkItem[])
-    .filter(item => item.visible !== false && item.label.trim() && item.url.trim())
+    .filter(item => item.visible !== false && item.label.trim() && item.url.trim() && item.label.toLowerCase() !== 'instagram')
     .sort((a, b) => {
       const aRank = DEFAULT_LINK_ORDER.findIndex(label => label.toLowerCase() === a.label.toLowerCase())
       const bRank = DEFAULT_LINK_ORDER.findIndex(label => label.toLowerCase() === b.label.toLowerCase())
@@ -54,7 +54,7 @@ export default function Links() {
     <div className="relative overflow-hidden">
       <PageMeta
         title="Links"
-        description="WASEEM QASIM online: GitHub, X, LinkedIn, Facebook, Instagram, email and WhatsApp."
+        description="WASEEM QASIM online: GitHub, X, LinkedIn, Facebook, email and WhatsApp."
         path="/links"
       />
 

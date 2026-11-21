@@ -4,7 +4,7 @@ import { useSiteContent, type SiteContent } from '../hooks/useSiteContent'
 type FooterColumn = SiteContent['footer']['columns'][number]
 type FooterItem = FooterColumn['links'][number]
 
-const SOCIAL_ORDER = ['GitHub', 'LinkedIn', 'X', 'Facebook', 'Instagram']
+const SOCIAL_ORDER = ['GitHub', 'LinkedIn', 'X', 'Facebook']
 
 export default function Footer() {
   const { footer, links } = useSiteContent()
@@ -84,8 +84,6 @@ function SocialMark({ label }: { label: string }) {
       return <svg {...iconProps}><path d="M18.9 2.25h2.9l-6.34 7.25L22.9 21.75h-5.8l-4.55-6.4-5.6 6.4h-2.9l6.78-7.75L3.8 2.25h5.95l4.11 5.78zm-1.02 17.1h1.6L8.88 4.5H7.16z" /></svg>
     case 'facebook':
       return <svg {...iconProps}><path d="M13.5 21v-8.2h2.75l.41-3.2H13.5V7.56c0-.93.26-1.56 1.6-1.56h1.7V3.14c-.3-.04-1.33-.14-2.53-.14-2.5 0-4.22 1.52-4.22 4.32V9.6H7.2v3.2h2.85V21z" /></svg>
-    case 'instagram':
-      return <svg {...iconProps} fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.8" r=".8" fill="currentColor" stroke="none" /></svg>
     default:
       return null
   }
