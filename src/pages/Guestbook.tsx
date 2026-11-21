@@ -26,6 +26,7 @@ import { useSiteContent } from '../hooks/useSiteContent'
 import PageMeta from '../components/PageMeta'
 import ScrollReveal from '../components/ScrollReveal'
 import GuestbookCard, { type GuestbookEntry, getAvatarColor, formatEntryDate } from '../components/GuestbookCard'
+import SocialSignInButtons from '../components/SocialSignInButtons'
 
 const PAGE_SIZE = 12
 
@@ -304,7 +305,7 @@ export default function Guestbook() {
             initial={reducedMotion ? false : { opacity: 0, y: 20 }}
             animate={reducedMotion ? undefined : { opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="w-full rounded-[2.2rem] border border-neutral-200/90 bg-surface/70 p-7 shadow-sm backdrop-blur-xl transition-all dark:border-border/10 dark:bg-surface-inverse/[0.035] sm:p-9"
+            className="w-full rounded-[2.2rem] border border-neutral-200/90 bg-surface/70 p-7 shadow-sm backdrop-blur-xl transition-all dark:border-foreground/25 dark:bg-[linear-gradient(145deg,rgba(56,189,248,0.5)_0%,rgba(99,102,241,0.5)_38%,rgba(168,85,247,0.52)_68%,rgba(18,18,20,0.98)_90%)] dark:shadow-[0_24px_70px_rgba(56,189,248,0.12),0_16px_70px_rgba(168,85,247,0.18)] sm:p-9"
           >
             <h2 className="text-2xl font-bold tracking-tight text-foreground dark:text-foreground sm:text-3xl">
               {ctaHeading}{' '}
@@ -324,23 +325,12 @@ export default function Guestbook() {
               ) : !user ? (
                 /* Signed-out: social sign-in */
                 <div>
-                  <div className="grid gap-3">
-                    <button type="button" onClick={() => void handleSignIn('google')} disabled={signingIn}
-                      className="group relative flex w-full items-center justify-center gap-3 rounded-full bg-neutral-950 px-5 py-3.5 text-sm font-semibold text-surface-inverse shadow-sm transition-all duration-200 hover:scale-[1.01] hover:bg-neutral-800 hover:shadow-[0_0_24px_rgba(249,115,22,0.3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 disabled:cursor-wait disabled:opacity-60 dark:bg-surface-inverse dark:text-inverse-foreground dark:hover:shadow-[0_0_24px_rgba(255,255,255,0.25)]">
-                      <svg className="h-5 w-5 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
-                        <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.65v3h3.88c2.27-2.09 3.665-5.17 3.665-9.09z" />
-                        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.28v3.09C3.27 21.3 7.35 24 12 24z" />
-                        <path fill="#FBBC05" d="M5.28 14.32a7.18 7.18 0 0 1 0-4.64V6.59H1.28a11.96 11.96 0 0 0 0 10.82l4-3.09z" />
-                        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.35 0 3.27 2.7 1.28 6.59l4 3.09c.95-2.83 3.6-4.93 6.72-4.93z" />
-                      </svg>
-                      <span>{signingIn ? 'Signing in...' : 'Sign in with Google'}</span>
-                    </button>
-                    <button type="button" onClick={() => void handleSignIn('facebook')} disabled={signingIn}
-                      className="flex w-full items-center justify-center gap-3 rounded-full bg-blue-600 px-5 py-3.5 text-sm font-semibold text-surface-inverse shadow-sm transition-all duration-200 hover:scale-[1.01] hover:bg-blue-700 hover:shadow-[0_0_24px_rgba(37,99,235,0.32)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-wait disabled:opacity-60">
-                      <svg className="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073c0 6.02 4.388 11.018 10.125 11.927v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.313 0 2.686.236 2.686.236v2.973h-1.513c-1.49 0-1.956.93-1.956 1.885v2.266h3.328l-.532 3.49h-2.796V24C19.612 23.09 24 18.092 24 12.073z" /></svg>
-                      <span>{signingIn ? 'Signing in...' : 'Sign in with Facebook'}</span>
-                    </button>
-                  </div>
+                  <SocialSignInButtons
+                    disabled={signingIn}
+                    busy={signingIn}
+                    onGoogle={() => void handleSignIn('google')}
+                    onFacebook={() => void handleSignIn('facebook')}
+                  />
                   {error && (
                     <p className="mt-3 text-center text-xs font-medium text-rose-500" role="alert">
                       {error}

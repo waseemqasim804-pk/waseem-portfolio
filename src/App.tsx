@@ -7,7 +7,6 @@ import { SiteContentProvider } from './hooks/useSiteContent'
 // Pages
 import Home from './pages/Home'
 import About from './pages/About'
-import Projects from './pages/Projects'
 import Work from './pages/Work'
 import Services from './pages/Services'
 import Awards from './pages/Awards'
@@ -33,7 +32,6 @@ export default function App() {
             <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
-            <Route path="/projects" element={<Projects />} />
             <Route path="/work" element={<Work />} />
             <Route path="/work/:slug" element={<Work />} />
             <Route path="/services" element={<Services />} />

@@ -10,6 +10,7 @@ import { useResolvedMedia } from '../hooks/useMedia'
 import PageHero from '../components/PageHero'
 import ScrollReveal from '../components/ScrollReveal'
 import PageMeta from '../components/PageMeta'
+import SocialSignInButtons from '../components/SocialSignInButtons'
 
 type Post = {
   id: string
@@ -146,26 +147,13 @@ export default function Blogs() {
                     <button type="button" onClick={() => void handleSocialSignOut()} className="font-semibold text-accent-foreground hover:underline dark:text-orange-300">Sign out</button>
                   </div>
                 ) : (
-                  <div className="grid w-full gap-3 sm:w-auto">
-                  <button
-                  type="button"
-                  onClick={() => void handleSocialSignIn('google')}
-                  disabled={authBusy}
-                  className="inline-flex h-[52px] w-full items-center justify-center gap-3 rounded-full bg-neutral-950 px-7 text-base font-semibold text-surface-inverse shadow-sm transition duration-200 hover:-translate-y-px hover:shadow-lg active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-50 disabled:opacity-60 dark:bg-surface-inverse dark:text-inverse-foreground dark:focus-visible:ring-offset-[var(--bg)] sm:w-auto"
-                >
-                  <svg aria-hidden="true" className="h-5 w-5 shrink-0" viewBox="0 0 48 48">
-                    <path fill="#4285F4" d="M44.5 20H24v8.5h11.7C34.6 33.1 29.8 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.1 8 3l6-6C34.6 6.1 29.6 4 24 4c-7.7 0-14.3 4.2-17.7 10.7z" />
-                    <path fill="#34A853" d="M6.3 14.7 13.3 20c1.9-4.7 5.9-8 10.7-8 3.1 0 5.9 1.1 8 3l6-6C34.6 6.1 29.6 4 24 4c-7.7 0-14.3 4.2-17.7 10.7z" />
-                    <path fill="#FBBC05" d="M24 44c5.4 0 10.2-2 13.7-5.4l-6.3-5.3c-2 1.7-4.5 2.7-7.4 2.7-5.8 0-10.6-3.9-12.1-9.1l-7.1 5.5C8.2 39.4 15.5 44 24 44z" />
-                    <path fill="#EA4335" d="M11.9 26.9A12.1 12.1 0 0 1 12 24c0-1.4.2-2.7.7-4l-7-5.3A19.8 19.8 0 0 0 4 24c0 2.8.6 5.5 1.7 8l6.2-5.1z" />
-                  </svg>
-                  <span>{authBusy ? 'Signing in...' : 'Sign in with Google'}</span>
-                </button>
-                <button type="button" onClick={() => void handleSocialSignIn('facebook')} disabled={authBusy}
-                  className="inline-flex h-[52px] w-full items-center justify-center gap-3 rounded-full bg-blue-600 px-7 text-base font-semibold text-surface-inverse shadow-sm transition duration-200 hover:-translate-y-px hover:bg-blue-700 hover:shadow-lg active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-60 sm:w-auto">
-                  <svg aria-hidden="true" className="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073c0 6.02 4.388 11.018 10.125 11.927v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.313 0 2.686.236 2.686.236v2.973h-1.513c-1.49 0-1.956.93-1.956 1.885v2.266h3.328l-.532 3.49h-2.796V24C19.612 23.09 24 18.092 24 12.073z" /></svg>
-                  <span>{authBusy ? 'Signing in...' : 'Sign in with Facebook'}</span>
-                </button>
+                  <div className="grid w-full max-w-[480px] gap-5 self-end rounded-[2.75rem] border border-neutral-200 bg-surface/90 p-6 shadow-lg dark:border-foreground/25 dark:bg-[linear-gradient(145deg,rgba(56,189,248,0.5)_0%,rgba(99,102,241,0.5)_38%,rgba(168,85,247,0.52)_68%,rgba(18,18,20,0.98)_90%)] dark:shadow-[0_24px_70px_rgba(56,189,248,0.12),0_16px_70px_rgba(168,85,247,0.18)] sm:p-8">
+                  <SocialSignInButtons
+                    disabled={authBusy}
+                    busy={authBusy}
+                    onGoogle={() => void handleSocialSignIn('google')}
+                    onFacebook={() => void handleSocialSignIn('facebook')}
+                  />
                 </div>
                 )}
                 {authStatus && <p role="alert" className="text-right text-xs font-medium text-rose-500">{authStatus}</p>}

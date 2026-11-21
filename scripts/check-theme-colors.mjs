@@ -43,9 +43,11 @@ for (const file of files) {
         && /['"]#[\da-fA-F]{3,8}['"]|CUSTOM_TECH_COLORS|return getContrastMode/.test(line)
       const isGoogleBrandMark = ['src/pages/Blogs.tsx', 'src/pages/Guestbook.tsx'].includes(name)
         && /fill="#(?:4285F4|34A853|FBBC05|EA4335)"/.test(line)
+      const isSocialSignInBrandMark = name === 'src/components/SocialSignInButtons.tsx'
+        && /(?:fill="#(?:4285F4|34A853|FBBC05|EA4335|1877F2)"|#1877F2)/.test(line)
       const isLegacyNavbarPalette = name === 'src/components/Navbar.tsx'
       const isBundledBrandArtwork = name.startsWith('src/assets/') && name.endsWith('.svg')
-      if (!isTechBrandLookup && !isGoogleBrandMark && !isLegacyNavbarPalette && !isBundledBrandArtwork) {
+      if (!isTechBrandLookup && !isGoogleBrandMark && !isSocialSignInBrandMark && !isLegacyNavbarPalette && !isBundledBrandArtwork) {
         for (const match of line.matchAll(hexColor)) {
           errors.push(`${name}:${lineNumber}: hard-coded hex color "${match[0]}"; use a theme token or document a brand-art exception`)
         }
